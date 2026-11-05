@@ -124,7 +124,7 @@ export default function Page() {
           <div className="join" id="join">
             <div className="copy">
               <h2>Twenty-five companies. Not twenty-six.</h2>
-              <p>After Symposium, Cypher and a Sitecore MVP sit down with twenty-five companies. You bring the website, the portal, the idea you couldn’t fund. You leave with it built, on SitecoreAI. Guaranteed, which is exactly why we can’t do it for everyone.</p>
+              <p>After Symposium, Cypher sits down with twenty-five companies. You bring the website, the portal, the idea you couldn’t fund. You leave with it built, on SitecoreAI. Guaranteed, which is exactly why we can’t do it for everyone.</p>
               <p className="close">Selection closes Friday, November 13.</p>
             </div>
             <InterestForm />
