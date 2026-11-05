@@ -1,4 +1,4 @@
-import { createHash } from 'node:crypto';
+import { createHmac } from 'node:crypto';
 import { after, NextResponse } from 'next/server';
 import { classify } from '@/lib/rules';
 import { companyOf, domainOf } from '@/lib/company';
@@ -11,9 +11,12 @@ export const dynamic = 'force-dynamic';
 
 type Body = { email?: unknown; level?: unknown; source?: unknown; website?: unknown };
 
-/** Networks are counted for the rate limit, but the address itself is never stored. */
-const hashIp = (ip: string) =>
-  createHash('sha256').update(`cypher-web:${ip}`).digest('hex').slice(0, 32);
+/**
+ * Networks are counted for the rate limit, but the address itself is never stored: only a keyed
+ * hash, which can't be turned back into the address without the server's secret.
+ */
+const ipKey = process.env.IP_HASH_SECRET || process.env.ADMIN_KEY || 'cypher-web';
+const hashIp = (ip: string) => createHmac('sha256', ipKey).update(ip).digest('hex').slice(0, 32);
 
 export async function POST(req: Request) {
   let body: Body;
