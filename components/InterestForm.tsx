@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState, type CSSProperties } from 'react';
 import { companyOf, domainOf } from '@/lib/company';
-import { isClosed } from '@/lib/config';
+import { isClosed, NOTED } from '@/lib/config';
 import { eye } from './eyeBus';
 
 const LEVELS = [
@@ -22,13 +22,6 @@ const LEVELS = [
     word: 'Take our budget.', sub: 'Careful. We might.', tick: 'Take our budget',
     svg: '<circle cx="36" cy="36" r="31" fill="#e8553d"/><path d="M16 36 Q36 16 56 36 Q36 56 16 36 Z" fill="#ffffff"/><circle cx="36" cy="36" r="9.5" fill="#141433"/>',
   },
-];
-
-const NOTED = [
-  'Curious. We’ll see if that’s enough.',
-  'Interested. We’ll be the judge of how much.',
-  'Needing it is the first qualification. You have it.',
-  'Bold. We like bold. We’re still going to check.',
 ];
 
 type ReplyKind = 'sitecore' | 'vendor' | 'personal' | 'bad' | 'slow' | 'error';

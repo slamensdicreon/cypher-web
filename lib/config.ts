@@ -7,3 +7,11 @@ export function isClosed(now: number = Date.now()): boolean {
 }
 
 export const LEVELS = ['Curious', 'Interested', 'Need it', 'Take our budget'] as const;
+
+/** What Cypher says back to a company put forward, by level. The page and the email both use it. */
+export const NOTED = [
+  'Curious. We’ll see if that’s enough.',
+  'Interested. We’ll be the judge of how much.',
+  'Needing it is the first qualification. You have it.',
+  'Bold. We like bold. We’re still going to check.',
+] as const;

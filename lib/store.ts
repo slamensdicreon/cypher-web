@@ -1,66 +1,154 @@
 import 'server-only';
+import postgres from 'postgres';
+
+/** What the form decided about a submission. Only `ok` is a company put forward. */
+export type Outcome = 'ok' | 'sitecore' | 'vendor' | 'personal' | 'bad';
 
 export type Submission = {
   email: string;
   domain: string;
   company: string;
-  level: number;
-  interest: string;
+  outcome: Outcome;
+  level: number | null;
+  interest: string | null;
   source: string;
-  at: string;
   ua: string;
+  ipHash: string;
 };
 
-const url = process.env.KV_REST_API_URL || process.env.UPSTASH_REDIS_REST_URL || '';
-const token = process.env.KV_REST_API_TOKEN || process.env.UPSTASH_REDIS_REST_TOKEN || '';
-export const hasStore = Boolean(url && token);
+export type Row = {
+  id: number;
+  createdAt: Date;
+  email: string;
+  domain: string;
+  company: string;
+  outcome: Outcome;
+  level: number | null;
+  interest: string | null;
+  source: string;
+  internalSentAt: Date | null;
+  confirmationSentAt: Date | null;
+  emailError: string | null;
+};
 
-/** One Redis command over Upstash's REST API. No SDK, no extra dependency. */
-async function redis<T = unknown>(command: (string | number)[]): Promise<T> {
-  const res = await fetch(url, {
-    method: 'POST',
-    headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify(command),
-    cache: 'no-store',
-  });
-  if (!res.ok) throw new Error(`Redis ${command[0]} failed: ${res.status}`);
-  const data = (await res.json()) as { result: T };
-  return data.result;
+const url = process.env.DATABASE_URL || process.env.POSTGRES_URL || '';
+export const hasStore = Boolean(url);
+
+/**
+ * One small pool per function instance. `prepare: false` keeps it working through Neon's
+ * pooled (PgBouncer) connection string, which is what the Vercel integration sets as DATABASE_URL.
+ */
+const sql = hasStore
+  ? postgres(url, { max: 3, idle_timeout: 20, prepare: false, transform: postgres.camel, onnotice: () => {} })
+  : null;
+
+let ready: Promise<unknown> | null = null;
+
+/** Creates the table on first use. Idempotent, so instances starting together are fine. */
+function migrate() {
+  if (!sql) return Promise.resolve();
+  ready ??= sql
+    .begin(async (tx) => {
+      await tx`select pg_advisory_xact_lock(7420261113)`;
+      await tx`
+        create table if not exists submissions (
+          id bigserial primary key,
+          created_at timestamptz not null default now(),
+          email text not null,
+          domain text not null,
+          company text not null,
+          outcome text not null,
+          level smallint,
+          interest text,
+          source text not null default '',
+          ua text not null default '',
+          ip_hash text not null default '',
+          internal_sent_at timestamptz,
+          confirmation_sent_at timestamptz,
+          email_error text
+        )`;
+      await tx`create index if not exists submissions_ip_recent on submissions (ip_hash, created_at)`;
+      await tx`create index if not exists submissions_email on submissions (lower(email), created_at)`;
+    })
+    .catch((err) => {
+      ready = null;
+      throw err;
+    });
+  return ready;
 }
 
-/** Returns false once an address has asked more than `limit` times in the window. */
-export async function underLimit(key: string, limit = 20, windowSeconds = 3600): Promise<boolean> {
-  if (!hasStore) return true;
+/** Saves a submission and returns its id. Without a database it goes to the server log instead. */
+export async function save(s: Submission): Promise<number | null> {
+  if (!sql) {
+    console.log('[interest]', JSON.stringify(s));
+    return null;
+  }
+  await migrate();
+  const [row] = await sql<{ id: string }[]>`
+    insert into submissions (email, domain, company, outcome, level, interest, source, ua, ip_hash)
+    values (${s.email}, ${s.domain}, ${s.company}, ${s.outcome}, ${s.level}, ${s.interest},
+            ${s.source}, ${s.ua}, ${s.ipHash})
+    returning id`;
+  return Number(row.id);
+}
+
+/** False once a network has submitted `limit` times in the last `windowMinutes`. */
+export async function underLimit(ipHash: string, limit = 20, windowMinutes = 60): Promise<boolean> {
+  if (!sql || !ipHash) return true;
   try {
-    const n = await redis<number>(['INCR', `rl:${key}`]);
-    if (n === 1) await redis(['EXPIRE', `rl:${key}`, windowSeconds]);
-    return n <= limit;
-  } catch {
+    await migrate();
+    const [{ n }] = await sql<{ n: string }[]>`
+      select count(*) as n from submissions
+      where ip_hash = ${ipHash} and created_at > now() - make_interval(mins => ${windowMinutes})`;
+    return Number(n) < limit;
+  } catch (err) {
+    console.error('[interest] rate limit check failed', err);
     return true;
   }
 }
 
-export async function save(s: Submission): Promise<void> {
-  const json = JSON.stringify(s);
-  if (hasStore) {
-    await redis(['LPUSH', 'interest:all', json]);
-    await redis(['HSET', 'interest:byDomain', s.domain, json]);
-  } else {
-    console.log('[interest]', json);
-  }
-  const hook = process.env.SUBMISSION_WEBHOOK_URL;
-  if (hook) {
-    const text = `${s.company} (${s.domain}) put themselves forward · ${s.interest}${s.source ? ` · card ${s.source}` : ''}`;
-    await fetch(hook, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ text, ...s }),
-    }).catch(() => undefined);
-  }
+/**
+ * Whether this address was already sent a confirmation within the window. Keeps someone from
+ * using the form to send repeated mail to an address that isn't theirs.
+ */
+export async function confirmedRecently(email: string, windowHours = 24): Promise<boolean> {
+  if (!sql) return false;
+  const [{ n }] = await sql<{ n: string }[]>`
+    select count(*) as n from submissions
+    where lower(email) = lower(${email}) and confirmation_sent_at > now() - make_interval(hours => ${windowHours})`;
+  return Number(n) > 0;
 }
 
-export async function all(): Promise<Submission[]> {
-  if (!hasStore) return [];
-  const rows = await redis<string[]>(['LRANGE', 'interest:all', 0, -1]);
-  return rows.map((r) => JSON.parse(r) as Submission);
+/** How many distinct companies have been put forward so far. */
+export async function companiesSoFar(): Promise<number | null> {
+  if (!sql) return null;
+  const [{ n }] = await sql<{ n: string }[]>`
+    select count(distinct domain) as n from submissions where outcome = 'ok'`;
+  return Number(n);
+}
+
+/** Records what happened to the emails for a submission. */
+export async function markEmails(
+  id: number,
+  r: { internal: boolean; confirmation: boolean; error: string | null },
+): Promise<void> {
+  if (!sql) return;
+  await sql`
+    update submissions set
+      internal_sent_at = case when ${r.internal} then now() else internal_sent_at end,
+      confirmation_sent_at = case when ${r.confirmation} then now() else confirmation_sent_at end,
+      email_error = ${r.error}
+    where id = ${id}`;
+}
+
+/** Every submission, newest first; `outcome: 'ok'` for only the companies put forward. */
+export async function all(opts: { outcome?: Outcome } = {}): Promise<Row[]> {
+  if (!sql) return [];
+  await migrate();
+  return sql<Row[]>`
+    select id::int as id, created_at, email, domain, company, outcome, level, interest, source,
+           internal_sent_at, confirmation_sent_at, email_error
+    from submissions
+    ${opts.outcome ? sql`where outcome = ${opts.outcome}` : sql``}
+    order by created_at desc`;
 }
