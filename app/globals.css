@@ -38,21 +38,46 @@ section.band{background:var(--band);box-shadow:0 0 0 100vmax var(--band);clip-pa
 section.band.lav{--band:var(--lavender);color:var(--ink)}
 section.band.white{--band:var(--surface);color:var(--ink)}
 section.band.dark{--band:var(--ink-2);color:var(--on-ink)}
-/* the four points, as decisions waiting in Cypher; the buttons are for show */
+/* the four points, as decisions waiting in Cypher: Reject turns a card over, Approve sends it away */
 .decisions{display:grid;grid-template-columns:minmax(0,1fr);gap:16px}
-.dcard{display:flex;flex-direction:column;gap:12px;min-width:0;background:var(--surface);color:var(--ink);border-radius:24px;padding:20px 22px;box-shadow:0 1px 2px rgba(20,20,51,.06),0 18px 40px -24px rgba(20,20,51,.45);transition:transform .6s cubic-bezier(.2,.9,.3,1.2),box-shadow .6s}
-.dcard:hover{transform:translateY(-4px);box-shadow:0 1px 2px rgba(20,20,51,.06),0 30px 54px -26px rgba(20,20,51,.5)}
+.dcard{position:relative;min-width:0;perspective:1600px;transition:transform .6s cubic-bezier(.2,.9,.3,1.2)}
+.dflip{display:grid;grid-template:1fr/1fr;height:100%;transform-style:preserve-3d;transition:transform .9s cubic-bezier(.3,1.25,.5,1)}
+.dflip.on{transform:rotateY(180deg)}
+.dface{grid-area:1/1;display:flex;flex-direction:column;gap:12px;min-width:0;border-radius:24px;padding:20px 22px;backface-visibility:hidden;-webkit-backface-visibility:hidden;box-shadow:0 1px 2px rgba(20,20,51,.06),0 18px 40px -24px rgba(20,20,51,.45);transition:box-shadow .6s}
+.dfront{background:var(--surface);color:var(--ink)}
+.dback{background:var(--ink);color:var(--on-ink);transform:rotateY(180deg)}
+.dcard:hover .dface{box-shadow:0 1px 2px rgba(20,20,51,.06),0 30px 54px -26px rgba(20,20,51,.5)}
 .dh{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text-3);min-width:0}
 .dh svg{flex:none}
 .dh b{font-weight:800;color:var(--ink)}
 .dh .dn{margin-left:auto;font-size:12px;font-weight:800;letter-spacing:.06em;color:var(--coral-deep);background:var(--mist-2);border-radius:999px;padding:4px 10px}
-.dcard h2{margin:4px 0 0;font-size:24px;font-weight:800;line-height:1.12;letter-spacing:-.03em}
-.dcard p{margin:0;font-size:16px;line-height:1.5;color:var(--text-2)}
+.dback .dh{color:var(--on-ink-quiet)}.dback .dh b{color:var(--on-ink)}.dback .dh .dn{color:var(--coral);background:var(--ink-3)}
+.dface h2,.dface h3{margin:4px 0 0;font-size:24px;font-weight:800;line-height:1.12;letter-spacing:-.03em}
+.dface p{margin:0;font-size:16px;line-height:1.5;color:var(--text-2)}
+.dback h3{color:var(--on-ink)}
+.dback p{color:var(--on-ink-soft)}
 .da{display:flex;justify-content:flex-end;gap:10px;margin-top:auto;padding-top:14px;border-top:1px solid var(--mist-2)}
-.dbtn{display:inline-flex;align-items:center;gap:7px;font-size:15px;font-weight:800;padding:10px 18px;border-radius:999px;user-select:none;-webkit-user-select:none;transition:transform .3s cubic-bezier(.2,.9,.3,1.5)}
-.dbtn:active{transform:scale(.96)}
+.dback .da{border-top-color:var(--ink-3)}
+.dbtn{display:inline-flex;align-items:center;gap:7px;font:inherit;font-size:15px;font-weight:800;padding:10px 18px;border-radius:999px;border:0;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:transform .3s cubic-bezier(.2,.9,.3,1.5),background .25s,color .25s,box-shadow .25s}
+.dbtn:hover{transform:translateY(-1px)}
+.dbtn:active{transform:scale(.95);transition-duration:.1s}
+.dbtn:focus-visible{outline:3px solid rgba(47,94,230,.45);outline-offset:2px}
 .dbtn.reject{background:var(--bliss);color:var(--ink);box-shadow:inset 0 0 0 1px var(--mist)}
+.dbtn.reject:hover{box-shadow:inset 0 0 0 1px var(--text-3)}
 .dbtn.approve{background:var(--ink);color:#ffffff}
+.dbtn.approve:hover{background:var(--ink-3)}
+.dbtn.approve.done{background:#1f8a5b;animation:stamp .32s cubic-bezier(.2,.9,.3,1.6)}
+.dback .dbtn.turn{background:transparent;color:var(--on-ink);box-shadow:inset 0 0 0 1px var(--ink-3)}
+.dback .dbtn.turn:hover{box-shadow:inset 0 0 0 1px var(--on-ink-quiet)}
+.dback .dbtn.approve{background:var(--on-ink);color:var(--ink)}
+.dback .dbtn.approve:hover{background:var(--on-ink-soft)}
+.dback .dbtn.approve.done{background:#1f8a5b;color:#ffffff}
+@keyframes stamp{0%{transform:scale(.9)}60%{transform:scale(1.08)}100%{transform:scale(1)}}
+.dempty{grid-column:1/-1;display:flex;flex-direction:column;align-items:flex-start;gap:12px;background:var(--surface);border-radius:24px;padding:28px 26px;box-shadow:0 1px 2px rgba(20,20,51,.06),0 18px 40px -24px rgba(20,20,51,.45);animation:rise .6s cubic-bezier(.2,.9,.3,1.2)}
+.dempty > svg{width:40px;height:40px}
+.dempty h2{margin:0;font-size:32px;font-weight:800;letter-spacing:-.035em;line-height:1}
+.dempty p{margin:0;font-size:17px;line-height:1.5;color:var(--text-2)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 /* the choosing line */
 .beats{display:grid;grid-template-columns:minmax(0,1fr)}
 .beat{display:flex;flex-direction:column;gap:10px;min-width:0}
@@ -142,7 +167,6 @@ input[type=range]:focus-visible{outline:3px solid rgba(47,94,230,.4);outline-off
 .reply .t svg.mini{flex:none;width:24px;height:24px;overflow:visible}
 .morph{overflow:hidden;min-width:0}
 /* scroll reveal: only set by script, so nothing is hidden without it */
-.dcard.rv:hover{transform:translateY(-4px)}
 .rv{opacity:0;transform:translateY(22px);transition:opacity .8s cubic-bezier(.2,.9,.3,1) var(--d,0ms),transform 1s cubic-bezier(.2,.9,.25,1) var(--d,0ms)}
 .rv.in{opacity:1;transform:none}
 .reply h3{margin:0;font-size:26px;font-weight:800;line-height:1.1;letter-spacing:-.035em}
@@ -159,7 +183,8 @@ input[type=range]:focus-visible{outline:3px solid rgba(47,94,230,.4);outline-off
   h1.line{font-size:84px}
   .hero p{margin:28px 0 0;max-width:520px;font-size:24px}
   .decisions{grid-template-columns:repeat(2,minmax(0,1fr));gap:24px}
-  .dcard{padding:26px 28px 24px;gap:14px}.dcard h2{font-size:30px}.dcard p{font-size:17px}
+  .dface{padding:26px 28px 24px;gap:14px}.dface h2,.dface h3{font-size:30px}.dface p{font-size:17px}
+  .dempty{padding:40px 40px 36px}.dempty h2{font-size:44px}
   .beat.big h2{font-size:72px;max-width:920px}.beat.big p{font-size:20px}
   .creds{grid-template-columns:repeat(3,minmax(0,1fr));gap:40px}
   .cred{display:flex;flex-direction:column;align-items:flex-start;gap:16px;padding-top:28px;border-top:2px solid var(--coral)}
@@ -178,4 +203,4 @@ input[type=range]:focus-visible{outline:3px solid rgba(47,94,230,.4);outline-off
   .join .copy h2{font-size:56px}
   .card{padding:30px 30px 32px}
 }
-@media (prefers-reduced-motion: reduce){.dcard,.dbtn,.halo,.co,.btn,label.f input,.ticks span{transition:none}.dial .read .t,.btn.busy span,.btn.busy::after{animation:none}.rv{opacity:1;transform:none;transition:none}}
+@media (prefers-reduced-motion: reduce){.dflip,.dempty,.dbtn.approve.done,.dcard,.dbtn,.halo,.co,.btn,label.f input,.ticks span{transition:none;animation:none}.dial .read .t,.btn.busy span,.btn.busy::after{animation:none}.rv{opacity:1;transform:none;transition:none}}
