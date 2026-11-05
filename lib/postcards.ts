@@ -89,7 +89,7 @@ export const USE_CASES: UseCase[] = [
     c('pc09b', 'violet', 'wide', 'It doesn’t need coffee. It needs three decisions from you.', 'That’s the job now.', 'Eat. We’ll build.'),
   ] },
   { n: '10', place: 'Outside the keynote', cards: [
-    c('pc10a', 'lavender', 'qr', 'The keynote showed you the future of SitecoreAI. We’re booking it.', 'Twenty-five sessions, right after Symposium.', 'Sitecore MVPs are in on it.'),
+    c('pc10a', 'lavender', 'qr', 'The keynote showed you the future of SitecoreAI. We’re booking it.', 'Twenty-five sessions, right after Symposium.', 'Sitecore MVPs built it.'),
     c('pc10b', 'ink', 'wide', 'You just watched the future. Twenty-five companies get to keep it.', 'Selected, not sold to.', 'No standing ovation required.'),
   ] },
   { n: '11', place: 'On the airport shuttle', cards: [
