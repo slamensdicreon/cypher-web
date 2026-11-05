@@ -1,6 +1,11 @@
 import type { Metadata, Viewport } from 'next';
 import { Plus_Jakarta_Sans } from 'next/font/google';
 import './globals.css';
+import WakeUp from '@/components/WakeUp';
+import { matrixRain, SOURCE_MESSAGE } from '@/lib/matrix';
+
+/** What View Source opens on. Never rendered: a template's contents stay inert. */
+const SOURCE_ART = `<!--\n\n${matrixRain(96, 36, SOURCE_MESSAGE)}\n\n-->`;
 
 const jakarta = Plus_Jakarta_Sans({
   subsets: ['latin'],
@@ -39,7 +44,13 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={jakarta.variable}>
-      <body>{children}</body>
+      <head>
+        <template id="wake-up" dangerouslySetInnerHTML={{ __html: SOURCE_ART }} />
+      </head>
+      <body>
+        {children}
+        <WakeUp />
+      </body>
     </html>
   );
 }
