@@ -1,27 +1,17 @@
 'use client';
 
-import { useEffect, useRef, useState, type CSSProperties } from 'react';
+import { useEffect, useRef, useState, type CSSProperties, type KeyboardEvent } from 'react';
 import { companyOf, domainOf } from '@/lib/company';
 import { isClosed, NOTED } from '@/lib/config';
-import { eye } from './eyeBus';
+import { eye, eyeLook, eyeMood } from './eyeBus';
+import LivingEye from './LivingEye';
+import Morph from './Morph';
 
 const LEVELS = [
-  {
-    word: 'Curious.', sub: 'Curious is a fine place to start. A worse place to stay.', tick: 'Curious',
-    svg: '<circle cx="36" cy="36" r="31" fill="#141433"/><path d="M20 36 Q36 50 52 36" fill="none" stroke="#ffffff" stroke-width="4" stroke-linecap="round"/>',
-  },
-  {
-    word: 'Interested.', sub: 'So is everyone you’re competing with.', tick: 'Interested',
-    svg: '<circle cx="36" cy="36" r="31" fill="#141433"/><path d="M18 36 Q36 20 54 36 Q36 52 18 36 Z" fill="none" stroke="#ffffff" stroke-width="3.5" stroke-linejoin="round"/><circle cx="36" cy="36" r="5" fill="#ffffff"/>',
-  },
-  {
-    word: 'We need this.', sub: 'Good. Needing it is the first qualification.', tick: 'Need it',
-    svg: '<circle cx="36" cy="36" r="31" fill="#141433"/><path d="M16 36 Q36 16 56 36 Q36 56 16 36 Z" fill="#ffffff"/><circle cx="36" cy="36" r="9" fill="#141433"/>',
-  },
-  {
-    word: 'Take our budget.', sub: 'Careful. We might.', tick: 'Take our budget',
-    svg: '<circle cx="36" cy="36" r="31" fill="#e8553d"/><path d="M16 36 Q36 16 56 36 Q36 56 16 36 Z" fill="#ffffff"/><circle cx="36" cy="36" r="9.5" fill="#141433"/>',
-  },
+  { word: 'Curious.', sub: 'Curious is a fine place to start. A worse place to stay.', tick: 'Curious' },
+  { word: 'Interested.', sub: 'So is everyone you’re competing with.', tick: 'Interested' },
+  { word: 'We need this.', sub: 'Good. Needing it is the first qualification.', tick: 'Need it' },
+  { word: 'Take our budget.', sub: 'Careful. We might.', tick: 'Take our budget' },
 ];
 
 type ReplyKind = 'sitecore' | 'vendor' | 'personal' | 'bad' | 'slow' | 'error';
@@ -41,14 +31,27 @@ type Phase =
   | { kind: 'closed' };
 
 const STORE_KEY = 'iib-sent';
+const reducedMotion = () =>
+  typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 export default function InterestForm() {
   const [phase, setPhase] = useState<Phase>({ kind: 'form' });
   const [email, setEmail] = useState('');
-  const [level, setLevel] = useState(1);
-  const [pop, setPop] = useState(false);
+  // The dial moves continuously under the finger and settles on a level when let go.
+  const [raw, setRaw] = useState(1);
+  const rawRef = useRef(1);
+  const tween = useRef(0);
   const [sending, setSending] = useState(false);
   const website = useRef<HTMLInputElement>(null);
+  const input = useRef<HTMLInputElement>(null);
+  const measure = useRef<CanvasRenderingContext2D | null>(null);
+  const lastCompany = useRef('');
+
+  const level = Math.round(raw);
+  const domain = domainOf(email);
+  const company = domain ? companyOf(domain) : '';
+  if (company) lastCompany.current = company;
+  const L = LEVELS[level];
 
   useEffect(() => {
     if (isClosed()) { setPhase({ kind: 'closed' }); return; }
@@ -58,24 +61,84 @@ export default function InterestForm() {
     } catch { /* first visit */ }
   }, []);
 
-  const domain = domainOf(email);
-  const company = domain ? companyOf(domain) : '';
-  const L = LEVELS[level];
+  // The moment a company is recognised, the eyes notice.
+  const hadCompany = useRef(false);
+  useEffect(() => {
+    if (company && !hadCompany.current) eye('widen', 700);
+    hadCompany.current = Boolean(company);
+  }, [company]);
 
-  function onLevel(v: number) {
-    setLevel(v);
-    setPop(true);
-    setTimeout(() => setPop(false), 220);
+  useEffect(() => () => cancelAnimationFrame(tween.current), []);
+
+  function react(v: number) {
+    eyeMood(v / 3);
     if (v === 0) eye('squint', 700);
     else if (v === 1) eye('blink');
     else if (v === 2) eye('widen', 1200);
     else { eye('wake'); eye('double'); eye('widen', 1600); }
   }
 
+  function moveTo(v: number) {
+    const before = Math.round(rawRef.current);
+    rawRef.current = v;
+    setRaw(v);
+    const after = Math.round(v);
+    if (after !== before) react(after);
+  }
+
+  /** Glide the dial to a value, as if a soft spring were pulling it there. */
+  function glideTo(to: number) {
+    cancelAnimationFrame(tween.current);
+    const from = rawRef.current;
+    if (Math.abs(from - to) < 0.001) return;
+    if (reducedMotion()) { moveTo(to); return; }
+    const t0 = performance.now();
+    const dur = 260 + Math.abs(to - from) * 60;
+    const step = (t: number) => {
+      const k = Math.min(1, (t - t0) / dur);
+      const e = 1 - Math.pow(1 - k, 3);
+      moveTo(from + (to - from) * e);
+      if (k < 1) tween.current = requestAnimationFrame(step);
+    };
+    tween.current = requestAnimationFrame(step);
+  }
+
+  const settle = () => glideTo(Math.round(rawRef.current));
+
+  function onDialKey(e: KeyboardEvent<HTMLInputElement>) {
+    const cur = Math.round(rawRef.current);
+    const to =
+      e.key === 'ArrowLeft' || e.key === 'ArrowDown' || e.key === 'PageDown' ? cur - 1
+      : e.key === 'ArrowRight' || e.key === 'ArrowUp' || e.key === 'PageUp' ? cur + 1
+      : e.key === 'Home' ? 0
+      : e.key === 'End' ? 3
+      : null;
+    if (to === null) return;
+    e.preventDefault();
+    glideTo(Math.max(0, Math.min(3, to)));
+  }
+
+  /** Point both eyes at the caret, so Cypher reads along as you type. */
+  function lookAtCaret() {
+    const el = input.current;
+    if (!el) return;
+    const cs = getComputedStyle(el);
+    measure.current ??= document.createElement('canvas').getContext('2d');
+    const ctx = measure.current;
+    if (!ctx) return;
+    ctx.font = `${cs.fontWeight} ${cs.fontSize} ${cs.fontFamily}`;
+    const caret = el.selectionStart ?? el.value.length;
+    const w = ctx.measureText(el.value.slice(0, caret)).width;
+    const r = el.getBoundingClientRect();
+    const pl = parseFloat(cs.paddingLeft) || 0;
+    eyeLook(Math.min(r.right - pl, r.left + pl + w - el.scrollLeft), r.top + r.height / 2);
+  }
+
   async function submit() {
     if (sending) return;
     if (isClosed()) { setPhase({ kind: 'closed' }); return; }
     setSending(true);
+    eye('scan', 1600);
     const source = new URLSearchParams(window.location.search).get('c') || '';
     try {
       const res = await fetch('/api/interest', {
@@ -87,13 +150,13 @@ export default function InterestForm() {
       if (data.status === 'ok') {
         const c = data.company || company || 'your company';
         try { localStorage.setItem(STORE_KEY, JSON.stringify({ company: c, level })); } catch { /* private mode */ }
-        eye('calm'); eye('double');
+        eye('calm'); eye('delight');
         setPhase({ kind: 'noted', company: c, level });
       } else if (data.status === 'closed') {
         setPhase({ kind: 'closed' });
       } else {
         const k = (['sitecore', 'vendor', 'personal', 'bad', 'slow'].includes(data.status) ? data.status : 'error') as ReplyKind;
-        eye('calm'); eye('squint', 900);
+        eye('calm'); eye('shake'); eye('squint', 900);
         setPhase({ kind: 'reply', reply: k });
       }
     } catch {
@@ -110,8 +173,10 @@ export default function InterestForm() {
     setPhase({ kind: 'form' });
   }
 
+  let content: React.ReactNode;
+
   if (phase.kind === 'closed') {
-    return (
+    content = (
       <div className="card">
         <div className="reply" style={{ background: '#f6f5fc', color: '#141433' }}>
           <span className="t" style={{ color: '#6a6889' }}>November 13 has passed</span>
@@ -120,11 +185,9 @@ export default function InterestForm() {
         </div>
       </div>
     );
-  }
-
-  if (phase.kind === 'reply') {
+  } else if (phase.kind === 'reply') {
     const r = REPLY[phase.reply];
-    return (
+    content = (
       <div className="card">
         <div className="reply" style={{ background: r.bg, color: r.fg }}>
           <span className="t" style={{ color: r.accent }}>{r.t}</span>
@@ -135,14 +198,12 @@ export default function InterestForm() {
         <button className="btn light" type="button" onClick={reset}>Try another address</button>
       </div>
     );
-  }
-
-  if (phase.kind === 'noted') {
-    return (
+  } else if (phase.kind === 'noted') {
+    content = (
       <div className="card">
         <div className="reply" style={{ background: '#141433', color: '#ffffff' }}>
           <span className="t" style={{ color: '#b7a6ff' }}>
-            <svg width="24" height="24" viewBox="0 0 72 72" aria-hidden="true" dangerouslySetInnerHTML={{ __html: LEVELS[phase.level].svg }} />
+            <LivingEye variant="dial" level={phase.level} className="mini" />
             Put forward
           </span>
           <h3>Noted, {phase.company}.</h3>
@@ -154,56 +215,70 @@ export default function InterestForm() {
         <button className="btn light" type="button" onClick={reset}>Put forward a different address</button>
       </div>
     );
+  } else {
+    content = (
+      <form className="card" onSubmit={(e) => { e.preventDefault(); submit(); }} noValidate>
+        <h2>Put your company forward.</h2>
+        <label className="f" htmlFor="email">
+          Work email
+          <input
+            id="email"
+            ref={input}
+            type="email"
+            autoComplete="email"
+            inputMode="email"
+            placeholder="you@yourcompany.com"
+            required
+            value={email}
+            onChange={(e) => { setEmail(e.target.value); requestAnimationFrame(lookAtCaret); }}
+            onSelect={lookAtCaret}
+            onFocus={() => { eye('focus'); lookAtCaret(); }}
+            onBlur={() => eye('unfocus')}
+          />
+          <span className={company ? 'co on' : 'co'} aria-live="polite" aria-hidden={company ? undefined : true}>
+            <span>Putting forward:</span> {company || lastCompany.current}
+          </span>
+        </label>
+        <div className="hp" aria-hidden="true">
+          <label htmlFor="website">Website</label>
+          <input id="website" name="website" type="text" tabIndex={-1} autoComplete="off" ref={website} />
+        </div>
+        <div className="dial">
+          <span className="q" id="dialq">How badly do you want this?</span>
+          <div className="read" aria-live="polite">
+            <LivingEye variant="dial" level={raw} className="dialeye" />
+            <span className="t" key={level}><b>{L.word}</b><span>{L.sub}</span></span>
+          </div>
+          <input
+            type="range"
+            min={0}
+            max={3}
+            step={0.001}
+            value={raw}
+            aria-labelledby="dialq"
+            aria-valuetext={L.tick}
+            style={{ '--p': `${(raw / 3) * 100}%` } as CSSProperties}
+            onChange={(e) => { cancelAnimationFrame(tween.current); moveTo(Number(e.target.value)); }}
+            onPointerUp={settle}
+            onPointerCancel={settle}
+            onTouchEnd={settle}
+            onBlur={settle}
+            onKeyDown={onDialKey}
+          />
+          <div className="ticks" aria-hidden="true">
+            {LEVELS.map((x, i) => (
+              <span key={x.tick} className={i === level ? 'on' : undefined} onClick={() => glideTo(i)}>{x.tick}</span>
+            ))}
+          </div>
+        </div>
+        <button className={sending ? 'btn busy' : 'btn'} type="submit" disabled={sending}>
+          <span>{sending ? 'Cypher is reading…' : 'Get considered'}</span>
+        </button>
+        <p className="small">If your company is selected, you’ll hear from Cypher. If not, you won’t.</p>
+      </form>
+    );
   }
 
-  return (
-    <form className="card" onSubmit={(e) => { e.preventDefault(); submit(); }} noValidate>
-      <h2>Put your company forward.</h2>
-      <label className="f" htmlFor="email">
-        Work email
-        <input
-          id="email"
-          type="email"
-          autoComplete="email"
-          inputMode="email"
-          placeholder="you@yourcompany.com"
-          required
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          onFocus={() => eye('focus')}
-          onBlur={() => eye('unfocus')}
-        />
-        <span className="co" aria-live="polite">
-          {company ? (<><span>Putting forward:</span> {company}</>) : null}
-        </span>
-      </label>
-      <div className="hp" aria-hidden="true">
-        <label htmlFor="website">Website</label>
-        <input id="website" name="website" type="text" tabIndex={-1} autoComplete="off" ref={website} />
-      </div>
-      <div className="dial">
-        <span className="q" id="dialq">How badly do you want this?</span>
-        <div className="read" aria-live="polite">
-          <svg viewBox="0 0 72 72" aria-hidden="true" className={pop ? 'pop' : undefined} dangerouslySetInnerHTML={{ __html: L.svg }} />
-          <span className="t"><b>{L.word}</b><span>{L.sub}</span></span>
-        </div>
-        <input
-          type="range"
-          min={0}
-          max={3}
-          step={1}
-          value={level}
-          aria-labelledby="dialq"
-          aria-valuetext={L.tick}
-          style={{ '--p': `${(level / 3) * 100}%` } as CSSProperties}
-          onChange={(e) => onLevel(Number(e.target.value))}
-        />
-        <div className="ticks" aria-hidden="true">
-          {LEVELS.map((x, i) => <span key={x.tick} className={i === level ? 'on' : undefined}>{x.tick}</span>)}
-        </div>
-      </div>
-      <button className="btn" type="submit" disabled={sending}>{sending ? 'Cypher is reading…' : 'Get considered'}</button>
-      <p className="small">If your company is selected, you’ll hear from Cypher. If not, you won’t.</p>
-    </form>
-  );
+  const key = phase.kind === 'reply' ? `reply-${phase.reply}` : phase.kind;
+  return <Morph k={key}>{content}</Morph>;
 }

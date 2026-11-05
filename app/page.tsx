@@ -1,5 +1,6 @@
 import Eye from '@/components/Eye';
 import InterestForm from '@/components/InterestForm';
+import Reveal from '@/components/Reveal';
 import Status from '@/components/Status';
 
 const Resting = ({ size }: { size: number }) => (
@@ -99,6 +100,7 @@ export default function Page() {
           <p className="q">Not affiliated with the conference. Obviously.</p>
         </div>
       </main>
+      <Reveal />
     </>
   );
 }
