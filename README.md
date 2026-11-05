@@ -32,7 +32,7 @@ Node 20.9 or later. Without a database, submissions are written to the server lo
 | `NEXT_PUBLIC_SITE_URL` | The public URL, used for share previews. |
 | `NEXT_PUBLIC_SELECTION_CLOSES_AT` | When the form closes, ISO 8601 in UTC. Default `2026-11-14T04:59:59Z`, the end of November 13 Eastern. |
 | `DATABASE_URL` | Neon Postgres, set by the Vercel Marketplace. `POSTGRES_URL` also works. |
-| `RESEND_API_KEY` | Resend. Without it, submissions are still stored but no email is sent. |
+| `RESEND_API_KEY` | Resend (`RESEND_KEY` also works). Without it, submissions are still stored but no email is sent. |
 | `EMAIL_FROM` | The sender, on a domain verified in Resend, e.g. `Cypher <cypher@ignoranceisbliss.ai>`. |
 | `INTERNAL_EMAIL_TO` | Who on the team is emailed for every company put forward. Comma-separated. |
 | `EMAIL_REPLY_TO` | Optional. Where replies to the confirmation go. |

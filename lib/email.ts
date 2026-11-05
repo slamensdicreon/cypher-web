@@ -6,7 +6,7 @@ import { NOTED } from './config';
  * and a confirmation to the person who put it forward. No SDK, no extra dependency.
  */
 
-const apiKey = (process.env.RESEND_API_KEY || process.env.RESEND || '').trim();
+const apiKey = (process.env.RESEND_API_KEY || process.env.RESEND_KEY || process.env.RESEND || '').trim();
 const from = process.env.EMAIL_FROM || 'Cypher <onboarding@resend.dev>';
 const replyTo = (process.env.EMAIL_REPLY_TO || '').trim();
 const internalTo = (process.env.INTERNAL_EMAIL_TO || '')
@@ -147,8 +147,8 @@ export async function notify(
   opts: { confirm: boolean; soFar: number | null },
 ): Promise<{ internal: boolean; confirmation: boolean; error: string | null }> {
   if (!canEmail) {
-    console.log('[email] RESEND_API_KEY is not set; no email sent for', p.email);
-    return { internal: false, confirmation: false, error: 'RESEND_API_KEY is not set' };
+    console.log('[email] No Resend key is set (RESEND_API_KEY or RESEND_KEY); no email sent for', p.email);
+    return { internal: false, confirmation: false, error: 'No Resend key is set (RESEND_API_KEY or RESEND_KEY)' };
   }
   const key = (kind: string) => (p.id === null ? null : `cypher-web/${kind}/${p.id}`);
   const [internal, confirm] = await Promise.allSettled([
