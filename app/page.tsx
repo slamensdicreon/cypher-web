@@ -15,7 +15,7 @@ export default function Page() {
     <>
       <header className="top">
         <a className="wordmark" href="#"><Resting size={30} />cypher</a>
-        <span className="count">There is no spoon.</span>
+        <span className="count lower">there is no spoon.</span>
       </header>
 
       <main className="wrap">

@@ -22,6 +22,7 @@ button,input{font:inherit}
 header.top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:22px 24px 0;max-width:1040px;margin:0 auto}
 .wordmark{font-size:22px;font-weight:800;letter-spacing:-.04em;color:var(--on-ink);text-decoration:none;display:inline-flex;align-items:center;gap:10px}
 .count{font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--on-ink-muted);text-align:right}
+.count.lower{text-transform:none;font-size:14px;letter-spacing:.01em}
 /* hero */
 .hero{display:grid;grid-template-columns:minmax(0,1fr);gap:28px;align-items:center;padding:48px 0 var(--sec);text-align:center}
 .eyewrap{position:relative;width:220px;height:220px;margin:0 auto;display:grid;place-items:center}
