@@ -2,21 +2,13 @@ import Decisions from '@/components/Decisions';
 import Eye from '@/components/Eye';
 import InterestForm from '@/components/InterestForm';
 import Reveal from '@/components/Reveal';
-
-const Resting = ({ size }: { size: number }) => (
-  <svg width={size} height={size} viewBox="0 0 72 72" aria-hidden="true">
-    <circle cx="36" cy="36" r="31" fill="#ffffff" />
-    <path d="M20 36 Q36 50 52 36" fill="none" stroke="#141433" strokeWidth="4" strokeLinecap="round" />
-  </svg>
-);
+import SiteHeader, { Resting } from '@/components/SiteHeader';
+import Link from 'next/link';
 
 export default function Page() {
   return (
     <>
-      <header className="top">
-        <a className="wordmark" href="#"><Resting size={30} />cypher</a>
-        <span className="count lower">there is no spoon.</span>
-      </header>
+      <SiteHeader />
 
       <main className="wrap">
         <div className="hero">
@@ -91,8 +83,11 @@ export default function Page() {
         </section>
 
         <div className="end">
-          <span className="sig"><Resting size={24} />I’ll say nothing unless you’re selected.</span>
-          <p className="q">Not affiliated with the conference. Obviously.</p>
+          <div className="endl">
+            <span className="sig"><Resting size={24} />I’ll say nothing unless you’re selected.</span>
+            <p className="q">Not affiliated with the conference. Obviously.</p>
+          </div>
+          <Link className="terms" href="/terms">Terms &amp; Conditions</Link>
         </div>
       </main>
       <Reveal />

@@ -173,9 +173,40 @@ input[type=range]:focus-visible{outline:3px solid rgba(47,94,230,.4);outline-off
 .reply h3{margin:0;font-size:26px;font-weight:800;line-height:1.1;letter-spacing:-.035em}
 .reply p{margin:0;font-size:15px;line-height:1.5}
 .reply .a{font-size:14px;font-weight:700}
-.end{padding:var(--sec) 0;display:flex;flex-direction:column;gap:12px}
+.end{padding:var(--sec) 0;display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:20px 32px}
+.endl{display:flex;flex-direction:column;gap:12px}
+.terms{margin-left:auto;font-size:13px;font-weight:700;color:var(--on-ink-muted);text-decoration:none;border-bottom:1px solid rgba(183,166,255,.4);padding-bottom:2px;transition:color .25s,border-color .25s}
+.terms:hover{color:var(--on-ink);border-color:var(--on-ink)}
 .sig{display:flex;align-items:center;gap:10px;font-size:15px;color:var(--on-ink-soft)}
 .end .q{margin:0;font-size:13px;color:var(--on-ink-quiet)}
+/* the terms: a legal document, on paper */
+.legal{padding:48px 0 var(--sec)}
+.legal-head h1{margin:0;font-size:clamp(40px,12vw,48px);font-weight:800;letter-spacing:-.045em;line-height:1}
+.legal-head p{margin:16px 0 0;font-size:19px;font-weight:300;line-height:1.45;color:var(--on-ink-soft);max-width:560px}
+.paper{margin-top:var(--block);background:var(--surface);color:var(--ink);border-radius:28px;padding:32px 22px 36px;box-shadow:0 30px 80px -40px rgba(0,0,0,.6)}
+.paper p,.paper li{font-size:16px;line-height:1.65;color:var(--text-2)}
+.paper b{color:var(--ink);font-weight:800}
+.paper .pre{margin:0;font-size:17px;color:var(--ink)}
+.whereas{margin-top:24px;padding-top:22px;border-top:1px solid var(--mist)}
+.whereas p{margin:0 0 14px}
+.paper section{margin-top:28px;padding-top:28px;border-top:1px solid var(--mist)}
+.paper h2{margin:0 0 12px;font-size:22px;font-weight:800;letter-spacing:-.02em;line-height:1.2;color:var(--ink)}
+.paper h2 span{color:var(--coral-text);margin-right:4px}
+.paper section p{margin:0 0 12px}
+.paper section p:last-child{margin-bottom:0}
+.paper ol{margin:0;padding:0;list-style:none;counter-reset:c}
+.paper ol li{counter-increment:c;position:relative;padding-left:34px;margin-bottom:8px}
+.paper ol li::before{content:"(" counter(c,lower-alpha) ")";position:absolute;left:0;font-weight:800;color:var(--ink)}
+.paper .caps p{font-size:14px;letter-spacing:.02em;line-height:1.75;color:var(--ink)}
+.sign{display:grid;grid-template-columns:minmax(0,1fr);gap:28px;margin-top:36px;padding-top:28px;border-top:1px solid var(--mist)}
+.sign div{display:flex;flex-direction:column;gap:8px}
+.sign .who{font-size:13px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--text-3)}
+.sign .line{display:flex;align-items:flex-end;height:46px;border-bottom:2px solid var(--ink);padding-bottom:6px}
+.sign .line svg circle{fill:var(--ink)}.sign .line svg path{stroke:#ffffff}
+.sign .by{font-size:14px;color:var(--text-2)}
+.accept{margin-top:36px}
+.accept .btn{display:inline-block;width:auto;padding:17px 28px;text-decoration:none}
+.satire{margin:24px 0 0;font-size:13px;line-height:1.5;color:var(--on-ink-quiet);text-align:center}
 @media (min-width: 820px){
   :root{--sec:96px;--block:64px;--gap:48px}
   header.top{padding-top:28px}
@@ -203,5 +234,9 @@ input[type=range]:focus-visible{outline:3px solid rgba(47,94,230,.4);outline-off
   .join{grid-template-columns:minmax(0,1fr) 460px;align-items:start}
   .join .copy h2{font-size:56px}
   .card{padding:30px 30px 32px}
+  .legal{padding:72px 0 var(--sec)}.legal-head,.paper,.satire{max-width:860px;margin-left:auto;margin-right:auto}
+  .legal-head h1{font-size:72px}.legal-head p{font-size:22px}
+  .paper{padding:64px 72px 72px}.paper p,.paper li{font-size:17px}.paper h2{font-size:24px}
+  .sign{grid-template-columns:1fr 1fr;gap:48px}
 }
 @media (prefers-reduced-motion: reduce){.dflip,.dempty,.dbtn.approve.done,.dcard,.dbtn,.halo,.co,.btn,label.f input,.ticks span{transition:none;animation:none}.dial .read .t,.btn.busy span,.btn.busy::after{animation:none}.rv{opacity:1;transform:none;transition:none}}
