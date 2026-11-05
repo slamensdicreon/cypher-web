@@ -1,9 +1,22 @@
 import type { Metadata } from 'next';
 import QRCode from 'qrcode';
-import PostcardEye from '@/components/PostcardEye';
 import PrintButton from '@/components/PrintButton';
 import SiteHeader from '@/components/SiteHeader';
-import { POSTCARDS, SCAN_BASE } from '@/lib/postcards';
+import StaticEye from '@/components/StaticEye';
+import type { RGB } from '@/lib/eyeEngine';
+import { EYE, POSTCARDS, SCAN_BASE, type Theme } from '@/lib/postcards';
+
+const INK: RGB = [20, 20, 51];
+const CORAL: RGB = [232, 85, 61];
+/** The eye's ball and pupil on each card colour: coral everywhere except on coral, where it goes ink. */
+const EYE_COLORS: Record<Theme, { ball: RGB; pupil: RGB }> = {
+  ink: { ball: CORAL, pupil: INK },
+  coral: { ball: INK, pupil: INK },
+  lavender: { ball: CORAL, pupil: INK },
+  white: { ball: CORAL, pupil: INK },
+  violet: { ball: CORAL, pupil: INK },
+};
+const THEME_NAME: Record<Theme, string> = { ink: 'ink', coral: 'coral', lavender: 'lavender', white: 'white', violet: 'deep violet' };
 
 export const metadata: Metadata = {
   title: 'Postcards | Cypher',
@@ -36,7 +49,7 @@ export default async function Postcards() {
         <div className="pc-intro">
           <h1>Postcards.</h1>
           <p>
-            Ten cards for the Swan and Dolphin. Unbranded, one line each, left where people stop. Every QR code carries its card’s
+            Ten cards for the Swan and Dolphin. Unbranded, one line each, five colours and a different look in the eye on every card, left where people stop. Every QR code carries its card’s
             code, so each submission says which card earned it. Every card names SitecoreAI and the close date.
           </p>
           <PrintButton />
@@ -45,8 +58,12 @@ export default async function Postcards() {
         <div className="pc-grid">
           {cards.map((c) => (
             <figure className="pcw" key={c.id}>
-              <div className="pc">
-                <PostcardEye />
+              <div className={`pc t-${c.theme}`}>
+                <div className="pc-eye">
+                  <span className="pc-halo" aria-hidden="true" />
+                  <span className="pc-well" aria-hidden="true" />
+                  <StaticEye id={c.id} state={EYE[c.eye]} {...EYE_COLORS[c.theme]} />
+                </div>
                 <h2 className={`pc-line ${size(c.line)}`}>{c.line}</h2>
                 <p className="pc-pay">{c.payoff}</p>
                 <div className="pc-foot">
@@ -61,6 +78,8 @@ export default async function Postcards() {
               </div>
               <figcaption>
                 <b>{c.id}</b> · {c.place}
+                <br />
+                {EYE[c.eye].name}, on {THEME_NAME[c.theme]}
                 <br />
                 <a href={c.url}>{c.url.replace('https://', '')}</a>
               </figcaption>
