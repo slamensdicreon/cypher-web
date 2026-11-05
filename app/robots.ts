@@ -26,11 +26,11 @@ const PREVIEW_BOTS = [
 
 export default function robots(): MetadataRoute.Robots {
   if (process.env.ALLOW_INDEXING) {
-    return { rules: { userAgent: '*', allow: '/', disallow: '/api/' }, sitemap: `${siteUrl}/sitemap.xml` };
+    return { rules: { userAgent: '*', allow: '/', disallow: ['/api/', '/postcards'] }, sitemap: `${siteUrl}/sitemap.xml` };
   }
   return {
     rules: [
-      { userAgent: PREVIEW_BOTS, allow: '/', disallow: '/api/' },
+      { userAgent: PREVIEW_BOTS, allow: '/', disallow: ['/api/', '/postcards'] },
       { userAgent: '*', disallow: '/' },
     ],
   };
