@@ -38,14 +38,14 @@ export const hasStore = Boolean(url);
  * One small pool per function instance. `prepare: false` keeps it working through Neon's
  * pooled (PgBouncer) connection string, which is what the Vercel integration sets as DATABASE_URL.
  */
-const sql = hasStore
+export const sql = hasStore
   ? postgres(url, { max: 3, idle_timeout: 20, prepare: false, transform: postgres.camel, onnotice: () => {} })
   : null;
 
 let ready: Promise<unknown> | null = null;
 
-/** Creates the table on first use. Idempotent, so instances starting together are fine. */
-function migrate() {
+/** Creates the tables on first use. Idempotent, so instances starting together are fine. */
+export function migrate() {
   if (!sql) return Promise.resolve();
   ready ??= sql
     .begin(async (tx) => {
@@ -69,6 +69,30 @@ function migrate() {
         )`;
       await tx`create index if not exists submissions_ip_recent on submissions (ip_hash, created_at)`;
       await tx`create index if not exists submissions_email on submissions (lower(email), created_at)`;
+      // First-party analytics: no cookies, no IP addresses; `visitor` is a keyed hash that changes daily.
+      await tx`
+        create table if not exists events (
+          id bigserial primary key,
+          at timestamptz not null default now(),
+          kind text not null,
+          path text not null default '',
+          ref text not null default '',
+          card text not null default '',
+          utm text not null default '',
+          country text not null default '',
+          device text not null default '',
+          visitor text not null default ''
+        )`;
+      await tx`create index if not exists events_at on events (at)`;
+      await tx`create index if not exists events_kind_at on events (kind, at)`;
+      // Admin sign-in attempts, for the lockout.
+      await tx`
+        create table if not exists admin_attempts (
+          ip_hash text not null,
+          at timestamptz not null default now(),
+          ok boolean not null
+        )`;
+      await tx`create index if not exists admin_attempts_ip on admin_attempts (ip_hash, at)`;
     })
     .catch((err) => {
       ready = null;

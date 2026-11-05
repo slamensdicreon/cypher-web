@@ -4,6 +4,7 @@ import { useEffect, useRef, useState, type CSSProperties, type KeyboardEvent } f
 import { companyOf, domainOf } from '@/lib/company';
 import { isClosed, NOTED } from '@/lib/config';
 import { eye, eyeLook, eyeMood } from './eyeBus';
+import { track } from '@/lib/track';
 import LivingEye from './LivingEye';
 import Morph from './Morph';
 
@@ -46,6 +47,7 @@ export default function InterestForm() {
   const input = useRef<HTMLInputElement>(null);
   const measure = useRef<CanvasRenderingContext2D | null>(null);
   const lastCompany = useRef('');
+  const started = useRef(false);
 
   const level = Math.round(raw);
   const domain = domainOf(email);
@@ -232,7 +234,7 @@ export default function InterestForm() {
             value={email}
             onChange={(e) => { setEmail(e.target.value); requestAnimationFrame(lookAtCaret); }}
             onSelect={lookAtCaret}
-            onFocus={() => { eye('focus'); lookAtCaret(); }}
+            onFocus={() => { eye('focus'); lookAtCaret(); if (!started.current) { started.current = true; track('form_start'); } }}
             onBlur={() => eye('unfocus')}
           />
           <span className={company ? 'co on' : 'co'} aria-live="polite" aria-hidden={company ? undefined : true}>

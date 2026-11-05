@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import SiteHeader, { Resting } from '@/components/SiteHeader';
+import Track from '@/components/Track';
 
 const description =
   'The Terms & Conditions of the Transfer of Unreasonable Advantage. A sales pitch in a suit: what the twenty-five selected companies get, in the deepest legalese.';
@@ -147,6 +148,7 @@ export default function Terms() {
 
         <p className="satire">A parody, and a sales pitch in a suit. Not a contract.</p>
       </main>
+      <Track />
     </>
   );
 }

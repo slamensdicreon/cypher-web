@@ -1,22 +1,15 @@
-import { createHmac } from 'node:crypto';
 import { after, NextResponse } from 'next/server';
 import { classify } from '@/lib/rules';
 import { companyOf, domainOf } from '@/lib/company';
 import { isClosed, LEVELS } from '@/lib/config';
 import { notify } from '@/lib/email';
+import { clientIp, keyedHash } from '@/lib/keys';
 import { companiesSoFar, confirmedRecently, markEmails, save, underLimit } from '@/lib/store';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
 type Body = { email?: unknown; level?: unknown; source?: unknown; website?: unknown };
-
-/**
- * Networks are counted for the rate limit, but the address itself is never stored: only a keyed
- * hash, which can't be turned back into the address without the server's secret.
- */
-const ipKey = process.env.IP_HASH_SECRET || process.env.ADMIN_KEY || 'cypher-web';
-const hashIp = (ip: string) => createHmac('sha256', ipKey).update(ip).digest('hex').slice(0, 32);
 
 export async function POST(req: Request) {
   let body: Body;
@@ -38,8 +31,8 @@ export async function POST(req: Request) {
   const kind = classify(domain);
   if (kind === 'bad') return NextResponse.json({ status: 'bad' });
 
-  const ip = (req.headers.get('x-forwarded-for') || '').split(',')[0].trim();
-  const ipHash = ip ? hashIp(ip) : '';
+  const ip = clientIp(req.headers);
+  const ipHash = ip ? keyedHash(ip) : '';
   if (!(await underLimit(ipHash))) return NextResponse.json({ status: 'slow' }, { status: 429 });
 
   const raw = Number(body.level);

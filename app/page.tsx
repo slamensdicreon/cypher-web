@@ -2,6 +2,7 @@ import Decisions from '@/components/Decisions';
 import Eye from '@/components/Eye';
 import InterestForm from '@/components/InterestForm';
 import Reveal from '@/components/Reveal';
+import Track from '@/components/Track';
 import SiteHeader from '@/components/SiteHeader';
 import Link from 'next/link';
 
@@ -88,6 +89,7 @@ export default function Page() {
         </div>
       </main>
       <Reveal />
+      <Track />
     </>
   );
 }

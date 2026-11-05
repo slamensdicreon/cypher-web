@@ -2,6 +2,7 @@
 
 import { useLayoutEffect, useRef, useState } from 'react';
 import { eye } from './eyeBus';
+import { track } from '@/lib/track';
 
 type Decision = {
   n: string;
@@ -122,6 +123,7 @@ export default function Decisions() {
 
   function flip(n: string, on: boolean) {
     setFlipped((f) => (on ? [...f, n] : f.filter((x) => x !== n)));
+    if (on) track('card_flip', { decision: n });
     eye(on ? 'squint' : 'blink', 600);
     setSaid(on ? 'Card turned over. The proof is showing.' : 'Card turned back.');
     // Keep the keyboard where the eyes are: on the face that just turned toward you.
@@ -134,6 +136,7 @@ export default function Decisions() {
     if (approving) return;
     setApproving(n);
     eye('double');
+    track('card_approve', { decision: n });
     const el = cards.current.get(n);
     const left = visible.filter((d) => d.n !== n);
     if (el && !reducedMotion()) {
