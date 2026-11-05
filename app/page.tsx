@@ -23,16 +23,16 @@ export default function Page() {
           <Eye />
           <div>
             <h1 className="line">Ignorance is bliss.</h1>
-            <p>Cypher is twenty-one specialists and one chief of staff that build on SitecoreAI: whatever you point them at, pixel perfect, in a fraction of the time and cost. It doesn’t replace you. It promotes you.</p>
+            <p>Cypher is twenty-one specialists and the mind that runs them. Point it at anything on SitecoreAI and it ships, pixel perfect, for a rounding error of what you pay now. It doesn’t replace you. It promotes you.</p>
           </div>
         </div>
 
         <section className="s">
           <div className="beats">
-            <div className="beat"><span className="ix">01</span><h2>This changes what a build costs. Permanently.</h2><p>Which is why we’re being quiet about it.</p></div>
-            <div className="beat"><span className="ix">02</span><h2>Twenty-one specialists. One chief of staff. No invoice you’d recognize.</h2><p>It plans, builds, checks its own work and learns from it. You make three decisions. That’s the job now.</p></div>
+            <div className="beat"><span className="ix">01</span><h2>We broke what a build costs. Permanently.</h2><p>Which is why we’re being quiet about it.</p></div>
+            <div className="beat"><span className="ix">02</span><h2>Twenty-one specialists. One mind running all of them. No invoice you’d recognize.</h2><p>It plans it, builds it, checks it, and fixes what it finds before you find it. You make three decisions. That’s the job now.</p></div>
             <div className="beat"><span className="ix">03</span><h2>It doesn’t replace your team. It makes them unfair.</h2><p>Every company that gets this first will look like it hired a hundred people. It didn’t.</p></div>
-            <div className="beat"><span className="ix">04</span><h2>Every build makes it smarter.</h2><p>It learns a lesson once and never bills you for it again.</p></div>
+            <div className="beat"><span className="ix">04</span><h2>It gets smarter every build. Your agency doesn’t.</h2><p>It learns a lesson once and never bills you for it again.</p></div>
             <div className="beat big"><h2>We’re not selling it. We’re <em>choosing</em> who gets it.</h2><p>Twenty-five companies. Selected, not sold to.</p></div>
           </div>
         </section>
@@ -45,12 +45,12 @@ export default function Page() {
               <p className="fine">The cost of the run, not the price of Cypher.</p>
             </div>
             <div className="pillars">
-              <div className="pillar"><b>Self-learning.</b><p>Every question becomes a rule. It never asks twice. What one build teaches it, every build after already knows.</p></div>
-              <div className="pillar"><b>Self-healing.</b><p>When something breaks, it finds why and picks up with nothing lost. No restart, no lost day.</p></div>
-              <div className="pillar"><b>Self-enhancing.</b><p>Every build rewrites its own playbook. It finishes a build better than it started it, and the next one starts smarter.</p></div>
+              <div className="pillar"><b>Self-learning.</b><p>Every question becomes a rule. It never asks twice. Agencies ask the same question every project, and bill you for it.</p></div>
+              <div className="pillar"><b>Self-healing.</b><p>Things break. It finds why, fixes it and carries on, before anyone thinks to file a ticket.</p></div>
+              <div className="pillar"><b>Self-enhancing.</b><p>Every build rewrites its own playbook. It finishes better than it started. Name one vendor who can say that.</p></div>
             </div>
           </div>
-          <p className="proofclose">We’re not asking you to believe us. We’re inviting twenty-five companies to watch.</p>
+          <p className="proofclose">We don’t need you to believe us. Twenty-five companies are about to watch.</p>
         </section>
 
         <section className="s">
@@ -62,7 +62,7 @@ export default function Page() {
         </section>
 
         <section className="s">
-          <div className="plhead"><h2>Your roadmap, in a week.</h2><p>Playbooks, not projects. Same team every day, on SitecoreAI.</p></div>
+          <div className="plhead"><h2>Your annual roadmap. In a week.</h2><p>Playbooks, not projects. Same crew every day, on SitecoreAI, and not one change order.</p></div>
           <div className="week">
             <div className="day"><span className="dn">Mon</span><b>The website.</b><span className="dl">Pixel for pixel. Marketers edit it on day one.</span></div>
             <div className="day"><span className="dn">Tue</span><b>The customer portal.</b><span className="dl">Log in, self-serve, done.</span></div>
