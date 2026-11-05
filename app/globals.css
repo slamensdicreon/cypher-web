@@ -31,7 +31,6 @@ h1.line{margin:0;font-size:clamp(40px,13vw,52px);font-weight:800;line-height:1.0
 .hero p{margin:20px auto 0;font-size:20px;font-weight:300;line-height:1.45;color:var(--on-ink-soft);max-width:440px}
 /* sections */
 section.s{padding:64px 0}
-.k{display:block;font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--on-ink-muted);margin-bottom:22px}
 .beats{display:grid;grid-template-columns:minmax(0,1fr)}
 .beat{display:flex;flex-direction:column;gap:10px;padding:20px 0 26px;min-width:0}
 .beat .ix{font-size:13px;font-weight:800;letter-spacing:.06em;color:var(--coral)}
@@ -47,11 +46,10 @@ section.s{padding:64px 0}
 .proof .fine{margin:0;font-size:15px;color:var(--on-ink-quiet)}
 .proofs{display:grid;grid-template-columns:minmax(0,1fr)}
 .proof{display:flex;flex-direction:column;gap:12px;padding:20px 0 30px;min-width:0}
-.proof .lab{font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--on-ink-quiet)}
-.selfs{display:grid;grid-template-columns:minmax(0,1fr)}
-.self{display:flex;flex-direction:column;gap:4px;padding:14px 0}
-.self b{font-size:19px;font-weight:800;letter-spacing:-.02em;color:var(--coral)}
-.self p{margin:0;font-size:15px;line-height:1.45;color:var(--on-ink-soft)}
+.pillars{display:flex;flex-direction:column;padding:4px 0 10px;min-width:0}
+.pillar{display:flex;flex-direction:column;gap:8px;padding:20px 0 22px;border-top:2px solid var(--coral)}
+.pillar b{font-size:26px;font-weight:800;line-height:1.05;letter-spacing:-.035em;color:var(--coral)}
+.pillar p{margin:0;font-size:17px;line-height:1.45;color:var(--on-ink-soft);max-width:440px}
 .proofclose{margin:30px 0 0;font-size:19px;font-weight:700;line-height:1.35;color:var(--on-ink);max-width:560px}
 .proof .num{font-size:clamp(88px,28vw,120px);font-weight:800;line-height:.9;letter-spacing:-.06em}
 .proof .num i{font-style:normal;color:var(--coral)}
@@ -139,8 +137,8 @@ input[type=range]:focus-visible{outline:3px solid rgba(47,94,230,.4);outline-off
   .cred b{font-size:96px;color:var(--on-ink)}.cred span{font-size:17px;max-width:280px}
   .proofs{grid-template-columns:repeat(2,minmax(0,1fr));column-gap:64px}
   .proof{gap:16px;padding:32px 0 44px}.proof .num{font-size:160px}.proof p{max-width:420px}
-  .selfs{grid-template-columns:repeat(3,minmax(0,1fr));column-gap:40px;margin-top:8px}
-  .self{gap:10px;padding:26px 0 0;border-top:2px solid var(--coral)}.self b{font-size:26px}.self p{font-size:16px;max-width:280px}
+  .pillars{padding:40px 0 44px;justify-content:space-between;gap:8px}
+  .pillar{padding:22px 0 26px}.pillar:last-child{padding-bottom:0}.pillar b{font-size:34px}.pillar p{font-size:18px}
   .proofclose{margin-top:56px;font-size:24px;max-width:640px}
   .plhead h2{font-size:56px}.plhead p{font-size:19px}
   .week{grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;margin-top:44px}

@@ -3,10 +3,9 @@
 import { useEffect } from 'react';
 
 const SELECTOR = [
-  '.k',
   '.beat',
   '.proof',
-  '.self',
+  '.pillar',
   '.proofclose',
   '.cred',
   '.plhead',

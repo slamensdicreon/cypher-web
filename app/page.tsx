@@ -23,15 +23,14 @@ export default function Page() {
           <Eye />
           <div>
             <h1 className="line">Ignorance is bliss.</h1>
-            <p>Cypher is twenty-one agents and one chief of staff that build on SitecoreAI: whatever you point them at, pixel perfect, in a fraction of the time and cost. It doesn’t replace you. It promotes you.</p>
+            <p>Cypher is twenty-one specialists and one chief of staff that build on SitecoreAI: whatever you point them at, pixel perfect, in a fraction of the time and cost. It doesn’t replace you. It promotes you.</p>
           </div>
         </div>
 
         <section className="s">
-          <span className="k">The short version</span>
           <div className="beats">
             <div className="beat"><span className="ix">01</span><h2>This changes what a build costs. Permanently.</h2><p>Which is why we’re being quiet about it.</p></div>
-            <div className="beat"><span className="ix">02</span><h2>Twenty-one agents. One chief of staff. No invoice you’d recognize.</h2><p>It plans, builds, checks its own work and learns from it. You make three decisions. That’s the job now.</p></div>
+            <div className="beat"><span className="ix">02</span><h2>Twenty-one specialists. One chief of staff. No invoice you’d recognize.</h2><p>It plans, builds, checks its own work and learns from it. You make three decisions. That’s the job now.</p></div>
             <div className="beat"><span className="ix">03</span><h2>It doesn’t replace your team. It makes them unfair.</h2><p>Every company that gets this first will look like it hired a hundred people. It didn’t.</p></div>
             <div className="beat"><span className="ix">04</span><h2>Every build makes it smarter.</h2><p>It learns a lesson once and never bills you for it again.</p></div>
             <div className="beat big"><h2>We’re not selling it. We’re <em>choosing</em> who gets it.</h2><p>Twenty-five companies. Selected, not sold to.</p></div>
@@ -39,31 +38,22 @@ export default function Page() {
         </section>
 
         <section className="s">
-          <span className="k">The proof</span>
           <div className="proofs">
             <div className="proof">
-              <span className="lab">The cost</span>
               <div className="num">$<i>512</i></div>
               <p>What it cost to run a SitecoreAI build an agency quoted at <b>$400,000</b>. We have the receipts.</p>
               <p className="fine">The cost of the run, not the price of Cypher.</p>
             </div>
-            <div className="proof">
-              <span className="lab">The night</span>
-              <div className="num"><i>4</i></div>
-              <p>New versions of its own playbook, shipped in one night on a real SitecoreAI build.</p>
-              <p className="fine">The build finished on a better Cypher than it started on.</p>
+            <div className="pillars">
+              <div className="pillar"><b>Self-learning.</b><p>Every question becomes a rule. It never asks twice. What one build teaches it, every build after already knows.</p></div>
+              <div className="pillar"><b>Self-healing.</b><p>When something breaks, it finds why and picks up with nothing lost. No restart, no lost day.</p></div>
+              <div className="pillar"><b>Self-enhancing.</b><p>Every build rewrites its own playbook. It finishes a build better than it started it, and the next one starts smarter.</p></div>
             </div>
-          </div>
-          <div className="selfs">
-            <div className="self"><b>Self-learning.</b><p>Every question becomes a rule. It never asks twice.</p></div>
-            <div className="self"><b>Self-healing.</b><p>When something breaks, it finds why and picks up with nothing lost.</p></div>
-            <div className="self"><b>Self-enhancing.</b><p>Every build rewrites its own playbook. The next one starts smarter.</p></div>
           </div>
           <p className="proofclose">We’re not asking you to believe us. We’re inviting twenty-five companies to watch.</p>
         </section>
 
         <section className="s">
-          <span className="k">Who taught it</span>
           <div className="creds">
             <div className="cred"><b>25</b><span>years of engineering, written down so it never has to be relearned.</span></div>
             <div className="cred"><b>10</b><span>years of Sitecore. Every pitfall, every workaround, every 2 AM fix.</span></div>
@@ -72,7 +62,6 @@ export default function Page() {
         </section>
 
         <section className="s">
-          <span className="k">What it builds on SitecoreAI</span>
           <div className="plhead"><h2>Your roadmap, in a week.</h2><p>Playbooks, not projects. Same team every day, on SitecoreAI.</p></div>
           <div className="week">
             <div className="day"><span className="dn">Mon</span><b>The website.</b><span className="dl">Pixel for pixel. Marketers edit it on day one.</span></div>
