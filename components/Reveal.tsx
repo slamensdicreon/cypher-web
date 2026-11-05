@@ -3,10 +3,11 @@
 import { useEffect } from 'react';
 
 const SELECTOR = [
+  '.dcard',
   '.beat',
   '.proof',
   '.pillar',
-  '.proofclose',
+  '.proofclose p',
   '.cred',
   '.plhead',
   '.day',
