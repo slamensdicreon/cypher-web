@@ -173,11 +173,9 @@ input[type=range]:focus-visible{outline:3px solid rgba(47,94,230,.4);outline-off
 .reply h3{margin:0;font-size:26px;font-weight:800;line-height:1.1;letter-spacing:-.035em}
 .reply p{margin:0;font-size:15px;line-height:1.5}
 .reply .a{font-size:14px;font-weight:700}
-.end{padding:var(--sec) 0;display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:20px 32px}
-.endl{display:flex;flex-direction:column;gap:12px}
+.end{padding:var(--sec) 0;display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:16px 32px}
 .terms{margin-left:auto;font-size:13px;font-weight:700;color:var(--on-ink-muted);text-decoration:none;border-bottom:1px solid rgba(183,166,255,.4);padding-bottom:2px;transition:color .25s,border-color .25s}
 .terms:hover{color:var(--on-ink);border-color:var(--on-ink)}
-.sig{display:flex;align-items:center;gap:10px;font-size:15px;color:var(--on-ink-soft)}
 .end .q{margin:0;font-size:13px;color:var(--on-ink-quiet)}
 /* the terms: a legal document, on paper */
 .legal{padding:48px 0 var(--sec)}
@@ -206,13 +204,7 @@ input[type=range]:focus-visible{outline:3px solid rgba(47,94,230,.4);outline-off
 .sign .by{font-size:14px;color:var(--text-2)}
 .accept{margin-top:36px}
 .accept .btn{display:inline-block;width:auto;padding:17px 28px;text-decoration:none}
-.privacy{margin-top:var(--block);border-top:1px solid var(--ink-3);padding-top:var(--block)}
-.privacy h2{margin:0;font-size:28px;font-weight:800;letter-spacing:-.03em;line-height:1.1}
-.privacy .lead{margin:12px 0 0;font-size:17px;line-height:1.55;color:var(--on-ink-soft);max-width:640px}
-.privacy dl{margin:28px 0 0;display:grid;grid-template-columns:minmax(0,1fr);gap:6px 32px}
-.privacy dt{font-size:13px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--on-ink-muted);margin-top:18px}
-.privacy dt:first-child{margin-top:0}
-.privacy dd{margin:0;font-size:16px;line-height:1.6;color:var(--on-ink-soft)}
+.satire{margin:24px 0 0;font-size:13px;line-height:1.5;color:var(--on-ink-quiet);text-align:center}
 /* postcards: 4×6 in, sized off the card's own width so they print and preview alike */
 .pc-page{padding:48px 0 var(--sec)}
 .pc-intro h1{margin:0;font-size:clamp(40px,12vw,72px);font-weight:800;letter-spacing:-.045em;line-height:1}
@@ -281,8 +273,7 @@ input[type=range]:focus-visible{outline:3px solid rgba(47,94,230,.4);outline-off
   .join{grid-template-columns:minmax(0,1fr) 460px;align-items:start}
   .join .copy h2{font-size:56px}
   .card{padding:30px 30px 32px}
-  .legal{padding:72px 0 var(--sec)}.legal-head,.paper,.privacy{max-width:860px;margin-left:auto;margin-right:auto}
-  .privacy dl{grid-template-columns:200px minmax(0,1fr);row-gap:22px}.privacy dt{margin-top:3px}.privacy h2{font-size:36px}
+  .legal{padding:72px 0 var(--sec)}.legal-head,.paper,.satire{max-width:860px;margin-left:auto;margin-right:auto}
   .legal-head h1{font-size:72px}.legal-head p{font-size:22px}
   .paper{padding:64px 72px 72px}.paper p,.paper li{font-size:17px}.paper h2{font-size:24px}
   .sign{grid-template-columns:1fr 1fr;gap:48px}

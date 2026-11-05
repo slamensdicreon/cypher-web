@@ -145,22 +145,7 @@ export default function Terms() {
           </div>
         </article>
 
-        <section className="privacy" id="privacy" aria-labelledby="privacy-h">
-          <h2 id="privacy-h">The actual fine print</h2>
-          <p className="lead">Everything above is a parody, and a sales pitch in a suit. It is not a contract and creates no obligation for anyone. This part is real: here is what happens when you put your company forward.</p>
-          <dl>
-            <dt>What we keep</dt>
-            <dd>The work email you enter, the company name we read from it, how badly you said you want this, which postcard brought you here (if any), when you sent it, and your browser’s name and version. If an address is declined, we keep it and the reason too.</dd>
-            <dt>What we don’t</dt>
-            <dd>Your IP address. To stop the form being flooded we keep a keyed one-way hash of it instead, which can’t be turned back into the address. There are no analytics, no tracking scripts and no cookies.</dd>
-            <dt>Why</dt>
-            <dd>To choose the twenty-five and to contact the companies that are selected. When a company is put forward we send one confirmation email to the address entered (at most once a day) and a copy to our team. Declined addresses get no email.</dd>
-            <dt>Who handles it</dt>
-            <dd>The site runs on Vercel, submissions are stored in a Neon Postgres database, and emails are sent through Resend. We don’t sell your details or share them with anyone else.</dd>
-            <dt>On your device</dt>
-            <dd>Your browser remembers that you’ve put your company forward, in its own local storage, so the form shows your confirmation when you come back. “Put forward a different address” clears it.</dd>
-          </dl>
-        </section>
+        <p className="satire">A parody, and a sales pitch in a suit. Not a contract.</p>
       </main>
     </>
   );

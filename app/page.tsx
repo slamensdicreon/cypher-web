@@ -2,7 +2,7 @@ import Decisions from '@/components/Decisions';
 import Eye from '@/components/Eye';
 import InterestForm from '@/components/InterestForm';
 import Reveal from '@/components/Reveal';
-import SiteHeader, { Resting } from '@/components/SiteHeader';
+import SiteHeader from '@/components/SiteHeader';
 import Link from 'next/link';
 
 export default function Page() {
@@ -55,7 +55,7 @@ export default function Page() {
           <div className="creds">
             <div className="cred"><b>25</b><span>years of engineering, written down so it never has to be relearned.</span></div>
             <div className="cred"><b>10</b><span>years of Sitecore. Every pitfall, every workaround, every 2 AM fix.</span></div>
-            <div className="cred"><b>MVPs</b><span>Sitecore MVPs are part of this. Yes, really.</span></div>
+            <div className="cred"><b>MVPs</b><span>Sitecore MVPs built this. Yes, really.</span></div>
           </div>
         </section>
 
@@ -83,10 +83,7 @@ export default function Page() {
         </section>
 
         <div className="end">
-          <div className="endl">
-            <span className="sig"><Resting size={24} />I’ll say nothing unless you’re selected.</span>
-            <p className="q">Not affiliated with the conference. Obviously.</p>
-          </div>
+          <p className="q">Not affiliated with the conference. Obviously.</p>
           <Link className="terms" href="/terms">Terms &amp; Conditions</Link>
         </div>
       </main>
