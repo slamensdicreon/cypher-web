@@ -1,6 +1,6 @@
 /* Ported verbatim from the approved prototype (claude.ai artifact 29PEnUjbe7D8YmLk2RGqFT). Change values here, not inline. */
 :root{
-  --ink:#141433;--ink-2:#1d1d45;--ink-3:#2c2c5a;--bliss:#f6f5fc;--surface:#ffffff;--mist:#e3e0f2;--mist-2:#eeedf7;
+  --ink:#141433;--ink-2:#1d1d45;--ink-3:#2c2c5a;--bliss:#f6f5fc;--surface:#ffffff;--mist:#e3e0f2;--mist-2:#eeedf7;--lavender:#dcd6f6;--coral-deep:#a8321d;
   --text-2:#3b3a5c;--text-3:#6a6889;--on-ink:#ffffff;--on-ink-muted:#b7a6ff;--on-ink-quiet:#8f86c4;--on-ink-soft:#d6d0f5;
   --coral:#e8553d;--coral-text:#c8402b;
   /* spacing: between sections (above and below each), between blocks in a section, between items in a grid */
@@ -33,8 +33,15 @@ h1.line{margin:0;font-size:clamp(40px,13vw,52px);font-weight:800;line-height:1.0
 .hero p{margin:20px auto 0;font-size:20px;font-weight:300;line-height:1.45;color:var(--on-ink-soft);max-width:440px}
 /* sections */
 section.s{padding:var(--sec) 0}
-/* a full-width light band, without leaving the centred column */
-section.band{background:var(--bliss);color:var(--ink);box-shadow:0 0 0 100vmax var(--bliss);clip-path:inset(0 -100vmax)}
+/* full-width bands, without leaving the centred column: pastel purple for the proof, white for the credentials */
+section.band{--band:var(--lavender);background:var(--band);color:var(--ink);box-shadow:0 0 0 100vmax var(--band);clip-path:inset(0 -100vmax)}
+section.band.white{--band:var(--surface)}
+.white .cred b{color:var(--coral-text)}
+.band .proof .num i{color:var(--coral-text)}
+.band .beat p{color:var(--text-2)}
+.band .beat .ix{color:var(--coral-deep)}
+.band .beat.big{margin-top:0}
+.white .cred span{color:var(--text-2)}
 .beats{display:grid;grid-template-columns:minmax(0,1fr);gap:var(--gap)}
 .beat{display:flex;flex-direction:column;gap:10px;min-width:0}
 .beat .ix{font-size:13px;font-weight:800;letter-spacing:.06em;color:var(--coral)}
@@ -47,14 +54,14 @@ section.band{background:var(--bliss);color:var(--ink);box-shadow:0 0 0 100vmax v
 .cred{display:grid;grid-template-columns:120px minmax(0,1fr);align-items:center;gap:16px;min-width:0}
 .cred b{font-size:40px;font-weight:800;line-height:1;letter-spacing:-.05em;color:var(--coral);white-space:nowrap}
 .cred span{font-size:15px;line-height:1.45;color:var(--on-ink-soft)}
-.proof .fine{margin:0;font-size:15px;color:var(--text-3)}
+.proof .fine{margin:0;font-size:15px;color:var(--text-2)}
 .proofs{display:grid;grid-template-columns:minmax(0,1fr);gap:var(--block)}
 .proof{display:flex;flex-direction:column;gap:12px;min-width:0}
 .pillars{display:flex;flex-direction:column;gap:28px;min-width:0}
 .pillar{display:flex;flex-direction:column;gap:8px;padding-top:20px;border-top:2px solid var(--coral)}
 .pillar b{font-size:26px;font-weight:800;line-height:1.05;letter-spacing:-.035em;color:var(--coral-text)}
 .pillar p{margin:0;font-size:17px;line-height:1.45;color:var(--text-2);max-width:440px}
-.proofclose{margin:var(--block) 0 0;padding-top:var(--block);border-top:1px solid var(--mist);font-size:19px;font-weight:700;line-height:1.35;color:var(--ink);max-width:none}
+.proofclose{margin:var(--block) 0 0;padding-top:var(--block);border-top:1px solid rgba(20,20,51,.14);font-size:19px;font-weight:700;line-height:1.35;color:var(--ink);max-width:none}
 .proofclose p{margin:0;text-wrap:balance}
 .nw{white-space:nowrap}
 .proofclose p+p{margin-top:.5em;color:var(--text-2)}
@@ -142,7 +149,7 @@ input[type=range]:focus-visible{outline:3px solid rgba(47,94,230,.4);outline-off
   .beat.big{grid-column:1/-1}.beat.big h2{font-size:72px;max-width:920px}.beat.big p{font-size:20px}
   .creds{grid-template-columns:repeat(3,minmax(0,1fr));gap:40px}
   .cred{display:flex;flex-direction:column;align-items:flex-start;gap:16px;padding-top:28px;border-top:2px solid var(--coral)}
-  .cred b{font-size:96px;color:var(--on-ink)}.cred span{font-size:17px;max-width:280px}
+  .cred b{font-size:96px;color:var(--on-ink)}.white .cred b{color:var(--ink)}.cred span{font-size:17px;max-width:280px}
   .proofs{grid-template-columns:repeat(2,minmax(0,1fr));gap:64px}
   .proof{gap:16px}.proof .num{font-size:160px}.proof p{max-width:420px}
   .pillars{gap:36px}

@@ -27,12 +27,17 @@ export default function Page() {
           </div>
         </div>
 
-        <section className="s">
+        <section className="s band">
           <div className="beats">
             <div className="beat"><span className="ix">01</span><h2>We broke what a build costs. Permanently.</h2><p>Which is why we’re being quiet about it.</p></div>
             <div className="beat"><span className="ix">02</span><h2>Twenty-one specialists. One mind running all of them. No invoice you’d recognize.</h2><p>It plans it, builds it, checks it, and fixes what it finds before you find it. You make three decisions. That’s the job now.</p></div>
             <div className="beat"><span className="ix">03</span><h2>It doesn’t replace your team. It makes them unfair.</h2><p>Every company that gets this first will look like it hired a hundred people. It didn’t.</p></div>
             <div className="beat"><span className="ix">04</span><h2>It gets smarter every build. Your agency doesn’t.</h2><p>It learns a lesson once and never bills you for it again.</p></div>
+          </div>
+        </section>
+
+        <section className="s band white">
+          <div className="beats">
             <div className="beat big"><h2>We’re not selling it. We’re <em>choosing</em> who gets it.</h2><p>Twenty-five companies. Selected, not sold to.</p></div>
           </div>
         </section>
@@ -56,7 +61,7 @@ export default function Page() {
           </div>
         </section>
 
-        <section className="s">
+        <section className="s band white">
           <div className="creds">
             <div className="cred"><b>25</b><span>years of engineering, written down so it never has to be relearned.</span></div>
             <div className="cred"><b>10</b><span>years of Sitecore. Every pitfall, every workaround, every 2 AM fix.</span></div>
