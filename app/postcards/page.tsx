@@ -4,7 +4,7 @@ import PrintButton from '@/components/PrintButton';
 import SiteHeader from '@/components/SiteHeader';
 import StaticEye from '@/components/StaticEye';
 import type { RGB } from '@/lib/eyeEngine';
-import { EYE, POSTCARDS, SCAN_BASE, type Theme } from '@/lib/postcards';
+import { EYE, SCAN_BASE, USE_CASES, type Postcard, type Theme } from '@/lib/postcards';
 
 const INK: RGB = [20, 20, 51];
 const CORAL: RGB = [232, 85, 61];
@@ -25,21 +25,43 @@ export const metadata: Metadata = {
 };
 
 /** Long lines get a smaller size so every card keeps the same rhythm. */
-const size = (line: string) => (line.length <= 52 ? 's' : line.length <= 60 ? 'm' : 'l');
+const size = (line: string) => (line.length <= 52 ? 's' : line.length <= 60 ? 'm' : line.length <= 66 ? 'l' : 'xl');
 
-/** The campaign, card by card, as it will be printed: 4×6 in, one per page. Not linked from the site. */
+const qr = (id: string) =>
+  QRCode.toString(`${SCAN_BASE}${id}`, {
+    type: 'svg',
+    margin: 0,
+    errorCorrectionLevel: 'M',
+    color: { dark: '#141433', light: '#ffffff' },
+  });
+
+/** One card, as it prints. */
+function Card({ c, code }: { c: Postcard; code: string }) {
+  return (
+    <div className={`pc t-${c.theme}`}>
+      <div className="pc-eye">
+        <span className="pc-halo" aria-hidden="true" />
+        <span className="pc-well" aria-hidden="true" />
+        <StaticEye id={c.id} state={EYE[c.eye]} {...EYE_COLORS[c.theme]} />
+      </div>
+      <h3 className={`pc-line ${size(c.line)}`}>{c.line}</h3>
+      <p className="pc-pay">{c.payoff}</p>
+      <div className="pc-foot">
+        <div className="pc-sig">
+          <b>cypher</b>
+          <span className="pc-url">ignoranceisbliss.ai</span>
+          <span className="pc-kick">{c.kicker}</span>
+        </div>
+        <div className="pc-qr" role="img" aria-label={`QR code for ${SCAN_BASE}${c.id}`} dangerouslySetInnerHTML={{ __html: code }} />
+      </div>
+    </div>
+  );
+}
+
+/** The campaign, place by place, two versions each, as printed: 4×6 in, one per page. Not linked. */
 export default async function Postcards() {
-  const cards = await Promise.all(
-    POSTCARDS.map(async (c) => ({
-      ...c,
-      url: `${SCAN_BASE}${c.id}`,
-      qr: await QRCode.toString(`${SCAN_BASE}${c.id}`, {
-        type: 'svg',
-        margin: 0,
-        errorCorrectionLevel: 'M',
-        color: { dark: '#141433', light: '#ffffff' },
-      }),
-    })),
+  const codes = Object.fromEntries(
+    await Promise.all(USE_CASES.flatMap((u) => u.cards).map(async (c) => [c.id, await qr(c.id)] as const)),
   );
 
   return (
@@ -49,43 +71,31 @@ export default async function Postcards() {
         <div className="pc-intro">
           <h1>Postcards.</h1>
           <p>
-            Ten cards for the Swan and Dolphin. Unbranded, one line each, five colours and a different look in the eye on every card, left where people stop. Every QR code carries its card’s
-            code, so each submission says which card earned it. Every card names SitecoreAI and the close date.
+            Eleven places around the Swan and Dolphin, two versions of the card for each. Unbranded, one line each, five colours and a
+            different look in the eye on every card. Every QR code carries its card’s code, so the scans say which version wins.
           </p>
           <PrintButton />
         </div>
 
-        <div className="pc-grid">
-          {cards.map((c) => (
-            <figure className="pcw" key={c.id}>
-              <div className={`pc t-${c.theme}`}>
-                <div className="pc-eye">
-                  <span className="pc-halo" aria-hidden="true" />
-                  <span className="pc-well" aria-hidden="true" />
-                  <StaticEye id={c.id} state={EYE[c.eye]} {...EYE_COLORS[c.theme]} />
-                </div>
-                <h2 className={`pc-line ${size(c.line)}`}>{c.line}</h2>
-                <p className="pc-pay">{c.payoff}</p>
-                <div className="pc-foot">
-                  <div className="pc-sig">
-                    <b>cypher</b>
-                    <span className="pc-meta">25 SitecoreAI builds. Closes Nov 13.</span>
-                    <span className="pc-url">ignoranceisbliss.ai</span>
-                    <span className="pc-kick">{c.kicker}</span>
-                  </div>
-                  <div className="pc-qr" role="img" aria-label={`QR code for ${c.url}`} dangerouslySetInnerHTML={{ __html: c.qr }} />
-                </div>
-              </div>
-              <figcaption>
-                <b>{c.id}</b> · {c.place}
-                <br />
-                {EYE[c.eye].name}, on {THEME_NAME[c.theme]}
-                <br />
-                <a href={c.url}>{c.url.replace('https://', '')}</a>
-              </figcaption>
-            </figure>
-          ))}
-        </div>
+        {USE_CASES.map((u) => (
+          <section className="pc-case" key={u.n}>
+            <h2>
+              <span>{u.n}</span> {u.place}
+            </h2>
+            <div className="pc-pair">
+              {u.cards.map((c, i) => (
+                <figure className="pcw" key={c.id}>
+                  <Card c={c} code={codes[c.id]} />
+                  <figcaption>
+                    <b>{i === 0 ? 'A' : 'B'}</b> · {c.id} · {EYE[c.eye].name}, on {THEME_NAME[c.theme]}
+                    <br />
+                    <a href={`${SCAN_BASE}${c.id}`}>{`${SCAN_BASE}${c.id}`.replace('https://', '')}</a>
+                  </figcaption>
+                </figure>
+              ))}
+            </div>
+          </section>
+        ))}
       </main>
     </>
   );

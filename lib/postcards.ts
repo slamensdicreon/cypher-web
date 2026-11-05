@@ -1,5 +1,6 @@
 /**
- * The postcard campaign: ten cards, each left somewhere specific around the Swan and Dolphin.
+ * The postcard campaign: eleven places around the Swan and Dolphin, two versions of the card for
+ * each, so the better line can be told by its scans.
  * Every QR code carries the card's id in `?c=`, so each submission says which card earned it.
  * Guardrails: no Icreon branding, $512 is the cost of a run (never the price), and nothing hints
  * at who gets declined.
@@ -23,31 +24,76 @@ export const EYE: Record<string, EyeState> = {
   back: { name: 'Glancing back', gx: -1, gy: 0.22, open: 1, pr: 7 },
 };
 
+/** One card: its id (the QR code's `?c=`), colours, the eye's pose, and the copy. */
 export type Postcard = {
   id: string;
   theme: Theme;
   eye: keyof typeof EYE;
-  /** Where the card is left. */
-  place: string;
   /** The provocation. */
   line: string;
-  /** The payoff, in coral. */
+  /** The payoff, in the accent colour. */
   payoff: string;
   /** The small aside at the bottom. */
   kicker: string;
 };
 
+/** A place the cards are left, with two versions to compare: A and B. */
+export type UseCase = { n: string; place: string; cards: [Postcard, Postcard] };
+
 export const SCAN_BASE = 'https://ignoranceisbliss.ai/?c=';
 
-export const POSTCARDS: Postcard[] = [
-  { id: 'pc01', theme: 'white', eye: 'sleepy', place: 'The coffee line', line: 'Your coffee will take longer than your next homepage.', payoff: 'Bring the coffee. Leave with the website.', kicker: 'Oat milk is extra. The build isn’t.' },
-  { id: 'pc02', theme: 'coral', eye: 'side', place: 'Inside the elevators', line: 'Everyone in this elevator wants what’s on this card.', payoff: 'Twenty-five of them get it.', kicker: 'Don’t make eye contact.' },
-  { id: 'pc03', theme: 'ink', eye: 'roll', place: 'On a session-room seat', line: 'The speaker is on slide 40. We’d have shipped by slide 4.', payoff: 'Stay for the Q&A. Or don’t.', kicker: 'Leave this for someone slower.' },
-  { id: 'pc04', theme: 'violet', eye: 'wide', place: 'On the bar', line: 'Your agency quoted $400,000+. We ran it for $512.', payoff: 'Next round’s on them.', kicker: 'The cost of the run, not the price.' },
-  { id: 'pc05', theme: 'lavender', eye: 'closed', place: 'Hotel door hangers', line: 'Do not disturb. Your website is being rebuilt.', payoff: 'Done before checkout.', kicker: 'No housekeeping required.' },
-  { id: 'pc06', theme: 'coral', eye: 'squint', place: 'The expo hall exits', line: 'Every booth in there sells hours. We stopped counting them.', payoff: 'Ask them what a build costs. Then scan this.', kicker: 'Act casual.' },
-  { id: 'pc07', theme: 'ink', eye: 'stare', place: 'Registration', line: 'Someone here is about to look like they hired a hundred people.', payoff: 'Make sure it’s you.', kicker: 'They didn’t hire anyone.' },
-  { id: 'pc08', theme: 'white', eye: 'think', place: 'The breakfast tables', line: 'It learned more overnight than your last project did all quarter.', payoff: 'And it never asks twice.', kicker: 'Self-learning. Self-healing. Self-enhancing.' },
-  { id: 'pc09', theme: 'lavender', eye: 'qr', place: 'Outside the keynote', line: 'The keynote showed you the future of SitecoreAI. We’re booking it.', payoff: 'Twenty-five sessions, right after Symposium.', kicker: 'Sitecore MVPs are in on it.' },
-  { id: 'pc10', theme: 'violet', eye: 'back', place: 'The airport shuttle', line: 'Ignorance is bliss. Until your competitor gets selected.', payoff: 'Last call before you fly home.', kicker: 'Mind the gap. Between you and them.' },
+const c = (id: string, theme: Theme, eye: keyof typeof EYE, line: string, payoff: string, kicker: string): Postcard => ({
+  id,
+  theme,
+  eye,
+  line,
+  payoff,
+  kicker,
+});
+
+export const USE_CASES: UseCase[] = [
+  { n: '01', place: 'In the bathroom', cards: [
+    c('pc01a', 'ink', 'closed', 'You’ve been in this bathroom longer than our last migration.', 'Take your time.', 'Wash your hands first.'),
+    c('pc01b', 'lavender', 'side', 'Somewhere, an agency is billing for this break.', 'We’d have shipped the homepage.', 'Flush with confidence.'),
+  ] },
+  { n: '02', place: 'In the coffee line', cards: [
+    c('pc02a', 'white', 'sleepy', 'Your coffee will take longer than your next homepage.', 'Bring the coffee. Leave with the website.', 'Oat milk is extra. The build isn’t.'),
+    c('pc02b', 'coral', 'wide', 'Still waiting on your latte? Your agency is still waiting on sign-off.', 'We don’t wait. We build.', 'Extra shot of ambition.'),
+  ] },
+  { n: '03', place: 'Inside the elevators', cards: [
+    c('pc03a', 'coral', 'side', 'Everyone in this elevator wants what’s on this card.', 'Twenty-five of them get it.', 'Don’t make eye contact.'),
+    c('pc03b', 'violet', 'think', 'This elevator moves faster than your last SitecoreAI project.', 'Going up?', 'Doors close November 13.'),
+  ] },
+  { n: '04', place: 'On a session-room seat', cards: [
+    c('pc04a', 'ink', 'roll', 'The speaker is on slide 40. We’d have shipped by slide 4.', 'Stay for the Q&A. Or don’t.', 'Leave this for someone slower.'),
+    c('pc04b', 'white', 'squint', 'This session runs 45 minutes. Long enough to rebuild your homepage.', 'Not long enough to explain how.', 'Silence your phone. Not your ambition.'),
+  ] },
+  { n: '05', place: 'On the bar', cards: [
+    c('pc05a', 'violet', 'wide', 'Your agency quoted $400,000+. We ran it for $512.', 'Next round’s on them.', 'The cost of the run, not the price.'),
+    c('pc05b', 'coral', 'stare', 'Last call for paying $400,000+ for a website.', 'We ran one for $512.', 'The cost of the run, not the price.'),
+  ] },
+  { n: '06', place: 'On hotel door hangers', cards: [
+    c('pc06a', 'lavender', 'closed', 'Do not disturb. Your website is being rebuilt.', 'Done before checkout.', 'No housekeeping required.'),
+    c('pc06b', 'ink', 'wide', 'While you were sleeping, it rebuilt the portal.', 'Room service doesn’t do that.', 'Checkout is Friday, November 13.'),
+  ] },
+  { n: '07', place: 'At the expo hall exits', cards: [
+    c('pc07a', 'coral', 'squint', 'Every booth in there sells hours. We stopped counting them.', 'Ask them what a build costs. Then scan this.', 'Act casual.'),
+    c('pc07b', 'white', 'side', 'Collected enough tote bags? Collect an unfair advantage.', 'Twenty-five companies. Not twenty-six.', 'No booth. No swag. No pitch.'),
+  ] },
+  { n: '08', place: 'At registration', cards: [
+    c('pc08a', 'ink', 'stare', 'Someone here is about to look like they hired a hundred people.', 'Make sure it’s you.', 'They didn’t hire anyone.'),
+    c('pc08b', 'lavender', 'squint', 'Twenty-five companies get selected. The rest get a lanyard.', 'Choose wisely. We will.', 'Keep the lanyard.'),
+  ] },
+  { n: '09', place: 'On the breakfast tables', cards: [
+    c('pc09a', 'white', 'think', 'It learned more overnight than your last project did all quarter.', 'And it never asks twice.', 'Self-learning. Self-healing. Self-enhancing.'),
+    c('pc09b', 'violet', 'wide', 'It doesn’t need coffee. It needs three decisions from you.', 'That’s the job now.', 'Eat. We’ll build.'),
+  ] },
+  { n: '10', place: 'Outside the keynote', cards: [
+    c('pc10a', 'lavender', 'qr', 'The keynote showed you the future of SitecoreAI. We’re booking it.', 'Twenty-five sessions, right after Symposium.', 'Sitecore MVPs are in on it.'),
+    c('pc10b', 'ink', 'wide', 'You just watched the future. Twenty-five companies get to keep it.', 'Selected, not sold to.', 'No standing ovation required.'),
+  ] },
+  { n: '11', place: 'On the airport shuttle', cards: [
+    c('pc11a', 'violet', 'back', 'Ignorance is bliss. Until your competitor gets selected.', 'Last call before you fly home.', 'Mind the gap. Between you and them.'),
+    c('pc11b', 'coral', 'side', 'Your competitor is on this shuttle.', 'Scan before they do.', 'Window seat. Unfair advantage.'),
+  ] },
 ];
