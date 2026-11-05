@@ -204,7 +204,6 @@ input[type=range]:focus-visible{outline:3px solid rgba(47,94,230,.4);outline-off
 .sign .by{font-size:14px;color:var(--text-2)}
 .accept{margin-top:36px}
 .accept .btn{display:inline-block;width:auto;padding:17px 28px;text-decoration:none}
-.satire{margin:24px 0 0;font-size:13px;line-height:1.5;color:var(--on-ink-quiet);text-align:center}
 /* postcards: 4×6 in, sized off the card's own width so they print and preview alike */
 .pc-page{padding:48px 0 var(--sec)}
 .pc-intro h1{margin:0;font-size:clamp(40px,12vw,72px);font-weight:800;letter-spacing:-.045em;line-height:1}
@@ -370,7 +369,7 @@ tr.ad-dim td{opacity:.55}
   .card{padding:30px 30px 32px}
   .ad-tiles{grid-template-columns:repeat(6,minmax(0,1fr))}.ad-grid2{grid-template-columns:repeat(2,minmax(0,1fr))}
   .pc-pair{gap:32px;max-width:820px}.pc-case h2{font-size:30px}
-  .legal{padding:72px 0 var(--sec)}.legal-head,.paper,.satire{max-width:860px;margin-left:auto;margin-right:auto}
+  .legal{padding:72px 0 var(--sec)}.legal-head,.paper{max-width:860px;margin-left:auto;margin-right:auto}
   .legal-head h1{font-size:72px}.legal-head p{font-size:22px}
   .paper{padding:64px 72px 72px}.paper p,.paper li{font-size:17px}.paper h2{font-size:24px}
   .sign{grid-template-columns:1fr 1fr;gap:48px}

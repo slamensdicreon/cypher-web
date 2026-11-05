@@ -146,7 +146,6 @@ export default function Terms() {
           </div>
         </article>
 
-        <p className="satire">A parody, and a sales pitch in a suit. Not a contract.</p>
       </main>
       <Track />
     </>
