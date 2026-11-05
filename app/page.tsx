@@ -1,7 +1,6 @@
 import Eye from '@/components/Eye';
 import InterestForm from '@/components/InterestForm';
 import Reveal from '@/components/Reveal';
-import Status from '@/components/Status';
 
 const Resting = ({ size }: { size: number }) => (
   <svg width={size} height={size} viewBox="0 0 72 72" aria-hidden="true">
@@ -52,7 +51,7 @@ export default function Page() {
     <>
       <header className="top">
         <a className="wordmark" href="#"><Resting size={30} />cypher</a>
-        <Status />
+        <span className="count">There is no spoon.</span>
       </header>
 
       <main className="wrap">
