@@ -1,6 +1,6 @@
 /**
  * The postcard campaign: eleven places around the Swan and Dolphin, two versions of the card for
- * each, so the better line can be told by its scans.
+ * each, so the better line can be told by its scans; and six evergreen cards for anywhere.
  * Every QR code carries the card's id in `?c=`, so each submission says which card earned it.
  * Guardrails: no Icreon branding, $512 is the cost of a run (never the price), and nothing hints
  * at who gets declined.
@@ -37,8 +37,8 @@ export type Postcard = {
   kicker: string;
 };
 
-/** A place the cards are left, with two versions to compare: A and B. */
-export type UseCase = { n: string; place: string; cards: [Postcard, Postcard] };
+/** A place the cards are left, with two versions to compare (A and B); or the evergreen set, for anywhere. */
+export type UseCase = { n: string; place: string; note?: string; cards: Postcard[] };
 
 export const SCAN_BASE = 'https://ignoranceisbliss.ai/?c=';
 
@@ -95,5 +95,13 @@ export const USE_CASES: UseCase[] = [
   { n: '11', place: 'On the airport shuttle', cards: [
     c('pc11a', 'violet', 'back', 'Ignorance is bliss. Until your competitor gets selected.', 'Last call before you fly home.', 'Mind the gap. Between you and them.'),
     c('pc11b', 'coral', 'side', 'Your competitor is on this shuttle.', 'Scan before they do.', 'Window seat. Unfair advantage.'),
+  ] },
+  { n: 'E', place: 'Anywhere', note: 'Evergreen: handed out, left on a table, dropped on the floor. No place in particular.', cards: [
+    c('pcev1', 'ink', 'side', 'You weren’t supposed to find this.', 'But since you did.', 'Act natural.'),
+    c('pcev2', 'coral', 'stare', 'Someone handed you this for a reason.', 'They think you can handle it.', 'Don’t make them regret it.'),
+    c('pcev3', 'lavender', 'wide', 'Your SitecoreAI roadmap called. It wants to be done next week.', 'Pick up.', 'Annual plans are so last year.'),
+    c('pcev4', 'violet', 'roll', 'No kickoff. No workshop. No six-month plan.', 'Just the website.', 'Your agency will hate this card.'),
+    c('pcev5', 'white', 'squint', '$512. Remember the number.', 'Ask what it built.', 'The cost of the run, not the price.'),
+    c('pcev6', 'coral', 'qr', 'Not everyone gets one of these.', 'Twenty-five companies. Not twenty-six.', 'Keep it somewhere safe.'),
   ] },
 ];

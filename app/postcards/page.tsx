@@ -35,6 +35,10 @@ const qr = (id: string) =>
     color: { dark: '#141433', light: '#ffffff' },
   });
 
+/** Keeps hyphenated words (twenty-six, $400,000+) from breaking across lines. */
+const keep = (text: string) =>
+  text.split(/(\S+-\S+)/).map((part, i) => (i % 2 ? <span className="nw" key={i}>{part}</span> : part));
+
 /** One card, as it prints. */
 function Card({ c, code }: { c: Postcard; code: string }) {
   return (
@@ -44,13 +48,13 @@ function Card({ c, code }: { c: Postcard; code: string }) {
         <span className="pc-well" aria-hidden="true" />
         <StaticEye id={c.id} state={EYE[c.eye]} {...EYE_COLORS[c.theme]} />
       </div>
-      <h3 className={`pc-line ${size(c.line)}`}>{c.line}</h3>
-      <p className="pc-pay">{c.payoff}</p>
+      <h3 className={`pc-line ${size(c.line)}`}>{keep(c.line)}</h3>
+      <p className="pc-pay">{keep(c.payoff)}</p>
       <div className="pc-foot">
         <div className="pc-sig">
           <b>cypher</b>
           <span className="pc-url">ignoranceisbliss.ai</span>
-          <span className="pc-kick">{c.kicker}</span>
+          <span className="pc-kick">{keep(c.kicker)}</span>
         </div>
         <div className="pc-qr" role="img" aria-label={`QR code for ${SCAN_BASE}${c.id}`} dangerouslySetInnerHTML={{ __html: code }} />
       </div>
@@ -71,7 +75,7 @@ export default async function Postcards() {
         <div className="pc-intro">
           <h1>Postcards.</h1>
           <p>
-            Eleven places around the Swan and Dolphin, two versions of the card for each. Unbranded, one line each, five colours and a
+            Eleven places around the Swan and Dolphin, two versions of the card for each, and six evergreen cards for anywhere. Unbranded, one line each, five colours and a
             different look in the eye on every card. Every QR code carries its card’s code, so the scans say which version wins.
           </p>
           <PrintButton />
@@ -82,12 +86,13 @@ export default async function Postcards() {
             <h2>
               <span>{u.n}</span> {u.place}
             </h2>
+            {u.note && <p className="pc-note">{u.note}</p>}
             <div className="pc-pair">
               {u.cards.map((c, i) => (
                 <figure className="pcw" key={c.id}>
                   <Card c={c} code={codes[c.id]} />
                   <figcaption>
-                    <b>{i === 0 ? 'A' : 'B'}</b> · {c.id} · {EYE[c.eye].name}, on {THEME_NAME[c.theme]}
+                    <b>{u.cards.length === 2 ? (i === 0 ? 'A' : 'B') : `${u.n}${i + 1}`}</b> · {c.id} · {EYE[c.eye].name}, on {THEME_NAME[c.theme]}
                     <br />
                     <a href={`${SCAN_BASE}${c.id}`}>{`${SCAN_BASE}${c.id}`.replace('https://', '')}</a>
                   </figcaption>

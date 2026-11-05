@@ -213,6 +213,7 @@ input[type=range]:focus-visible{outline:3px solid rgba(47,94,230,.4);outline-off
 .pc-case{margin-top:var(--block)}
 .pc-case h2{margin:0 0 20px;font-size:24px;font-weight:800;letter-spacing:-.03em}
 .pc-case h2 span{color:var(--coral);margin-right:6px}
+.pc-note{margin:-10px 0 20px;font-size:15px;color:var(--on-ink-soft)}
 .pc-pair{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
 .pcw{margin:0;min-width:0;container-type:inline-size}
 /* card colours */
@@ -242,7 +243,7 @@ input[type=range]:focus-visible{outline:3px solid rgba(47,94,230,.4);outline-off
   @page{size:4in 6in;margin:0}
   *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
   html,body{background:#ffffff}
-  header.top,.pc-intro,.pcw figcaption,.pc-case h2{display:none}
+  header.top,.pc-intro,.pcw figcaption,.pc-case h2,.pc-note{display:none}
   .pc-page{padding:0;max-width:none}
   .pc-case{margin:0}.pc-pair{display:block}
   .pcw{width:4in;height:6in;break-after:page;break-inside:avoid}
