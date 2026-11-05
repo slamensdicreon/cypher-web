@@ -13,7 +13,7 @@ const internalTo = (process.env.INTERNAL_EMAIL_TO || '')
   .split(',')
   .map((s) => s.trim())
   .filter(Boolean);
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://ignoranceisbliss.ai';
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.ignoranceisbliss.ai';
 
 export const canEmail = Boolean(apiKey);
 

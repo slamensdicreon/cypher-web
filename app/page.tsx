@@ -37,11 +37,11 @@ export default function Page() {
           </div>
         </section>
 
-        <section className="s">
+        <section className="s band">
           <div className="proofs">
             <div className="proof">
               <div className="num">$<i>512</i></div>
-              <p>What it cost to run a SitecoreAI build an agency quoted at <b>$400,000</b>. We have the receipts.</p>
+              <p>What it cost to run a SitecoreAI build an agency quoted at <b>$400,000+</b>. We have the receipts.</p>
               <p className="fine">The cost of the run, not the price of Cypher.</p>
             </div>
             <div className="pillars">
@@ -50,7 +50,10 @@ export default function Page() {
               <div className="pillar"><b>Self-enhancing.</b><p>Every build rewrites its own playbook. It finishes better than it started. Name one vendor who can say that.</p></div>
             </div>
           </div>
-          <p className="proofclose">We don’t need you to believe us. Twenty-five companies are about to watch.</p>
+          <div className="proofclose">
+            <p>We don’t need you to believe us. <span className="nw">Twenty-five</span> companies are about to watch.</p>
+            <p>We’ve watched it conduct over <b>225,000</b> events. We don’t need you to tell us it works.</p>
+          </div>
         </section>
 
         <section className="s">
