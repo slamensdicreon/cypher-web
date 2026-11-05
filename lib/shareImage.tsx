@@ -4,12 +4,11 @@ import { ImageResponse } from 'next/og';
 
 /** The link preview: what Slack, LinkedIn, X, iMessage, WhatsApp and Teams show when the site is shared. */
 
-export const SHARE_ALT = 'Ignorance is bliss. Cypher’s eye, watching. Twenty-five companies, selected, not sold to.';
+export const SHARE_ALT = 'Cypher’s eye, glancing at the words: You weren’t supposed to find this. But since you did.';
 export const SHARE_SIZE = { width: 1200, height: 630 };
 
 const INK = '#141433';
 const CORAL = '#e8553d';
-const SOFT = '#d6d0f5';
 const MUTED = '#b7a6ff';
 
 async function fonts() {
@@ -54,19 +53,13 @@ export async function shareImage() {
             </svg>
             cypher
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', fontSize: 92, fontWeight: 800, lineHeight: 0.98, letterSpacing: -4.4 }}>
-            <span>Ignorance is</span>
-            <span>bliss.</span>
+          <div style={{ display: 'flex', flexDirection: 'column', fontSize: 76, fontWeight: 800, lineHeight: 1, letterSpacing: -3.4 }}>
+            <span>You weren’t</span>
+            <span>supposed to</span>
+            <span>find this.</span>
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', fontSize: 31, fontWeight: 500, lineHeight: 1.3, color: SOFT, marginTop: 30, letterSpacing: -0.4 }}>
-            <span>We’re not selling it.</span>
-            <div style={{ display: 'flex' }}>
-              We’re<span style={{ color: CORAL, fontWeight: 800, margin: '0 7px' }}>choosing</span>who gets it.
-            </div>
-          </div>
-          <div style={{ display: 'flex', fontSize: 20, fontWeight: 800, letterSpacing: 2, textTransform: 'uppercase', color: MUTED, marginTop: 40 }}>
-            Twenty-five companies · Closes Nov 13
-          </div>
+          <div style={{ display: 'flex', fontSize: 36, fontWeight: 800, letterSpacing: -0.8, color: CORAL, marginTop: 22 }}>But since you did.</div>
+          <div style={{ display: 'flex', fontSize: 24, fontWeight: 500, color: MUTED, marginTop: 40 }}>ignoranceisbliss.ai</div>
         </div>
       </div>
     ),
