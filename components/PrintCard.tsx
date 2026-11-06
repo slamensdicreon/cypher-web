@@ -1,19 +1,9 @@
 import QRCode from 'qrcode';
 import StaticEye from '@/components/StaticEye';
-import type { RGB } from '@/lib/eyeEngine';
-import { EYE, SCAN_BASE, USE_CASES, type Postcard, type Theme } from '@/lib/postcards';
+import { EYE_COLORS } from '@/lib/cardStyle';
+import { EYE, SCAN_BASE, USE_CASES, type Postcard } from '@/lib/postcards';
 
-const INK: RGB = [20, 20, 51];
-const CORAL: RGB = [232, 85, 61];
-/** The eye's ball and pupil on each card colour: on coral the colours swap, an ink ball with a coral pupil. */
-const EYE_COLORS: Record<Theme, { ball: RGB; pupil: RGB }> = {
-  ink: { ball: CORAL, pupil: INK },
-  coral: { ball: INK, pupil: CORAL },
-  lavender: { ball: CORAL, pupil: INK },
-  white: { ball: CORAL, pupil: INK },
-  violet: { ball: CORAL, pupil: INK },
-};
-export const THEME_NAME: Record<Theme, string> = { ink: 'ink', coral: 'coral', lavender: 'lavender', white: 'white', violet: 'deep violet' };
+export { THEME_NAME } from '@/lib/cardStyle';
 
 /** Long lines get a smaller size so every card keeps the same rhythm. */
 const size = (line: string) => (line.length <= 52 ? 's' : line.length <= 60 ? 'm' : line.length <= 66 ? 'l' : 'xl');

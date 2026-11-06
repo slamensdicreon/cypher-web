@@ -13,6 +13,7 @@
     "node": ">=20.9"
   },
   "dependencies": {
+    "fflate": "0.8.2",
     "next": "16.4.2",
     "postgres": "3.4.9",
     "qrcode": "1.5.4",

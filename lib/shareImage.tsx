@@ -11,7 +11,8 @@ const INK = '#141433';
 const CORAL = '#e8553d';
 const MUTED = '#b7a6ff';
 
-async function fonts() {
+/** The site's typeface, for images rendered on the server. */
+export async function fonts() {
   const dir = join(process.cwd(), 'assets', 'fonts');
   const [medium, extraBold] = await Promise.all([
     readFile(join(dir, 'PlusJakartaSans-Medium.ttf')),
