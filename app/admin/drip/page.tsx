@@ -4,6 +4,7 @@ import { redirect } from 'next/navigation';
 import AdminNav, { Banner } from '@/components/admin/AdminNav';
 import { isAdmin } from '@/lib/admin';
 import { checks } from '@/lib/drip/config';
+import { TEMPLATES } from '@/lib/drip/render';
 import { sequences } from '@/lib/drip/stats';
 import { hasStore } from '@/lib/store';
 
@@ -54,11 +55,14 @@ export default async function Drip({ searchParams }: { searchParams: Promise<{ m
           <h3>Sequences</h3>
           <form method="post" action="/api/admin/drip/create-sequence" className="ad-test">
             <input className="ad-input" name="name" required maxLength={120} placeholder="Name, e.g. Symposium attendees" aria-label="New sequence name" />
+            <select className="ad-input ad-select" name="template" defaultValue="symposium" aria-label="Start from">
+              {Object.entries(TEMPLATES).map(([k, t]) => <option key={k} value={k}>{t.label}</option>)}
+            </select>
             <button className="ad-btn primary" type="submit">New sequence</button>
           </form>
         </div>
         {list.length === 0 ? (
-          <p className="ad-empty">No sequences yet. Start one: it comes with three starter emails in the Cypher voice, ready to edit and preview.</p>
+          <p className="ad-empty">No sequences yet. Start one from a template: the emails come written in the Cypher voice, ready to edit and preview.</p>
         ) : (
           <div className="ad-scroll">
             <table className="ad-tbl">

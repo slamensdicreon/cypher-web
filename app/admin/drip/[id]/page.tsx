@@ -83,11 +83,12 @@ export default async function SequencePage({ params, searchParams }: { params: P
 
       {steps.map((st, i) => {
         day += st.delayDays;
+        const dated = st.sendOn ? new Intl.DateTimeFormat('en-US', { timeZone: 'UTC', weekday: 'short', month: 'short', day: 'numeric' }).format(new Date(`${st.sendOn}T12:00:00Z`)) : null;
         const s = q.steps.find((x) => x.id === st.id);
         return (
           <section className="ad-card ad-wide ad-step" key={st.id} id={`step-${st.id}`}>
             <div className="ad-step-head">
-              <h3>Email {st.position} <small>· day {day}{i === 0 ? ' (after enrolling)' : ''}</small></h3>
+              <h3>Email {st.position} <small>· {dated ? `${dated}, 9 to 10 AM ET` : `day ${day}${i === 0 ? ' (after enrolling)' : ''}`}</small></h3>
               {s && s.sent > 0 && (
                 <p className="ad-step-stats">
                   {fmt(s.sent)} sent · {rate(s.delivered, s.sent)} delivered · {rate(s.opened, s.delivered || s.sent)} opened · {rate(s.clicked, s.delivered || s.sent)} clicked

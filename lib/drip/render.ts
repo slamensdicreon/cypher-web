@@ -121,8 +121,10 @@ export function renderEmail(opts: { step: StepCopy; person: Person; code: string
   return { subject, preheader, html, text };
 }
 
+export type TemplateStep = StepCopy & { delay_days: number; send_on?: string };
+
 /** The copy a new sequence starts with: three steps in the Cypher voice, ready to edit. */
-export const STARTER_STEPS: Array<StepCopy & { delay_days: number }> = [
+export const STARTER_STEPS: TemplateStep[] = [
   {
     delay_days: 0,
     subject: 'You weren’t supposed to get this.',
@@ -166,3 +168,81 @@ If {{company|your company}} isn’t on the list, ignorance is bliss.`,
     cta_url: '',
   },
 ];
+
+/**
+ * Symposium week (Swan and Dolphin, Tuesday November 10 to Thursday 12; selection closes Friday the
+ * 13th at midnight Eastern). Four dated emails, sent at the daily run (9 to 10 AM Eastern):
+ * Monday tease before they travel, Wednesday proof after the keynotes, Thursday the ask, Friday last
+ * call. Tuesday is left to the postcards. Anyone who puts their company forward stops getting them.
+ */
+export const SYMPOSIUM_STEPS: TemplateStep[] = [
+  {
+    delay_days: 0,
+    send_on: '2026-11-09',
+    subject: 'Before you land.',
+    preheader: 'You weren’t supposed to get this.',
+    body: `{{first_name|Hi}},
+
+Tomorrow, Symposium spends three days telling you what SitecoreAI can do.
+
+We’ll be doing it.
+
+You’ll see an eye around the Swan and Dolphin. Don’t look for a booth. There isn’t one.
+
+Twenty-five companies get what’s behind it. We’re not selling it. We’re choosing.`,
+    cta_label: 'See what’s watching',
+    cta_url: '',
+  },
+  {
+    delay_days: 0,
+    send_on: '2026-11-11',
+    subject: '$512.',
+    preheader: 'The cost of the run. Not the price.',
+    body: `{{first_name|Hi}},
+
+Yesterday you watched the future of SitecoreAI on a big screen. Here it is in one number.
+
+An agency quoted a SitecoreAI build at **$400,000+**. Cypher ran it for **$512**. The cost of the run, not the price of Cypher. We have the receipts.
+
+It learns a lesson once and never bills you for it again. It fixes what breaks before anyone files a ticket. It finishes every build smarter than it started.
+
+Don’t believe us? Reject us. The page will show you why we’re not lying.`,
+    cta_label: 'Approve or reject',
+    cta_url: '',
+  },
+  {
+    delay_days: 0,
+    send_on: '2026-11-12',
+    subject: 'Someone here is about to look unfair.',
+    preheader: 'Make sure it’s {{company|you}}.',
+    body: `{{first_name|Hi}},
+
+By next week, twenty-five companies will look like they hired a hundred people.
+
+They didn’t. They put themselves forward.
+
+It takes ten seconds: your work email, and how badly you want it. If {{company|your company}} is selected, you’ll hear from Cypher. If not, you won’t.`,
+    cta_label: 'Put {{company|your company}} forward',
+    cta_url: '',
+  },
+  {
+    delay_days: 0,
+    send_on: '2026-11-13',
+    subject: 'Last call, {{company|you}}.',
+    preheader: 'Selection closes tonight.',
+    body: `{{first_name|Hi}},
+
+Selection closes tonight at midnight Eastern.
+
+After that, the twenty-five are chosen and we go quiet. No follow-up. No “just checking in.” This is the last email you’ll get from us.
+
+If {{company|your company}} isn’t on the list, ignorance is bliss.`,
+    cta_label: 'Get considered',
+    cta_url: '',
+  },
+];
+
+export const TEMPLATES: Record<string, { label: string; steps: TemplateStep[] }> = {
+  symposium: { label: 'Symposium week: Mon, Wed, Thu, Fri (Nov 9 to 13)', steps: SYMPOSIUM_STEPS },
+  starter: { label: 'Starter: three emails, days 0, 3 and 7', steps: STARTER_STEPS },
+};

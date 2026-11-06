@@ -54,6 +54,7 @@ export function dripReady(): Promise<unknown> {
             cta_url text not null default '',
             updated_at timestamptz not null default now()
           )`;
+        await tx`alter table steps add column if not exists send_on date`;
         await tx`
           create table if not exists enrollments (
             id bigserial primary key,

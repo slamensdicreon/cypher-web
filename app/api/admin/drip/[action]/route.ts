@@ -25,13 +25,13 @@ export async function POST(req: Request, { params }: { params: Promise<{ action:
   try {
     switch (action) {
       case 'create-sequence': {
-        const id = await createSequence(str('name').trim());
-        return done('Sequence created with three starter emails. Edit them, preview, then enroll contacts.', `/admin/drip/${id}`);
+        const id = await createSequence(str('name').trim(), str('template'));
+        return done('Sequence created. Edit the emails against the preview, send yourself a test, then enroll contacts.', `/admin/drip/${id}`);
       }
       case 'save-step':
         await saveStep(num('step'), {
           subject: str('subject'), preheader: str('preheader'), body: str('body'),
-          cta_label: str('cta_label'), cta_url: str('cta_url'), delay_days: num('delay_days'),
+          cta_label: str('cta_label'), cta_url: str('cta_url'), delay_days: num('delay_days'), send_on: str('send_on'),
         });
         return done('Saved.', back, `#step-${num('step')}`);
       case 'add-step':

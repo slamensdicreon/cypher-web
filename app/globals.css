@@ -396,6 +396,9 @@ tr.ad-dim td{opacity:.55}
 .ad-title-input{font:inherit;font-size:30px;font-weight:800;letter-spacing:-.03em;color:var(--on-ink);background:transparent;border:1px solid transparent;border-radius:12px;padding:2px 8px;margin-left:-9px;min-width:0;width:min(100%,520px)}
 .ad-title-input:hover,.ad-title-input:focus{border-color:var(--ink-3);outline:none}
 .ad-upload{max-width:560px}
+.ad-when{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px}
+.ad-when .ad-num{width:100%}
+.ad-input[type=date]{color-scheme:dark}
 form.ad-wide{margin-top:16px}
 @page postcard{size:4in 6in;margin:0}
 @page sheet{size:8.5in 11in;margin:0}

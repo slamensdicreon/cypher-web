@@ -3,16 +3,35 @@ import { classify } from '../rules';
 import { domainOf } from '../company';
 import { canSend, dripFrom, dripReplyTo, postalAddress, resendKey, senderName, SITE } from './config';
 import { db, dripReady } from './db';
-import { STARTER_STEPS, renderEmail, SAMPLE, type Person, type StepCopy } from './render';
+import { TEMPLATES, renderEmail, SAMPLE, type Person, type StepCopy } from './render';
 import { unsubToken } from './tokens';
 import type { ContactRow } from './csv';
 
 /** The drip: contacts in, sequences of steps, one send run a day, and Resend's events back. */
 
-export type Step = StepCopy & { id: number; sequenceId: number; position: number; delayDays: number };
+export type Step = StepCopy & { id: number; sequenceId: number; position: number; delayDays: number; sendOn?: string | null };
 
 const code = (sequenceId: number, position: number) => `d${sequenceId}s${position}`;
-const startOfDayPlus = (days: number) => db()`date_trunc('day', now()) + make_interval(days => ${Math.max(0, days)})`;
+
+/**
+ * The next step to send after `after` (0 to start). A dated step is skipped once its date has passed,
+ * so someone enrolled late never gets two emails in a day or a last call after the close. After a send,
+ * a dated step dated today waits (one email a day); when starting, today's step is fine.
+ */
+async function nextStep(sequenceId: number, after: number) {
+  const s = db();
+  const [st] = await s<{ position: number }[]>`
+    select position from steps
+    where sequence_id = ${sequenceId} and position > ${after}
+      and (send_on is null or ${after === 0 ? s`send_on >= current_date` : s`send_on > current_date`})
+    order by position limit 1`;
+  return st?.position ?? null;
+}
+
+/** When a step is due: its date, or today plus its delay. */
+const dueAt = (sequenceId: number, position: number) => db()`(
+  select coalesce(st.send_on::timestamptz, date_trunc('day', now()) + make_interval(days => st.delay_days))
+  from steps st where st.sequence_id = ${sequenceId} and st.position = ${position})`;
 
 function footer(contactId: number, sendId: number | null) {
   return {
@@ -80,14 +99,15 @@ function message(step: Step, person: Person, contactId: number, sendId: number |
 
 // ---------- sequences ----------
 
-export async function createSequence(name: string): Promise<number> {
+export async function createSequence(name: string, template = 'starter'): Promise<number> {
+  const steps = (TEMPLATES[template] ?? TEMPLATES.starter).steps;
   await dripReady();
   const s = db();
   return s.begin(async (tx) => {
     const [{ id }] = await tx<{ id: number }[]>`insert into sequences (name) values (${name.slice(0, 120) || 'Untitled sequence'}) returning id`;
-    for (const [i, st] of STARTER_STEPS.entries()) {
-      await tx`insert into steps (sequence_id, position, delay_days, subject, preheader, body, cta_label, cta_url)
-        values (${id}, ${i + 1}, ${st.delay_days}, ${st.subject}, ${st.preheader}, ${st.body}, ${st.cta_label}, ${st.cta_url})`;
+    for (const [i, st] of steps.entries()) {
+      await tx`insert into steps (sequence_id, position, delay_days, send_on, subject, preheader, body, cta_label, cta_url)
+        values (${id}, ${i + 1}, ${st.delay_days}, ${st.send_on ?? null}, ${st.subject}, ${st.preheader}, ${st.body}, ${st.cta_label}, ${st.cta_url})`;
     }
     return id;
   });
@@ -96,13 +116,14 @@ export async function createSequence(name: string): Promise<number> {
 export async function getSteps(sequenceId: number): Promise<Step[]> {
   await dripReady();
   const rows = await db()<Record<string, unknown>[]>`
-    select id, sequence_id, position, delay_days, subject, preheader, body, cta_label, cta_url
+    select id, sequence_id, position, delay_days, to_char(send_on, 'YYYY-MM-DD') as send_on, subject, preheader, body, cta_label, cta_url
     from steps where sequence_id = ${sequenceId} order by position`;
   return rows.map((r) => ({
     id: Number(r.id),
     sequenceId: Number(r.sequenceId),
     position: Number(r.position),
     delayDays: Number(r.delayDays),
+    sendOn: (r.sendOn as string | null) ?? null,
     subject: String(r.subject),
     preheader: String(r.preheader),
     body: String(r.body),
@@ -111,10 +132,11 @@ export async function getSteps(sequenceId: number): Promise<Step[]> {
   }));
 }
 
-export async function saveStep(stepId: number, v: StepCopy & { delay_days: number }) {
+export async function saveStep(stepId: number, v: StepCopy & { delay_days: number; send_on: string }) {
   await dripReady();
+  const sendOn = /^\d{4}-\d{2}-\d{2}$/.test(v.send_on) ? v.send_on : null;
   await db()`update steps set subject = ${v.subject}, preheader = ${v.preheader}, body = ${v.body}, cta_label = ${v.cta_label},
-    cta_url = ${v.cta_url}, delay_days = ${Math.max(0, Math.min(365, v.delay_days))}, updated_at = now() where id = ${stepId}`;
+    cta_url = ${v.cta_url}, delay_days = ${Math.max(0, Math.min(365, v.delay_days))}, send_on = ${sendOn}, updated_at = now() where id = ${stepId}`;
 }
 
 export async function addStep(sequenceId: number) {
@@ -192,11 +214,11 @@ export async function setContactStatus(contactId: number, status: 'active' | 'un
 export async function enroll(sequenceId: number, opts: { list: string; skipPutForward: boolean }): Promise<number> {
   await dripReady();
   const s = db();
-  const [first] = await s<{ delayDays: number }[]>`select delay_days from steps where sequence_id = ${sequenceId} order by position limit 1`;
+  const first = await nextStep(sequenceId, 0);
   if (!first) return 0;
   const rows = await s`
     insert into enrollments (contact_id, sequence_id, next_position, next_send_at)
-    select c.id, ${sequenceId}, 1, ${startOfDayPlus(first.delayDays)}
+    select c.id, ${sequenceId}, ${first}, ${dueAt(sequenceId, first)}
     from contacts c
     where c.status = 'active'
       ${opts.list ? s`and ${opts.list} = any(c.lists)` : s``}
@@ -273,8 +295,8 @@ export async function runDue(limit = 1000): Promise<RunResult> {
       const ids = res.data ?? [];
       for (const [k, j] of batch.entries()) {
         await s`update drip_sends set status = 'sent', resend_id = ${ids[k]?.id ?? null}, sent_at = now() where id = ${j.sendId}`;
-        const [next] = await s<{ delayDays: number }[]>`select delay_days from steps where sequence_id = ${j.step.sequenceId} and position = ${j.step.position + 1}`;
-        if (next) await s`update enrollments set next_position = ${j.step.position + 1}, next_send_at = ${startOfDayPlus(next.delayDays)}, last_error = null where id = ${j.enrollmentId}`;
+        const next = await nextStep(j.step.sequenceId, j.step.position);
+        if (next) await s`update enrollments set next_position = ${next}, next_send_at = ${dueAt(j.step.sequenceId, next)}, last_error = null where id = ${j.enrollmentId}`;
         else {
           await s`update enrollments set status = 'completed', last_error = null where id = ${j.enrollmentId}`;
           out.completed++;

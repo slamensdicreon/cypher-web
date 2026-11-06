@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 
-type Step = { id: number; position: number; delayDays: number; subject: string; preheader: string; body: string; cta_label: string; cta_url: string };
+type Step = { id: number; position: number; delayDays: number; sendOn?: string | null; subject: string; preheader: string; body: string; cta_label: string; cta_url: string };
 
 /**
  * One email in a sequence: the copy on the left, and on the right the real email as it will
@@ -11,13 +11,14 @@ type Step = { id: number; position: number; delayDays: number; subject: string; 
 export default function StepEditor({ step, sequenceId, back, first }: { step: Step; sequenceId: number; back: string; first: boolean }) {
   const [v, setV] = useState({
     subject: step.subject, preheader: step.preheader, body: step.body, cta_label: step.cta_label, cta_url: step.cta_url, delay_days: String(step.delayDays),
+    send_on: step.sendOn ?? '',
   });
   const [preview, setPreview] = useState<{ subject: string; preheader: string; html: string } | null>(null);
   const [width, setWidth] = useState<'desktop' | 'phone'>('desktop');
   const frame = useRef<HTMLIFrameElement>(null);
   const dirty =
     v.subject !== step.subject || v.preheader !== step.preheader || v.body !== step.body || v.cta_label !== step.cta_label ||
-    v.cta_url !== step.cta_url || v.delay_days !== String(step.delayDays);
+    v.cta_url !== step.cta_url || v.delay_days !== String(step.delayDays) || v.send_on !== (step.sendOn ?? '');
 
   useEffect(() => {
     const t = setTimeout(async () => {
@@ -48,10 +49,18 @@ export default function StepEditor({ step, sequenceId, back, first }: { step: St
         <form method="post" action="/api/admin/drip/save-step" className="ad-form">
           <input type="hidden" name="step" value={step.id} />
           <input type="hidden" name="back" value={back} />
-          <label className="ad-field ad-inline">
-            <span>{first ? 'Days after enrolling' : 'Days after the previous email'}</span>
-            <input className="ad-input ad-num" type="number" min={0} max={365} {...field('delay_days')} />
-          </label>
+          <div className="ad-when">
+            <label className="ad-field">
+              <span>Send on <small>(a date; empty to use the delay)</small></span>
+              <input className="ad-input" type="date" {...field('send_on')} />
+            </label>
+            <label className="ad-field">
+              <span>{first ? 'Or days after enrolling' : 'Or days after the previous email'}</span>
+              <input className="ad-input ad-num" type="number" min={0} max={365} disabled={Boolean(v.send_on)} {...field('delay_days')} />
+            </label>
+          </div>
+          {v.send_on && <input type="hidden" name="delay_days" value={v.delay_days} />}
+          <p className="ad-hint">Sends go out once a day, 9 to 10 AM Eastern. A dated email is skipped for anyone who joins after its date.</p>
           <label className="ad-field">
             <span>Subject</span>
             <input className="ad-input" required maxLength={200} {...field('subject')} />
