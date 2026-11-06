@@ -108,6 +108,8 @@ section.band.dark{--band:var(--ink-2);color:var(--on-ink)}
 .proofclose p+p{margin-top:18px;font-size:19px;font-weight:700;line-height:1.35;letter-spacing:-.01em;color:var(--text-2);max-width:720px}
 .proofclose b{color:var(--coral-text);font-weight:800}
 .nw{white-space:nowrap}
+/* a line break for phones only */
+.mbr{display:block}
 .plhead h2{margin:0;font-size:36px;font-weight:800;letter-spacing:-.04em;line-height:1.02}
 .plhead p{margin:12px 0 0;font-size:17px;line-height:1.5;color:var(--on-ink-soft);max-width:520px}
 .week{display:grid;grid-template-columns:minmax(0,1fr);gap:10px;margin-top:var(--block)}
@@ -379,6 +381,7 @@ tr.ad-dim td{opacity:.55}
   .join{grid-template-columns:minmax(0,1fr) 460px;align-items:start}
   .join .copy h2{font-size:56px}
   .card{padding:30px 30px 32px}
+  .mbr{display:inline}
   .ad-tiles{grid-template-columns:repeat(6,minmax(0,1fr))}.ad-grid2{grid-template-columns:repeat(2,minmax(0,1fr))}
   .pc-pair{gap:32px;max-width:820px}.pc-case h2{font-size:30px}
   .legal{padding-top:72px}.legal-head,.paper{max-width:860px;margin-left:auto;margin-right:auto}
