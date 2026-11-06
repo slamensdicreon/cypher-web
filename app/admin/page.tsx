@@ -277,6 +277,7 @@ export default async function Admin({ searchParams }: { searchParams: Promise<Se
               </Link>
             ))}
           </nav>
+          <a className="ad-btn" href="/api/admin/deck" download>Pitch deck (.pptx)</a>
           <form method="post" action="/api/admin/logout">
             <button className="ad-btn" type="submit">Sign out</button>
           </form>

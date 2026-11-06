@@ -70,6 +70,7 @@ Declined submissions get no email; they're stored. Emails go out after the respo
 | `lib/email.ts` | The two emails and sending them through Resend. |
 | `app/api/interest/route.ts` | The form endpoint: deadline, rules, honeypot, rate limit, storage, email. |
 | `app/api/export/route.ts` | The CSV export. |
+| `assets/deck/Cypher-Pitch-Deck.pptx` | The pitch deck. Signed-in admins download it from `/admin` (served by `app/api/admin/deck/route.ts`, never public). Keep it under 4.5 MB, Vercel's limit for a function response. |
 
 ## Behaviour worth knowing
 
