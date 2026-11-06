@@ -145,13 +145,17 @@ It takes ten seconds to put {{company|your company}} forward.`,
     preheader: 'The cost of the run. Not the price.',
     body: `{{first_name|Hi}},
 
+Forrester priced a plain lift-and-shift to XM Cloud at **$258,500**. Not a redesign: the same site, moved.
+
 An agency quoted a SitecoreAI build at **$400,000+**. Cypher ran it for **$512**. That’s the cost of the run, not the price of Cypher. We have the receipts.
 
 - Self-learning. It never asks twice.
 - Self-healing. It fixes what breaks before anyone files a ticket.
 - Self-enhancing. Every build starts smarter than the last.
 
-Twenty-five companies get to see it for themselves.`,
+Twenty-five companies get to see it for themselves.
+
+_Source: [Forrester, The Total Economic Impact of Sitecore XM Cloud](https://delivery-sitecore.sitecorecontenthub.cloud/api/public/content/419814f28e284b76b77bd6afd57ea057?v=7c8ccfa5), July 2025, commissioned by Sitecore._`,
     cta_label: 'Get considered',
     cta_url: '',
   },
@@ -200,13 +204,15 @@ Twenty-five companies get what’s behind it. We’re not selling it. We’re ch
     preheader: 'The cost of the run. Not the price.',
     body: `{{first_name|Hi}},
 
-Yesterday you watched the future of SitecoreAI on a big screen. Here it is in one number.
+Yesterday you watched the future of SitecoreAI on a big screen. Here’s what it usually costs.
+
+Forrester priced a plain lift-and-shift to XM Cloud at **$258,500**. Not a redesign: the same site, moved. One insurer reported **5,000 hours** to move 23 sites. At partner rates, that’s **$750K to $1.25M**.
 
 An agency quoted a SitecoreAI build at **$400,000+**. Cypher ran it for **$512**. The cost of the run, not the price of Cypher. We have the receipts.
 
-It learns a lesson once and never bills you for it again. It fixes what breaks before anyone files a ticket. It finishes every build smarter than it started.
+Don’t believe us? Reject us. The page will show you why we’re not lying.
 
-Don’t believe us? Reject us. The page will show you why we’re not lying.`,
+_Sources: [Forrester, The Total Economic Impact of Sitecore XM Cloud](https://delivery-sitecore.sitecorecontenthub.cloud/api/public/content/419814f28e284b76b77bd6afd57ea057?v=7c8ccfa5), July 2025, commissioned by Sitecore. The dollar range for 5,000 hours is our estimate at $150 to $250 an hour._`,
     cta_label: 'Approve or reject',
     cta_url: '',
   },

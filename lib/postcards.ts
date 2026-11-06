@@ -104,4 +104,14 @@ export const USE_CASES: UseCase[] = [
     c('pcev5', 'white', 'squint', '$512. Remember the number.', 'Ask what it built.', 'The cost of the run, not the price.'),
     c('pcev6', 'coral', 'qr', 'Not everyone gets one of these.', 'Twenty-five companies. Not twenty-six.', 'Keep it somewhere safe.'),
   ] },
+  // Market numbers, each with its source on the card. From Forrester, The Total Economic Impact of
+  // Sitecore XM Cloud, July 2025 (commissioned by Sitecore): the composite's $258,500 lift-and-shift,
+  // an education institution's ~€400,000 like-for-like rebuild, and a business insurer's ~5,000 hours
+  // for 23 sites. The $750K–$1.25M is our estimate: those hours at $150–$250/hr partner rates.
+  { n: 'M', place: 'The math', note: 'Market numbers, cited on the card. Forrester TEI of Sitecore XM Cloud, July 2025 (commissioned by Sitecore). Dollar figures for hours are our estimate.', cards: [
+    c('pcm1', 'ink', 'stare', 'Forrester priced a plain lift-and-shift at $258,500.', 'Not a redesign. The same site, moved.', 'Source: Forrester TEI, Sitecore XM Cloud, July 2025.'),
+    c('pcm2', 'coral', 'wide', '€400,000 and six months to rebuild the same website.', 'Same functionality. On purpose.', 'An education institution, per Forrester TEI, July 2025.'),
+    c('pcm3', 'violet', 'roll', '5,000 hours to move 23 sites to XM Cloud.', 'At partner rates: $750K to $1.25M.', 'Hours: Forrester TEI, 2025. Dollars: our estimate at $150–$250/hr.'),
+    c('pcm4', 'white', 'squint', 'The going rate for an XM Cloud migration: $258K to $1.25M.', 'Cypher’s run cost: $512.', 'Forrester TEI 2025; top end our estimate. Run cost, not price.'),
+  ] },
 ];
