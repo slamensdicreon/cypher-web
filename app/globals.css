@@ -206,13 +206,15 @@ a.btn{display:inline-block;text-decoration:none;text-align:center}
 .accept{margin-top:32px}
 .accept .btn{display:block;width:100%;padding:17px 16px;font-size:16.5px;text-decoration:none;white-space:nowrap}
 /* postcards: 4×6 in, sized off the card's own width so they print and preview alike */
-.pc-page{padding:48px 0 var(--sec)}
+.pc-page{padding-top:40px;padding-bottom:var(--sec)}
 .pc-intro h1{margin:0;font-size:clamp(40px,12vw,72px);font-weight:800;letter-spacing:-.045em;line-height:1}
 .pc-intro p{margin:16px 0 0;font-size:18px;line-height:1.5;color:var(--on-ink-soft);max-width:640px}
 .pc-actions{margin-top:24px;display:flex;flex-wrap:wrap;align-items:center;gap:14px 24px}
 .pc-print{width:auto;background:var(--coral);padding:15px 26px}
 .pc-switch{font-size:15px;font-weight:700;color:var(--on-ink-muted);text-decoration:none;border-bottom:1px solid rgba(183,166,255,.4)}
 .pc-switch:hover{color:var(--on-ink)}
+/* the sheet unit: registered as a length so it's worked out once, on the sheet, and inherited as a number */
+@property --u{syntax:'<length>';inherits:true;initial-value:1in}
 /* social ads: square previews, each a click to download */
 .sa-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,240px),1fr));gap:20px}
 .sa{margin:0;min-width:0}
@@ -225,12 +227,12 @@ a.btn{display:inline-block;text-decoration:none;text-align:center}
 /* trading cards: 2.5 × 3.5 in, nine to a US Letter sheet */
 .tc-sheetw{margin:var(--block) 0 0}
 .tc-sheetw figcaption{margin:0 0 12px;font-size:14px;color:var(--on-ink-quiet)}
-.tc-scroll{overflow-x:auto;padding-bottom:8px}
-.tc-sheet{position:relative;width:8.5in;height:11in;background:#ffffff;box-shadow:0 30px 60px -30px rgba(0,0,0,.7)}
-.tc-marks{position:absolute;inset:0;width:8.5in;height:11in}
-.tc-grid{position:absolute;left:.5in;top:.25in;display:grid;grid-template-columns:repeat(3,2.5in);grid-template-rows:repeat(3,3.5in)}
-.tc-cell{container-type:inline-size;width:2.5in;height:3.5in;min-width:0}
-.pc.tc{aspect-ratio:auto;width:2.5in;height:3.5in;border-radius:0;box-shadow:none;padding:7cqw 7cqw 6.5cqw}
+.tc-scroll{overflow-x:auto;padding-bottom:8px;container-type:inline-size}
+.tc-sheet{--u:min(1in,calc(100cqw / 8.5));position:relative;width:calc(var(--u) * 8.5);height:calc(var(--u) * 11);background:#ffffff;box-shadow:0 30px 60px -30px rgba(0,0,0,.7)}
+.tc-marks{position:absolute;inset:0;width:100%;height:100%}
+.tc-grid{position:absolute;left:calc(var(--u) * .5);top:calc(var(--u) * .25);display:grid;grid-template-columns:repeat(3,calc(var(--u) * 2.5));grid-template-rows:repeat(3,calc(var(--u) * 3.5))}
+.tc-cell{container-type:inline-size;width:calc(var(--u) * 2.5);height:calc(var(--u) * 3.5);min-width:0}
+.pc.tc{aspect-ratio:auto;width:calc(var(--u) * 2.5);height:calc(var(--u) * 3.5);border-radius:0;box-shadow:none;padding:7cqw 7cqw 6.5cqw}
 .tc .pc-eye{width:40cqw;margin-bottom:6cqw}
 .tc .pc-line{font-size:8cqw}.tc .pc-line.m{font-size:7.3cqw}.tc .pc-line.l{font-size:6.7cqw}.tc .pc-line.xl{font-size:6.1cqw}
 .tc .pc-pay{margin-top:2.6cqw;font-size:4.8cqw}
@@ -276,7 +278,7 @@ a.btn{display:inline-block;text-decoration:none;text-align:center}
 .ad-pin input:focus{outline:3px solid rgba(183,166,255,.5);outline-offset:2px}
 .ad-pin .btn{margin-top:8px;background:var(--coral)}
 .ad-err{margin:0;font-size:14px;font-weight:700;color:#ff8a73}
-.ad{padding:40px 0 80px}
+.ad{padding-top:32px;padding-bottom:80px}
 .ad-top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:16px}
 .ad-top h1{margin:0;font-size:40px;font-weight:800;letter-spacing:-.04em;line-height:1}
 .ad-top p{margin:8px 0 0;font-size:14px;color:var(--on-ink-quiet)}
@@ -348,7 +350,7 @@ tr.ad-dim td{opacity:.55}
   .pcw{page:postcard;width:4in;height:6in;break-after:page;break-inside:avoid}
   .pcw .pc{width:4in;height:6in;aspect-ratio:auto;border-radius:0;box-shadow:none}
   .tc-sheetw{margin:0}.tc-scroll{overflow:visible;padding:0}
-  .tc-sheet{page:sheet;box-shadow:none;break-after:page;break-inside:avoid}
+  .tc-sheet{--u:1in;page:sheet;box-shadow:none;break-after:page;break-inside:avoid}
 }
 @media (min-width: 820px){
   :root{--sec:96px;--block:64px;--gap:48px}
