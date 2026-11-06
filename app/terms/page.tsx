@@ -4,14 +4,14 @@ import SiteHeader, { Resting } from '@/components/SiteHeader';
 import Track from '@/components/Track';
 
 const description =
-  'The Terms & Conditions of the Transfer of Unreasonable Advantage. A sales pitch in a suit: what the twenty-five selected companies get, in the deepest legalese.';
+  'The Terms of Use of the Transfer of Unreasonable Advantage. A sales pitch in a suit: what the twenty-five selected companies get, in the deepest legalese.';
 
 export const metadata: Metadata = {
-  title: 'Terms & Conditions | Cypher',
+  title: 'Terms of Use | Cypher',
   description,
   alternates: { canonical: '/terms' },
-  openGraph: { type: 'website', url: '/terms', siteName: 'Cypher', locale: 'en_US', title: 'Terms & Conditions', description },
-  twitter: { card: 'summary_large_image', title: 'Terms & Conditions', description },
+  openGraph: { type: 'website', url: '/terms', siteName: 'Cypher', locale: 'en_US', title: 'Terms of Use', description },
+  twitter: { card: 'summary_large_image', title: 'Terms of Use', description },
 };
 
 /** A parody: Cypher's sales pitch, dressed in the deepest legalese. Not a contract. */
@@ -21,7 +21,7 @@ export default function Terms() {
       <SiteHeader />
       <main className="wrap legal">
         <div className="legal-head">
-          <h1>Terms &amp; Conditions</h1>
+          <h1>Terms of Use</h1>
           <p>Of the Transfer of Unreasonable Advantage. Effective upon selection. Read slowly; it gets better.</p>
         </div>
 

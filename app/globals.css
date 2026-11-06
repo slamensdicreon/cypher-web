@@ -176,8 +176,8 @@ a.btn{display:inline-block;text-decoration:none;text-align:center}
 .reply h3{margin:0;font-size:26px;font-weight:800;line-height:1.1;letter-spacing:-.035em}
 .reply p{margin:0;font-size:15px;line-height:1.5}
 .reply .a{font-size:14px;font-weight:700}
-.end{padding:var(--sec) 0;display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:16px 32px}
-.terms{margin-left:auto;font-size:13px;font-weight:700;color:var(--on-ink-muted);text-decoration:none;border-bottom:1px solid rgba(183,166,255,.4);padding-bottom:2px;transition:color .25s,border-color .25s}
+.end{padding:var(--sec) 0;display:flex;flex-direction:column;align-items:center;gap:14px;text-align:center}
+.terms{font-size:13px;font-weight:700;color:var(--on-ink-muted);text-decoration:none;border-bottom:1px solid rgba(183,166,255,.4);padding-bottom:2px;transition:color .25s,border-color .25s}
 .terms:hover{color:var(--on-ink);border-color:var(--on-ink)}
 .end .q{margin:0;font-size:13px;color:var(--on-ink-quiet)}
 /* the terms: a legal document, on paper */
@@ -382,6 +382,7 @@ tr.ad-dim td{opacity:.55}
   .join .copy h2{font-size:56px}
   .card{padding:30px 30px 32px}
   .mbr{display:inline}
+  .end{flex-direction:row;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:16px 32px;text-align:left}
   .ad-tiles{grid-template-columns:repeat(6,minmax(0,1fr))}.ad-grid2{grid-template-columns:repeat(2,minmax(0,1fr))}
   .pc-pair{gap:32px;max-width:820px}.pc-case h2{font-size:30px}
   .legal{padding-top:72px}.legal-head,.paper{max-width:860px;margin-left:auto;margin-right:auto}

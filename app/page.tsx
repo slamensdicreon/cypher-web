@@ -85,7 +85,7 @@ export default function Page() {
 
         <div className="end">
           <p className="q">Not affiliated with the conference. Obviously.</p>
-          <Link className="terms" href="/terms">Terms &amp; Conditions</Link>
+          <Link className="terms" href="/terms">Terms of Use</Link>
         </div>
       </main>
       <Reveal />
