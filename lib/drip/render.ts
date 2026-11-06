@@ -15,11 +15,23 @@ export const SAMPLE: Person = { email: 'jane@northwind-traders.com', first_name:
 
 const esc = (s: string) => s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]!);
 
+/**
+ * Registration lists often hold names typed in all caps or all lower case ("LAUREN", "ted"). Names
+ * like that are title-cased so an email never opens with "LAUREN,"; mixed-case names are left alone.
+ */
+export function nameCase(v: string): string {
+  if (v !== v.toUpperCase() && v !== v.toLowerCase()) return v;
+  return v.toLowerCase().replace(/(^|[\s'’-])(\p{L})/gu, (_, sep: string, ch: string) => sep + ch.toUpperCase());
+}
+
+const NAME_FIELDS = new Set(['first_name', 'last_name']);
+
 /** Fills {{field}} and {{field|fallback}}. Unknown fields fall back too. */
 export function merge(text: string, p: Person): string {
   return text.replace(/\{\{\s*(\w+)\s*(?:\|([^}]*))?\}\}/g, (_, k: string, fb?: string) => {
-    const v = (p as Record<string, string>)[k];
-    return v && v.trim() ? v.trim() : (fb ?? '').trim();
+    const v = ((p as Record<string, string>)[k] ?? '').trim();
+    if (!v) return (fb ?? '').trim();
+    return NAME_FIELDS.has(k) ? nameCase(v) : v;
   });
 }
 
