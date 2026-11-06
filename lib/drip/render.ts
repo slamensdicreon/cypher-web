@@ -173,82 +173,115 @@ If {{company|your company}} isn’t on the list, ignorance is bliss.`,
   },
 ];
 
+/** Forrester, The Total Economic Impact of Sitecore XM Cloud, July 2025 (commissioned by Sitecore). */
+const FORRESTER = 'https://delivery-sitecore.sitecorecontenthub.cloud/api/public/content/419814f28e284b76b77bd6afd57ea057?v=7c8ccfa5';
+
 /**
  * Symposium week (Swan and Dolphin, Tuesday November 10 to Thursday 12; selection closes Friday the
- * 13th at midnight Eastern). Four dated emails, sent at the daily run (9 to 10 AM Eastern):
- * Monday tease before they travel, Wednesday proof after the keynotes, Thursday the ask, Friday last
- * call. Tuesday is left to the postcards. Anyone who puts their company forward stops getting them.
+ * 13th at midnight Eastern). Five dated emails, Monday to Friday, sent at the daily run (9 to 10 AM
+ * Eastern). One number a day: each email explains the last number and leaves a new one, so the value
+ * arrives piece by piece and the mystery holds until Friday. Anyone who puts their company forward
+ * stops getting them.
  */
 export const SYMPOSIUM_STEPS: TemplateStep[] = [
   {
     delay_days: 0,
     send_on: '2026-11-09',
-    subject: 'Before you land.',
-    preheader: 'You weren’t supposed to get this.',
+    subject: '21.',
+    preheader: 'Don’t Google it.',
     body: `{{first_name|Hi}},
 
-Tomorrow, Symposium spends three days telling you what SitecoreAI can do.
+Tomorrow, a few thousand people walk into Symposium to hear what AI might do for SitecoreAI someday.
 
-We’ll be doing it.
+Something in that building already does it. It isn’t on the agenda. It doesn’t have a booth. Nobody is going to announce it from a stage.
 
-You’ll see an eye around the Swan and Dolphin. Don’t look for a booth. There isn’t one.
+Every morning this week, we’ll send you one number. Each one explains the last. By Friday you’ll know exactly what it is, and whether {{company|your company}} should be one of the few that gets it.
 
-Twenty-five companies get what’s behind it. We’re not selling it. We’re choosing.`,
-    cta_label: 'See what’s watching',
-    cta_url: '',
+Today’s number is **21**.
+
+Don’t Google it. You won’t find it.`,
+    cta_label: 'Look closer',
+    cta_url: `${SITE}/`,
+  },
+  {
+    delay_days: 0,
+    send_on: '2026-11-10',
+    subject: '3.',
+    preheader: 'Yesterday’s number, explained.',
+    body: `{{first_name|Hi}},
+
+**21** is how many specialists it runs. Each one has a single job. One of them screenshots every page at three breakpoints and diffs it, pixel by pixel, against the original. And above all twenty-one, one mind that conducts them.
+
+Same crew every day. Nobody rotates off your account. And it never asks the same question twice: every answer becomes a rule for every build that follows.
+
+Sitecore MVPs built it. Ten years of every pitfall, every workaround and every 2 AM fix, written down so nobody has to learn them again.
+
+Today’s number is **3**. Keep it in mind during the keynote.`,
+    cta_label: 'Keep looking',
+    cta_url: `${SITE}/`,
   },
   {
     delay_days: 0,
     send_on: '2026-11-11',
     subject: '$512.',
-    preheader: 'The cost of the run. Not the price.',
+    preheader: 'It isn’t a price.',
     body: `{{first_name|Hi}},
 
-Yesterday you watched the future of SitecoreAI on a big screen. Here’s what it usually costs.
+**3** is how many decisions you make per build.
 
-Forrester priced a plain lift-and-shift to XM Cloud at **$258,500**. Not a redesign: the same site, moved. One insurer reported **5,000 hours** to move 23 sites. At partner rates, that’s **$750K to $1.25M**.
+It does everything else itself. It plans the build, builds it, checks it, and fixes what it finds before you find it. When something breaks at 2 AM, it works out why, repairs it and carries on. Nobody files a ticket. Nobody gets paged.
 
-An agency quoted a SitecoreAI build at **$400,000+**. Cypher ran it for **$512**. The cost of the run, not the price of Cypher. We have the receipts.
+Pixel for pixel, on SitecoreAI. Your marketers edit it on day one.
 
-Don’t believe us? Reject us. The page will show you why we’re not lying.
+That’s how an annual roadmap becomes a week.
 
-_Sources: [Forrester, The Total Economic Impact of Sitecore XM Cloud](https://delivery-sitecore.sitecorecontenthub.cloud/api/public/content/419814f28e284b76b77bd6afd57ea057?v=7c8ccfa5), July 2025, commissioned by Sitecore. The dollar range for 5,000 hours is our estimate at $150 to $250 an hour._`,
-    cta_label: 'Approve or reject',
-    cta_url: '',
+Today’s number is **$512**. It isn’t a price.`,
+    cta_label: 'Decide for yourself',
+    cta_url: `${SITE}/`,
   },
   {
     delay_days: 0,
     send_on: '2026-11-12',
-    subject: 'Someone here is about to look unfair.',
-    preheader: 'Make sure it’s {{company|you}}.',
+    subject: '225,000.',
+    preheader: 'And what $512 actually means.',
     body: `{{first_name|Hi}},
 
-By next week, twenty-five companies will look like they hired a hundred people.
+**$512** is what it cost to run a SitecoreAI build that an agency quoted at **$400,000+**.
 
-They didn’t. They put themselves forward.
+That’s not the price of Cypher. It’s the cost of the run, metered to the cent, and we have the receipts.
 
-It takes ten seconds: your work email, and how badly you want it. If {{company|your company}} is selected, you’ll hear from Cypher. If not, you won’t.`,
-    cta_label: 'Put {{company|your company}} forward',
-    cta_url: '',
+For scale: Forrester put a plain lift-and-shift to XM Cloud at **$258,500**. Not a redesign. The same site, moved. One insurer reported **5,000 hours** to move 23 sites. At partner rates, that’s **$750K to $1.25M**.
+
+All week you’ve heard what’s possible. That’s the number nobody put on a slide.
+
+Today’s number is **225,000**. Tomorrow’s is the one that matters.
+
+_Sources: [Forrester, The Total Economic Impact of Sitecore XM Cloud](${FORRESTER}), July 2025, commissioned by Sitecore. The dollar range for 5,000 hours is our estimate at $150 to $250 an hour._`,
+    cta_label: 'See the math',
+    cta_url: `${SITE}/`,
   },
   {
     delay_days: 0,
     send_on: '2026-11-13',
-    subject: 'Last call, {{company|you}}.',
-    preheader: 'Selection closes tonight.',
+    subject: '25.',
+    preheader: 'Selection closes at midnight.',
     body: `{{first_name|Hi}},
 
-Selection closes tonight at midnight Eastern.
+**225,000** is how many events it has conducted. Every action passes one gateway that checks what each specialist is allowed to touch, and then lands in a log nobody can edit. Any build can be replayed, step by step. We don’t need you to believe us. We can show you.
 
-After that, the twenty-five are chosen and we go quiet. No follow-up. No “just checking in.” This is the last email you’ll get from us.
+**25** is how many companies get it.
 
-If {{company|your company}} isn’t on the list, ignorance is bliss.`,
-    cta_label: 'Get considered',
+After Symposium, Cypher sits down with twenty-five companies. You bring the website, the portal, the idea nobody would fund. You leave with it built, on SitecoreAI. Guaranteed, which is exactly why we can’t do it for everyone.
+
+Selection closes tonight at midnight Eastern. Then we go quiet. If {{company|your company}} is chosen, you’ll hear from us. If not, you won’t.
+
+Ignorance is bliss. You’ve had five days of the alternative.`,
+    cta_label: 'Put {{company|your company}} forward',
     cta_url: '',
   },
 ];
 
 export const TEMPLATES: Record<string, { label: string; steps: TemplateStep[] }> = {
-  symposium: { label: 'Symposium week: Mon, Wed, Thu, Fri (Nov 9 to 13)', steps: SYMPOSIUM_STEPS },
+  symposium: { label: 'Symposium week: one number a day, Mon to Fri (Nov 9 to 13)', steps: SYMPOSIUM_STEPS },
   starter: { label: 'Starter: three emails, days 0, 3 and 7', steps: STARTER_STEPS },
 };
