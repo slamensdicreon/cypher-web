@@ -1,7 +1,10 @@
 import 'server-only';
-import { createHash, createHmac, timingSafeEqual } from 'node:crypto';
+import { createHash, timingSafeEqual } from 'node:crypto';
 import { cookies } from 'next/headers';
+import { COOKIE, adminConfigured, validToken } from './adminToken';
 import { clientIp, keyedHash } from './keys';
+
+export { COOKIE, adminConfigured, newSession, safeNext } from './adminToken';
 import { hasStore, migrate, sql } from './store';
 
 /**
@@ -10,31 +13,10 @@ import { hasStore, migrate, sql } from './store';
  * Five wrong PINs from one network within fifteen minutes lock that network out for the rest.
  */
 
-export const COOKIE = 'cy_admin';
-const HOURS = 12;
 const LIMIT = 5;
 const WINDOW_MIN = 15;
 
 const pin = () => (process.env.ADMIN_PIN || '').trim();
-export const adminConfigured = () => pin().length > 0;
-
-const sessionKey = () => createHmac('sha256', `cypher-admin:${pin()}`).update(process.env.IP_HASH_SECRET || process.env.ADMIN_KEY || '').digest();
-const sign = (exp: number) => createHmac('sha256', sessionKey()).update(String(exp)).digest('hex');
-
-export function newSession(): { value: string; maxAge: number } {
-  const exp = Date.now() + HOURS * 3600_000;
-  return { value: `${exp}.${sign(exp)}`, maxAge: HOURS * 3600 };
-}
-
-function validToken(token: string | undefined): boolean {
-  if (!token || !adminConfigured()) return false;
-  const [expStr, sig] = token.split('.');
-  const exp = Number(expStr);
-  if (!Number.isFinite(exp) || exp < Date.now() || !sig) return false;
-  const want = Buffer.from(sign(exp), 'hex');
-  const got = Buffer.from(sig, 'hex');
-  return got.length === want.length && timingSafeEqual(got, want);
-}
 
 /** Is this request signed in? */
 export async function isAdmin(): Promise<boolean> {

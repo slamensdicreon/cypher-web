@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { Resting } from '@/components/SiteHeader';
-import { adminConfigured, isAdmin } from '@/lib/admin';
+import { adminConfigured, isAdmin, safeNext } from '@/lib/admin';
 import { dashboard, submissions, TABS, type Count, type Dashboard, type Tab } from '@/lib/adminData';
 import { USE_CASES } from '@/lib/postcards';
 import type { Row } from '@/lib/store';
@@ -34,7 +34,7 @@ const CARD_INFO = new Map(
   ),
 );
 
-function Login({ error }: { error?: string }) {
+function Login({ error, next }: { error?: string; next: string }) {
   return (
     <main className="ad-login">
       <form className="ad-pin" method="post" action="/api/admin/login">
@@ -42,6 +42,7 @@ function Login({ error }: { error?: string }) {
         <h1>Admin</h1>
         <label htmlFor="pin">PIN</label>
         <input id="pin" name="pin" type="password" inputMode="numeric" autoComplete="current-password" required autoFocus />
+        {next !== '/admin' && <input type="hidden" name="next" value={next} />}
         {error && ERRORS[error] && <p className="ad-err" role="alert">{ERRORS[error]}</p>}
         <button className="btn" type="submit" disabled={!adminConfigured()}>Enter</button>
       </form>
@@ -250,12 +251,12 @@ function People({ tab, q, rows, counts }: { tab: Tab; q: string; rows: Row[]; co
   );
 }
 
-type Search = { e?: string; tab?: string; q?: string; days?: string };
+type Search = { e?: string; tab?: string; q?: string; days?: string; next?: string };
 
 /** The hidden admin: PIN first, then the form fills and the traffic. Not linked, not indexed. */
 export default async function Admin({ searchParams }: { searchParams: Promise<Search> }) {
   const sp = await searchParams;
-  if (!(await isAdmin())) return <Login error={sp.e} />;
+  if (!(await isAdmin())) return <Login error={sp.e} next={safeNext(sp.next)} />;
 
   const days = [7, 14, 30].includes(Number(sp.days)) ? Number(sp.days) : 14;
   const tab = (TABS.some((t) => t.key === sp.tab) ? sp.tab : 'all') as Tab;
@@ -278,6 +279,9 @@ export default async function Admin({ searchParams }: { searchParams: Promise<Se
             ))}
           </nav>
           <a className="ad-btn" href="/api/admin/deck" download>Pitch deck (.pptx)</a>
+          <Link className="ad-btn" href="/postcards">Postcards</Link>
+          <Link className="ad-btn" href="/postcards/trading">Trading cards</Link>
+          <Link className="ad-btn" href="/postcards/social">Social ads</Link>
           <form method="post" action="/api/admin/logout">
             <button className="ad-btn" type="submit">Sign out</button>
           </form>

@@ -56,6 +56,7 @@ export default async function TradingCards() {
           </p>
           <div className="pc-actions">
             <PrintButton label="Print the sheets" />
+            <Link className="pc-switch" href="/admin">← Admin</Link>
             <Link className="pc-switch" href="/postcards">Postcards, 4 × 6 in</Link>
             <Link className="pc-switch" href="/postcards/social">Social ads, 1080 × 1080</Link>
           </div>

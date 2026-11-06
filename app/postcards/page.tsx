@@ -27,6 +27,7 @@ export default async function Postcards() {
           </p>
           <div className="pc-actions">
             <PrintButton label="Print the postcards" />
+            <Link className="pc-switch" href="/admin">← Admin</Link>
             <Link className="pc-switch" href="/postcards/trading">Trading cards, 2.5 × 3.5 in</Link>
             <Link className="pc-switch" href="/postcards/social">Social ads, 1080 × 1080</Link>
           </div>

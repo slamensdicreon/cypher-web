@@ -29,6 +29,7 @@ export default function SocialAds() {
             <a className="btn pc-print" href="/postcards/social/cypher-social-ads.zip" download>
               Download all {AD_CARDS.length} (ZIP)
             </a>
+            <Link className="pc-switch" href="/admin">← Admin</Link>
             <Link className="pc-switch" href="/postcards">Postcards, 4 × 6 in</Link>
             <Link className="pc-switch" href="/postcards/trading">Trading cards, 2.5 × 3.5 in</Link>
           </div>

@@ -1,22 +1,29 @@
 import { NextResponse } from 'next/server';
-import { COOKIE, adminConfigured, lockedOut, newSession, noteAttempt, pinMatches } from '@/lib/admin';
+import { COOKIE, adminConfigured, lockedOut, newSession, noteAttempt, pinMatches, safeNext } from '@/lib/admin';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
-const back = (req: Request, error?: string) =>
-  NextResponse.redirect(new URL(error ? `/admin?e=${error}` : '/admin', req.url), 303);
+const back = (req: Request, next: string, error?: string) => {
+  const url = new URL(error ? '/admin' : next, req.url);
+  if (error) {
+    url.searchParams.set('e', error);
+    if (next !== '/admin') url.searchParams.set('next', next);
+  }
+  return NextResponse.redirect(url, 303);
+};
 
 /** The PIN form posts here. */
 export async function POST(req: Request) {
-  if (!adminConfigured()) return back(req, 'unset');
-  if (await lockedOut(req.headers)) return back(req, 'locked');
   const form = await req.formData().catch(() => null);
+  const next = safeNext(form?.get('next'));
+  if (!adminConfigured()) return back(req, next, 'unset');
+  if (await lockedOut(req.headers)) return back(req, next, 'locked');
   const candidate = typeof form?.get('pin') === 'string' ? (form!.get('pin') as string) : '';
   const ok = pinMatches(candidate);
   await noteAttempt(req.headers, ok);
-  if (!ok) return back(req, 'pin');
-  const res = back(req);
+  if (!ok) return back(req, next, 'pin');
+  const res = back(req, next);
   const s = newSession();
   res.cookies.set(COOKIE, s.value, {
     httpOnly: true,
