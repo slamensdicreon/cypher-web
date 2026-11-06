@@ -179,82 +179,62 @@ const FORRESTER = 'https://delivery-sitecore.sitecorecontenthub.cloud/api/public
 /**
  * Symposium week (Swan and Dolphin, Tuesday November 10 to Thursday 12; selection closes Friday the
  * 13th at midnight Eastern). Five dated emails, Monday to Friday, sent at the daily run (9 to 10 AM
- * Eastern). One number a day: each email explains the last number and leaves a new one, so the value
- * arrives piece by piece and the mystery holds until Friday. Anyone who puts their company forward
+ * Eastern). The arc flatters, then proves, then asks: Monday they've been picked for a first look,
+ * Tuesday they know something the keynote room doesn't, Wednesday the credit and the math, Thursday
+ * why they belong in the twenty-five, Friday they pick back. Anyone who puts their company forward
  * stops getting them.
  */
 export const SYMPOSIUM_STEPS: TemplateStep[] = [
   {
     delay_days: 0,
     send_on: '2026-11-09',
-    subject: '21.',
-    preheader: 'Don’t Google it.',
+    subject: 'You’ve been selected.',
+    preheader: 'Out of everyone walking into Symposium tomorrow.',
     body: `{{first_name|Hi}},
 
-Tomorrow, a few thousand people walk into Symposium to hear what AI might do for SitecoreAI someday.
+You’ve been selected.
 
-Something in that building already does it. It isn’t on the agenda. It doesn’t have a booth. Nobody is going to announce it from a stage.
+Out of everyone walking into Symposium tomorrow, a short list gets to hear about this first. We didn’t pull names out of a hat. We picked people whose companies run on Sitecore and could use an unfair advantage. {{company|Your company}} made the list.
 
-Every morning this week, we’ll send you one number. Each one explains the last. By Friday you’ll know exactly what it is, and whether {{company|your company}} should be one of the few that gets it.
+What you were picked for: a first look at Cypher. Twenty-one specialists and the mind that runs them, building on SitecoreAI at a pace your board will assume is a typo.
 
-Today’s number is **21**.
+Everyone else will spend this week hearing what AI might do someday. You’ll spend it knowing what already does.
 
-Don’t Google it. You won’t find it.`,
-    cta_label: 'Look closer',
+Keep this one to yourself. That’s rather the point.`,
+    cta_label: 'See what you were selected for',
     cta_url: `${SITE}/`,
   },
   {
     delay_days: 0,
     send_on: '2026-11-10',
-    subject: '3.',
-    preheader: 'Yesterday’s number, explained.',
+    subject: 'You already know something they don’t.',
+    preheader: 'Watch the keynote with that in mind.',
     body: `{{first_name|Hi}},
 
-**21** is how many specialists it runs. Each one has a single job. One of them screenshots every page at three breakpoints and diffs it, pixel by pixel, against the original. And above all twenty-one, one mind that conducts them.
+This morning, a room full of smart people will hear about the future of SitecoreAI.
 
-Same crew every day. Nobody rotates off your account. And it never asks the same question twice: every answer becomes a rule for every build that follows.
+You’re one of the few who knows it’s already here.
 
-Sitecore MVPs built it. Ten years of every pitfall, every workaround and every 2 AM fix, written down so nobody has to learn them again.
+Cypher plans the build, builds it, checks it, and fixes what it finds before you find it. Every page is screenshotted at three breakpoints and diffed, pixel by pixel, against the original. Your part is three decisions. That’s the job now.
 
-Today’s number is **3**. Keep it in mind during the keynote.`,
-    cta_label: 'Keep looking',
+So when the keynote gets to the part about what’s coming, enjoy the feeling. Most people in that room won’t have it.`,
+    cta_label: 'See it for yourself',
     cta_url: `${SITE}/`,
   },
   {
     delay_days: 0,
     send_on: '2026-11-11',
-    subject: '$512.',
-    preheader: 'It isn’t a price.',
+    subject: 'Imagine taking the credit.',
+    preheader: 'You’d deserve it. Technically.',
     body: `{{first_name|Hi}},
 
-**3** is how many decisions you make per build.
+Picture your next leadership meeting. The roadmap everyone budgeted a year for is done. It took a week.
 
-It does everything else itself. It plans the build, builds it, checks it, and fixes what it finds before you find it. When something breaks at 2 AM, it works out why, repairs it and carries on. Nobody files a ticket. Nobody gets paged.
+Every head in the room turns to you. Let them.
 
-Pixel for pixel, on SitecoreAI. Your marketers edit it on day one.
+An agency quoted a SitecoreAI build at **$400,000+**. Cypher ran it for **$512**: the cost of the run, not the price of Cypher. For scale, Forrester put a plain lift-and-shift to XM Cloud at **$258,500**, and one insurer reported **5,000 hours** to move 23 sites. At partner rates, that’s **$750K to $1.25M**.
 
-That’s how an annual roadmap becomes a week.
-
-Today’s number is **$512**. It isn’t a price.`,
-    cta_label: 'Decide for yourself',
-    cta_url: `${SITE}/`,
-  },
-  {
-    delay_days: 0,
-    send_on: '2026-11-12',
-    subject: '225,000.',
-    preheader: 'And what $512 actually means.',
-    body: `{{first_name|Hi}},
-
-**$512** is what it cost to run a SitecoreAI build that an agency quoted at **$400,000+**.
-
-That’s not the price of Cypher. It’s the cost of the run, metered to the cent, and we have the receipts.
-
-For scale: Forrester put a plain lift-and-shift to XM Cloud at **$258,500**. Not a redesign. The same site, moved. One insurer reported **5,000 hours** to move 23 sites. At partner rates, that’s **$750K to $1.25M**.
-
-All week you’ve heard what’s possible. That’s the number nobody put on a slide.
-
-Today’s number is **225,000**. Tomorrow’s is the one that matters.
+Cypher doesn’t replace your team. It makes them look like they hired a hundred people. The credit stays with you. We insist.
 
 _Sources: [Forrester, The Total Economic Impact of Sitecore XM Cloud](${FORRESTER}), July 2025, commissioned by Sitecore. The dollar range for 5,000 hours is our estimate at $150 to $250 an hour._`,
     cta_label: 'See the math',
@@ -262,26 +242,41 @@ _Sources: [Forrester, The Total Economic Impact of Sitecore XM Cloud](${FORRESTE
   },
   {
     delay_days: 0,
-    send_on: '2026-11-13',
-    subject: '25.',
-    preheader: 'Selection closes at midnight.',
+    send_on: '2026-11-12',
+    subject: '{{company|You}} belongs in the twenty-five.',
+    preheader: 'Here’s why we think so.',
     body: `{{first_name|Hi}},
 
-**225,000** is how many events it has conducted. Every action passes one gateway that checks what each specialist is allowed to touch, and then lands in a log nobody can edit. Any build can be replayed, step by step. We don’t need you to believe us. We can show you.
+After Symposium, twenty-five companies get something nobody else in that building has. We think {{company|yours}} should be one of them.
 
-**25** is how many companies get it.
+You’ve sat through enough discovery workshops to know how this usually goes. Cypher doesn’t hold them. It never asks the same question twice: every answer becomes a rule for every build after. When something breaks, it finds why and fixes it before anyone files a ticket. Every action is logged, over 225,000 so far, and any build can be replayed step by step.
 
-After Symposium, Cypher sits down with twenty-five companies. You bring the website, the portal, the idea nobody would fund. You leave with it built, on SitecoreAI. Guaranteed, which is exactly why we can’t do it for everyone.
+Sitecore MVPs built it. Ten years of every pitfall and every 2 AM fix, written down so nobody has to learn them again.
 
-Selection closes tonight at midnight Eastern. Then we go quiet. If {{company|your company}} is chosen, you’ll hear from us. If not, you won’t.
+We picked you on Monday. All that’s left is putting {{company|your company}} forward. It takes ten seconds.`,
+    cta_label: 'Put {{company|your company}} forward',
+    cta_url: '',
+  },
+  {
+    delay_days: 0,
+    send_on: '2026-11-13',
+    subject: 'Tonight, you pick back.',
+    preheader: 'Selection closes at midnight Eastern.',
+    body: `{{first_name|Hi}},
 
-Ignorance is bliss. You’ve had five days of the alternative.`,
+On Monday, we picked you. Tonight it’s your turn.
+
+Selection closes at midnight Eastern. After that, Cypher sits down with twenty-five companies. They bring the website, the portal, the idea nobody would fund. They leave with it built, on SitecoreAI.
+
+Twenty-five. Not twenty-six. Once the seats are gone, we go quiet: no follow-up, no “just checking in.”
+
+You made the short list without asking. The final one takes ten seconds.`,
     cta_label: 'Put {{company|your company}} forward',
     cta_url: '',
   },
 ];
 
 export const TEMPLATES: Record<string, { label: string; steps: TemplateStep[] }> = {
-  symposium: { label: 'Symposium week: one number a day, Mon to Fri (Nov 9 to 13)', steps: SYMPOSIUM_STEPS },
+  symposium: { label: 'Symposium week: Mon to Fri (Nov 9 to 13)', steps: SYMPOSIUM_STEPS },
   starter: { label: 'Starter: three emails, days 0, 3 and 7', steps: STARTER_STEPS },
 };
