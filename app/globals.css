@@ -179,32 +179,32 @@ a.btn{display:inline-block;text-decoration:none;text-align:center}
 .terms:hover{color:var(--on-ink);border-color:var(--on-ink)}
 .end .q{margin:0;font-size:13px;color:var(--on-ink-quiet)}
 /* the terms: a legal document, on paper */
-.legal{padding:48px 0 var(--sec)}
+.legal{padding-top:40px;padding-bottom:var(--sec)}
 .legal-head h1{margin:0;font-size:clamp(40px,12vw,48px);font-weight:800;letter-spacing:-.045em;line-height:1}
-.legal-head p{margin:16px 0 0;font-size:19px;font-weight:300;line-height:1.45;color:var(--on-ink-soft);max-width:560px}
-.paper{margin-top:var(--block);background:var(--surface);color:var(--ink);border-radius:28px;padding:32px 22px 36px;box-shadow:0 30px 80px -40px rgba(0,0,0,.6)}
-.paper p,.paper li{font-size:16px;line-height:1.65;color:var(--text-2)}
+.legal-head p{margin:14px 0 0;font-size:18px;font-weight:300;line-height:1.45;color:var(--on-ink-soft);max-width:560px;text-wrap:balance}
+.paper{margin:32px -12px 0;background:var(--surface);color:var(--ink);border-radius:22px;padding:26px 18px 30px;box-shadow:0 30px 80px -40px rgba(0,0,0,.6)}
+.paper p,.paper li{font-size:16px;line-height:1.62;color:var(--text-2);text-wrap:pretty;overflow-wrap:break-word}
 .paper b{color:var(--ink);font-weight:800}
-.paper .pre{margin:0;font-size:17px;color:var(--ink)}
-.whereas{margin-top:24px;padding-top:22px;border-top:1px solid var(--mist)}
+.paper .pre{margin:0;font-size:16.5px;color:var(--ink)}
+.whereas{margin-top:22px;padding-top:20px;border-top:1px solid var(--mist)}
 .whereas p{margin:0 0 14px}
-.paper section{margin-top:28px;padding-top:28px;border-top:1px solid var(--mist)}
-.paper h2{margin:0 0 12px;font-size:22px;font-weight:800;letter-spacing:-.02em;line-height:1.2;color:var(--ink)}
+.paper section{margin-top:24px;padding-top:24px;border-top:1px solid var(--mist)}
+.paper h2{margin:0 0 10px;font-size:20px;font-weight:800;letter-spacing:-.02em;line-height:1.2;color:var(--ink);text-wrap:balance}
 .paper h2 span{color:var(--coral-text);margin-right:4px}
 .paper section p{margin:0 0 12px}
 .paper section p:last-child{margin-bottom:0}
 .paper ol{margin:0;padding:0;list-style:none;counter-reset:c}
-.paper ol li{counter-increment:c;position:relative;padding-left:34px;margin-bottom:8px}
+.paper ol li{counter-increment:c;position:relative;padding-left:28px;margin-bottom:8px}
 .paper ol li::before{content:"(" counter(c,lower-alpha) ")";position:absolute;left:0;font-weight:800;color:var(--ink)}
-.paper .caps p{font-size:14px;letter-spacing:.02em;line-height:1.75;color:var(--ink)}
-.sign{display:grid;grid-template-columns:minmax(0,1fr);gap:28px;margin-top:36px;padding-top:28px;border-top:1px solid var(--mist)}
+.paper .caps p{font-size:13.5px;letter-spacing:.015em;line-height:1.8;color:var(--ink)}
+.sign{display:grid;grid-template-columns:minmax(0,1fr);gap:24px;margin-top:32px;padding-top:24px;border-top:1px solid var(--mist)}
 .sign div{display:flex;flex-direction:column;gap:8px}
 .sign .who{font-size:13px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--text-3)}
 .sign .line{display:flex;align-items:flex-end;height:46px;border-bottom:2px solid var(--ink);padding-bottom:6px}
 .sign .line svg circle{fill:var(--ink)}.sign .line svg path{stroke:#ffffff}
 .sign .by{font-size:14px;color:var(--text-2)}
-.accept{margin-top:36px}
-.accept .btn{display:inline-block;width:auto;padding:17px 28px;text-decoration:none}
+.accept{margin-top:32px}
+.accept .btn{display:block;width:100%;padding:17px 16px;font-size:16.5px;text-decoration:none;white-space:nowrap}
 /* postcards: 4×6 in, sized off the card's own width so they print and preview alike */
 .pc-page{padding:48px 0 var(--sec)}
 .pc-intro h1{margin:0;font-size:clamp(40px,12vw,72px);font-weight:800;letter-spacing:-.045em;line-height:1}
@@ -379,7 +379,10 @@ tr.ad-dim td{opacity:.55}
   .card{padding:30px 30px 32px}
   .ad-tiles{grid-template-columns:repeat(6,minmax(0,1fr))}.ad-grid2{grid-template-columns:repeat(2,minmax(0,1fr))}
   .pc-pair{gap:32px;max-width:820px}.pc-case h2{font-size:30px}
-  .legal{padding:72px 0 var(--sec)}.legal-head,.paper{max-width:860px;margin-left:auto;margin-right:auto}
+  .legal{padding-top:72px}.legal-head,.paper{max-width:860px;margin-left:auto;margin-right:auto}
+  .legal-head p{font-size:22px}.paper{margin-top:var(--block);border-radius:28px}
+  .paper section{margin-top:28px;padding-top:28px}.paper ol li{padding-left:34px}.paper .caps p{font-size:14px}
+  .accept .btn{display:inline-block;width:auto;padding:17px 28px;font-size:18px}
   .legal-head h1{font-size:72px}.legal-head p{font-size:22px}
   .paper{padding:64px 72px 72px}.paper p,.paper li{font-size:17px}.paper h2{font-size:24px}
   .sign{grid-template-columns:1fr 1fr;gap:48px}
