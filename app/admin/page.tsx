@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import AdminNav from '@/components/admin/AdminNav';
 import { Resting } from '@/components/SiteHeader';
 import { adminConfigured, isAdmin, safeNext } from '@/lib/admin';
 import { dashboard, submissions, TABS, type Count, type Dashboard, type Tab } from '@/lib/adminData';
@@ -265,6 +266,7 @@ export default async function Admin({ searchParams }: { searchParams: Promise<Se
 
   return (
     <main className="wrap ad">
+      <AdminNav on="dashboard" />
       <header className="ad-top">
         <div>
           <h1>Admin</h1>

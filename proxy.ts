@@ -2,8 +2,8 @@ import { NextResponse, type NextRequest } from 'next/server';
 import { COOKIE, validToken } from '@/lib/adminToken';
 
 /**
- * The campaign pages (postcards, trading cards, social ads, and their images and ZIP) are for
- * signed-in admins only. This runs before the cache, so even the prebuilt files are covered.
+ * The campaign pages (postcards, trading cards, social ads, and their images and ZIP) and the admin's
+ * inner pages (/admin/...) are for signed-in admins only. /admin itself is the sign-in page. This runs before the cache, so even the prebuilt files are covered.
  */
 export function proxy(req: NextRequest) {
   if (validToken(req.cookies.get(COOKIE)?.value)) {
@@ -20,4 +20,4 @@ export function proxy(req: NextRequest) {
   return NextResponse.redirect(url, 307);
 }
 
-export const config = { matcher: ['/postcards', '/postcards/:path*'] };
+export const config = { matcher: ['/postcards', '/postcards/:path*', '/admin/:path+'] };
