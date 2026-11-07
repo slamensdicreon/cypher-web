@@ -8,17 +8,30 @@ const FLOOR = { w: 2396, h: 852, frames: 168, cx: 0.5, cy: 0.468 };
 /** Where Cypher's mark is (its height on the footage, 0..1) in each frame: he keeps dashing up to the Director. */
 const CYPHER_Y = [0.454,0.454,0.451,0.439,0.421,0.402,0.385,0.369,0.348,0.327,0.306,0.284,0.263,0.242,0.221,0.199,0.178,0.159,0.147,0.141,0.144,0.156,0.173,0.192,0.212,0.233,0.253,0.266,0.271,0.274,0.276,0.276,0.277,0.277,0.277,0.270,0.257,0.239,0.220,0.200,0.179,0.159,0.146,0.140,0.137,0.136,0.135,0.135,0.142,0.155,0.173,0.192,0.212,0.233,0.254,0.275,0.296,0.318,0.339,0.360,0.381,0.402,0.424,0.438,0.446,0.450,0.451,0.452,0.453,0.450,0.439,0.423,0.404,0.384,0.363,0.342,0.321,0.300,0.279,0.258,0.237,0.215,0.194,0.173,0.163,0.168,0.181,0.199,0.219,0.239,0.260,0.281,0.302,0.323,0.345,0.366,0.387,0.408,0.429,0.442,0.448,0.451,0.452,0.453,0.453,0.453,0.453,0.453,0.453,0.453,0.453,0.453,0.453,0.453,0.453,0.453,0.453,0.453,0.453,0.453,0.453,0.453,0.453,0.453,0.453,0.453,0.453,0.453,0.453,0.453,0.453,0.451,0.442,0.427,0.408,0.388,0.368,0.347,0.326,0.305,0.284,0.263,0.241,0.220,0.199,0.178,0.158,0.147,0.141,0.138,0.137,0.136,0.136,0.136,0.141,0.154,0.171,0.190,0.210,0.231,0.252,0.260,0.270,0.281,0.294,0.310,0.329,0.353];
 const SHOTS = [
-  // label, file, focus point for the slow push-in, label colour
-  { t: 7.6, d: 0.95, label: 'Plan.', img: 'plan', fx: 0, fy: 0.2, c: CORAL },
-  { t: 8.55, d: 0.95, label: 'Team.', img: 'team', fx: 0, fy: 0.9, c: LAV },
-  { t: 9.5, d: 0.95, label: 'Bliss.', img: 'bliss', fx: 0.55, fy: 0.3, c: WHITE },
-  { t: 10.45, d: 0.95, label: 'Everything.', img: 'everything', fx: 0.25, fy: 0.15, c: CORAL },
-  { t: 11.4, d: 0.95, label: 'Workbench.', img: 'workbench', fx: 0, fy: 0.15, c: LAV },
-  { t: 12.35, d: 0.42, label: 'Decisions.', img: 'decisions', fx: 0.4, fy: 0.4, c: WHITE, fast: true },
-  { t: 12.77, d: 0.42, label: 'Every move.', img: 'activity', fx: 0.4, fy: 0.3, c: CORAL, fast: true },
-  { t: 13.19, d: 0.5, label: 'Receipts.', img: 'scorecard', fx: 0.3, fy: 0.2, c: LAV, fast: true },
+  // label, file, focus point for the push-in, label colour
+  { t: 8.9, d: 1.1, label: 'Plan.', img: 'plan', fx: 0, fy: 0.2, c: CORAL },
+  { t: 10.0, d: 1.1, label: 'Team.', img: 'team', fx: 0, fy: 0.9, c: LAV },
+  { t: 11.1, d: 1.1, label: 'Bliss.', img: 'bliss', fx: 0.55, fy: 0.3, c: WHITE },
+  { t: 12.2, d: 1.1, label: 'Everything.', img: 'everything', fx: 0.25, fy: 0.15, c: CORAL },
+  { t: 13.3, d: 1.1, label: 'Workbench.', img: 'workbench', fx: 0, fy: 0.15, c: LAV },
+  { t: 14.4, d: 0.75, label: 'Needs you.', img: 'needs', fx: 0.3, fy: 0.75, c: WHITE },
+  { t: 15.15, d: 0.75, label: 'What’s next.', img: 'next', fx: 0, fy: 0.2, c: CORAL },
+  { t: 15.9, d: 0.75, label: 'Every task.', img: 'tasks', fx: 0, fy: 0.2, c: LAV },
+  { t: 16.65, d: 0.42, label: 'Decisions.', img: 'decisions', fx: 0.4, fy: 0.4, c: WHITE, fast: true },
+  { t: 17.07, d: 0.42, label: 'Every move.', img: 'activity', fx: 0.4, fy: 0.3, c: CORAL, fast: true },
+  { t: 17.49, d: 0.41, label: 'Receipts.', img: 'scorecard', fx: 0.3, fy: 0.2, c: LAV, fast: true },
 ];
-const ASPECT = { plan: 1476 / 1460, team: 2334 / 1610, bliss: 2480 / 1280, everything: 2550 / 1800, workbench: 2020 / 1560, decisions: 2550 / 660, activity: 2550 / 1800, scorecard: 2400 / 1800 };
+/** What it does, one word-slam per beat, in the site's own words. */
+const VERBS = [
+  { t: 17.9, txt: [['Plans it.', INK]], bg: CORAL },
+  { t: 18.45, txt: [['Builds it.', INK]], bg: LAVBG },
+  { t: 19.0, txt: [['Checks it.', INK]], bg: WHITE },
+  { t: 19.55, txt: [['Fixes it.', WHITE]], bg: VIOLET },
+  { t: 20.1, txt: [['Before you', WHITE], ['find it.', CORAL]], bg: INK },
+  { t: 21.0, txt: [['You make', WHITE], ['three decisions.', CORAL]], bg: INK, size: 150 },
+];
+const CTA = 22.4;
+const ASPECT = { needs: 2480 / 1320, next: 1720 / 900, tasks: 2390 / 1680, plan: 1476 / 1460, team: 2334 / 1610, bliss: 2480 / 1280, everything: 2550 / 1800, workbench: 2020 / 1560, decisions: 2550 / 660, activity: 2550 / 1800, scorecard: 2400 / 1800 };
 
 /** A decaying shake from `t0`: [dx, dy] in px. */
 function shake(t, t0, amp = 14, d = 0.28) {
@@ -34,19 +47,21 @@ const flash = (t, t0, peak = 0.5, d = 0.14) => {
 };
 
 VIDEOS.hood = {
-  id: 'hood', title: 'Under the hood', dur: 20.5,
+  id: 'hood', title: 'Under the hood', dur: 30,
   eye: {
     keys: [{ t: 0, gx: -0.7, gy: 0.2, open: 0.9, pr: 7 }, { t: 0.3, gx: 0, gy: 0, open: 1 }, { t: 1.95, open: 1.12, pr: 10.5 },
-      { t: 2.2, pr: 12 }, { t: 2.9, open: 1, pr: 7.2 }, { t: 14.0, gx: 0, gy: 0, open: 1, pr: 7.4 }, { t: 15.0, gx: 0.3, gy: 0.85 },
-      { t: 16.55, gx: 0.2, gy: 0.9, open: 1.12, pr: 10 }, { t: 17.3, open: 1, pr: 7.4, gx: 0.15, gy: 0.95 }, { t: 18.6, gx: 0, gy: 0 }],
-    blinks: [1.62, 18.2, 19.7],
+      { t: 2.2, pr: 12 }, { t: 2.9, open: 1, pr: 7.2 }, { t: 22.5, gx: 0, gy: 0, open: 1, pr: 7.4 }, { t: 23.5, gx: 0.3, gy: 0.85 },
+      { t: 25.1, gx: 0.2, gy: 0.9, open: 1.12, pr: 10 }, { t: 25.85, open: 1, pr: 7.4, gx: 0.15, gy: 0.95 }, { t: 27.1, gx: 0, gy: 0 },
+      { t: 28.4, gx: -0.8, gy: 0.1 }, { t: 28.9, gx: 0, gy: 0 }],
+    blinks: [1.62, 26.7, 28.2, 29.5],
   },
 
   frame(t) {
     if (t < 2.75) return this.intro(t);
     if (t < 3.15) return this.dive(t);
-    if (t < 7.6) return this.floor(t);
-    if (t < 13.85) return this.shots(t);
+    if (t < 8.9) return this.floor(t);
+    if (t < 17.9) return this.shots(t);
+    if (t < CTA) return this.verbs(t);
     return this.cta(t);
   },
 
@@ -94,9 +109,9 @@ VIDEOS.hood = {
     const n = Math.min(FLOOR.frames, Math.max(1, 1 + Math.floor(ft * 30)));
     // Camera: tight on Cypher, then a fast pull back, then a slow drift toward the Engineering pod.
     const pull = expo(p(t, 2.75, 5.0)) * 0.5 + eo(p(t, 2.75, 5.0)) * 0.5;
-    const hOnScreen = lerp(5200, 1020, pull) * U * lerp(1, 0.9, eio(p(t, 5.0, 7.6)));
+    const hOnScreen = lerp(5200, 1020, pull) * U * lerp(1, 0.88, eio(p(t, 5.0, 8.9)));
     const scale = hOnScreen / FLOOR.h;
-    const fx = lerp(FLOOR.cx, 0.6, eio(p(t, 4.6, 7.6)));
+    const fx = t < 7.0 ? lerp(FLOOR.cx, 0.64, eio(p(t, 4.6, 7.0))) : lerp(0.64, 0.38, eio(p(t, 7.0, 8.9)));
     // the camera rides with Cypher while it is close, then lets him go
     const fyy = lerp(CYPHER_Y[n - 1], 0.47, pull);
     const anchorY = H * 0.46;
@@ -104,8 +119,8 @@ VIDEOS.hood = {
     const img = `<img src=".cache/floor/f_${String(n).padStart(4, '0')}.jpg" style="position:absolute;left:${left}px;top:${top}px;width:${FLOOR.w * scale}px;height:${FLOOR.h * scale}px">`;
     const fade = `<div class="layer" style="background:linear-gradient(180deg,${FLOOR_BG} 0%,rgba(23,22,53,0) 22%,rgba(23,22,53,0) 58%,${FLOOR_BG}ee 80%,${FLOOR_BG} 100%)"></div>`;
     const beat = (txt, t0, t1, c = WHITE) => (t >= t0 - 0.02 && t < t1 ? slam(t, t0, words(txt, t, t0, { size: 110, color: c, st: 0.04, dur: 0.3 }), 1.15) : '');
-    const lines = beat('21 specialists.', 3.5, 4.55) + beat('One floor.', 4.55, 5.5) + beat([['Working', WHITE], ['together.', CORAL]], 5.5, 6.5) + beat([['Every move,', WHITE], ['on the record.', LAV]], 6.5, 7.6);
-    const fl = flash(t, 3.5, 0.18) + flash(t, 4.55, 0.14) + flash(t, 5.5, 0.14) + flash(t, 6.5, 0.14);
+    const lines = beat('21 specialists.', 3.5, 4.7) + beat('One floor.', 4.7, 5.9) + beat([['Working', WHITE], ['together.', CORAL]], 5.9, 7.1) + beat([['Every move,', WHITE], ['on the record.', LAV]], 7.1, 8.9);
+    const fl = flash(t, 3.5, 0.18) + flash(t, 4.7, 0.14) + flash(t, 5.9, 0.14) + flash(t, 7.1, 0.14);
     return {
       bg: FLOOR_BG,
       html: img + fade + block(fy(0.76), lines) + (fl ? `<div class="layer" style="background:#fff;opacity:${fl}"></div>` : ''),
@@ -148,18 +163,33 @@ VIDEOS.hood = {
     return { bg: INK, html: grid + `<div class="layer" style="transform:translate(${sh[0]}px,${sh[1]}px)">${html}</div>` + (fl ? `<div class="layer" style="background:#fff;opacity:${fl}"></div>` : '') };
   },
 
+  verbs(t) {
+    const scene = (i) => {
+      const v = VERBS[i];
+      const lines = v.txt.map(([txt, c]) => `<div class="tight" style="font-size:${u(v.size ?? 172)};color:${c}">${txt}</div>`).join('');
+      const [sx, sy] = shake(t, v.t + 0.06, 16);
+      return { bg: v.bg, html: `<div class="layer" style="transform:translate(${sx}px,${sy}px)">${block(fy(0.36), slam(t, v.t + 0.04, lines, 1.3))}</div>` };
+    };
+    let i = 0;
+    while (i + 1 < VERBS.length && VERBS[i + 1].t <= t) i++;
+    if (i === 0) return wipe(t, VERBS[0].t, () => this.shots(VERBS[0].t - 0.001), () => scene(0), 0.16);
+    return wipe(t, VERBS[i].t, () => scene(i - 1), () => scene(i), 0.14);
+  },
+
   cta(t) {
-    const lt = t - 13.85;
-    // the last screen falls away as the eye pops back in
-    const away = eio(p(t, 13.85, 14.2));
-    const last = away < 1 ? `<div class="layer" style="opacity:${1 - away};transform:scale(${1 - 0.5 * away}) rotate(${-10 * away}deg)">${this.shots(13.84).html}</div>` : '';
-    const eyeS = lerp(0, 1, back(p(t, 13.95, 14.4)));
+    const C = CTA;
+    // the last line falls away as the eye pops back in
+    const away = eio(p(t, C, C + 0.35));
+    const last = away < 1 ? `<div class="layer" style="opacity:${1 - away};transform:scale(${1 - 0.4 * away})">${this.verbs(C - 0.001).html}</div>` : '';
+    const eyeS = lerp(0, 1, back(p(t, C + 0.1, C + 0.55)));
     const eye = eyeEl(pose(this, t), { x: W / 2, y: fy(0.15), size: 300, bg: INK, scale: eyeS });
-    const [sx, sy] = shake(t, 16.55, 18, 0.35);
-    const lines = words('See it on', t, 14.55, { size: 150, st: 0.06 }) + words('your site', t, 14.85, { size: 150, st: 0.06 }) + words('today.', t, 15.15, { size: 150, st: 0.06 });
-    const lit = t >= 16.5 ? slam(t, 16.55, `<div class="tight" style="font-size:${u(150)};color:${CORAL}">Literally.</div>`, 1.5) : '';
-    const pill = `<div style="display:inline-block;margin-top:${u(50)};padding:${u(22)} ${u(40)};border-radius:999px;background:${WHITE};color:${INK};font-size:${u(46)};letter-spacing:-.02em;opacity:${eo(p(t, 17.3, 17.7))};transform:translateY(${u(24 * (1 - eo(p(t, 17.3, 17.7))))})">ignoranceisbliss.ai</div>`;
-    const fl = flash(t, 16.55, 0.45, 0.16);
+    const [sx, sy] = shake(t, C + 2.7, 18, 0.35);
+    const lines = words('See it on', t, C + 0.7, { size: 150, st: 0.06 }) + words('your site', t, C + 1.0, { size: 150, st: 0.06 }) + words('today.', t, C + 1.3, { size: 150, st: 0.06 });
+    const lit = t >= C + 2.65 ? slam(t, C + 2.7, `<div class="tight" style="font-size:${u(150)};color:${CORAL}">Literally.</div>`, 1.5) : '';
+    const pin = eo(p(t, C + 3.45, C + 3.85));
+    const pulse = 1 + 0.06 * Math.max(0, Math.sin(p(t, C + 5.3, C + 5.8) * Math.PI));
+    const pill = `<div style="display:inline-block;margin-top:${u(50)};padding:${u(22)} ${u(40)};border-radius:999px;background:${WHITE};color:${INK};font-size:${u(46)};letter-spacing:-.02em;opacity:${pin};transform-origin:0 50%;transform:translateY(${u(24 * (1 - pin))}) scale(${pulse})">ignoranceisbliss.ai</div>`;
+    const fl = flash(t, C + 2.7, 0.45, 0.16);
     return {
       bg: INK,
       html: last + `<div class="layer" style="transform:translate(${sx}px,${sy}px)">${eye}${block(fy(0.33), lines + lit + pill)}</div>` + (fl ? `<div class="layer" style="background:#fff;opacity:${fl}"></div>` : ''),
