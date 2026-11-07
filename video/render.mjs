@@ -4,6 +4,7 @@
 //   node video/render.mjs receipt              one video, both formats
 //   node video/render.mjs receipt --stills 1,4.5,7   PNG stills at those seconds, to check a layout
 //   --out <dir>   where the files go (default: video/out)
+//   --audio <file>  also write <name>-with-audio.mp4 with that track under the picture (for review)
 //
 // Needs Playwright's Chromium and ffmpeg. Each frame is a pure function of time (videos.js), so
 // renders are exact and repeatable.
@@ -25,6 +26,7 @@ const args = process.argv.slice(2);
 const opt = (name) => { const i = args.indexOf(name); return i >= 0 ? args[i + 1] : undefined; };
 const outDir = resolve(opt('--out') ?? join(here, 'out'));
 const stills = opt('--stills')?.split(',').map(Number);
+const audio = opt('--audio') ? resolve(opt('--audio')) : null;
 const only = args.filter((a, i) => !a.startsWith('--') && !(i > 0 && args[i - 1].startsWith('--')));
 const formats = opt('--format') ? [opt('--format')] : Object.keys(FORMATS);
 
@@ -77,6 +79,13 @@ for (const format of formats) {
     }
     ff.stdin.end();
     await done;
+    // A review cut with a temp track laid under the picture (--audio <file>). The silent master stays as it is.
+    if (audio) {
+      const withAudio = file.replace(/\.mp4$/, '-with-audio.mp4');
+      const r = spawnSync('ffmpeg', ['-y', '-loglevel', 'error', '-i', file, '-i', audio, '-map', '0:v', '-map', '1:a', '-c:v', 'copy', '-c:a', 'aac', '-b:a', '256k', '-shortest', '-movflags', '+faststart', withAudio], { stdio: 'inherit' });
+      if (r.status !== 0) throw new Error('could not lay the audio under ' + file);
+      console.log(withAudio);
+    }
     // A cover image for each video: the frame where the hook lands.
     console.log(file, `${frames} frames`);
   }
