@@ -33,6 +33,9 @@ const VERBS = [
 const CTA = 22.4;
 const ASPECT = { needs: 2480 / 1320, next: 1720 / 900, tasks: 2390 / 1680, plan: 1476 / 1460, team: 2334 / 1610, bliss: 2480 / 1280, everything: 2550 / 1800, workbench: 2020 / 1560, decisions: 2550 / 660, activity: 2550 / 1800, scorecard: 2400 / 1800 };
 
+/** 16:9 and wider get their own composition: screens on the right, labels on the left. */
+const land = () => W > H * 1.3;
+
 /** A decaying shake from `t0`: [dx, dy] in px. */
 function shake(t, t0, amp = 14, d = 0.28) {
   const x = (t - t0) / d;
@@ -128,7 +131,8 @@ VIDEOS.hood = {
   },
 
   shots(t) {
-    const maxW = 1010 * U, cardTop = fy(0.2), maxH = Math.min(960 * U, H - cardTop - (H > F ? 400 : 40) * U);
+    const L = land();
+    const maxW = L ? W * 0.6 : 1010 * U, cardTop = fy(0.2), maxH = L ? H - 150 * U : Math.min(960 * U, H - cardTop - (H > F ? 400 : 40) * U);
     let html = '';
     let fl = 0, sh = [0, 0];
     const cur = SHOTS.reduce((k, s, i) => (t >= s.t ? i : k), 0);
@@ -148,13 +152,13 @@ VIDEOS.hood = {
         ty = 240 * U * y; sc = lerp(1, 0.86, y); op = lerp(1, 0.25, y); rot = -4 * dir * y;
       }
       const push = 1 + (s.fast ? 0.18 : 0.42) * eio(p(lt, dropD * 0.8, s.d + 0.25));
-      const cx = W / 2, cy = cardTop + h / 2;
+      const cx = L ? W - 90 * U - w / 2 : W / 2, cy = L ? H / 2 : cardTop + h / 2;
       html += `<div style="position:absolute;left:${cx - w / 2}px;top:${cy - h / 2}px;width:${w}px;height:${h}px;border-radius:${u(26)};overflow:hidden;opacity:${op};
         transform:translateY(${ty}px) rotate(${rot}deg) scale(${sc});box-shadow:0 ${u(40)} ${u(90)} rgba(0,0,0,.55),0 0 0 1px rgba(183,166,255,.22)">
         <img src="assets/hood/${s.img}.jpg" style="width:100%;height:100%;object-fit:cover;object-position:top;transform-origin:${s.fx * 100}% ${s.fy * 100}%;transform:scale(${push})"></div>`;
       if (i === cur) {
         const lab = slam(t, s.t + dropD * 0.6, `<div class="tight" style="font-size:${u(s.label.length > 10 ? 132 : 160)};color:${s.c}">${s.label}</div>`, 1.35);
-        html += block(fy(0.035), lab);
+        html += L ? `<div style="position:absolute;left:${u(96)};width:${W * 0.3}px;top:${H / 2 - 70 * U}px">${lab.replace(/font-size:[^;]+;/, `font-size:${u(s.label.length > 10 ? 112 : 150)};`)}</div>` : block(fy(0.035), lab);
         fl = flash(t, s.t + dropD, s.fast ? 0.3 : 0.4);
         sh = shake(t, s.t + dropD, s.fast ? 10 : 16);
       }
@@ -166,9 +170,9 @@ VIDEOS.hood = {
   verbs(t) {
     const scene = (i) => {
       const v = VERBS[i];
-      const lines = v.txt.map(([txt, c]) => `<div class="tight" style="font-size:${u(v.size ?? 172)};color:${c}">${txt}</div>`).join('');
+      const lines = v.txt.map(([txt, c]) => `<div class="tight" style="font-size:${u((v.size ?? 172) * (land() ? 1.35 : 1))};color:${c}">${txt}</div>`).join('');
       const [sx, sy] = shake(t, v.t + 0.06, 16);
-      return { bg: v.bg, html: `<div class="layer" style="transform:translate(${sx}px,${sy}px)">${block(fy(0.36), slam(t, v.t + 0.04, lines, 1.3))}</div>` };
+      return { bg: v.bg, html: `<div class="layer" style="transform:translate(${sx}px,${sy}px)">${block(fy(land() ? 0.3 : 0.36), slam(t, v.t + 0.04, lines, 1.3))}</div>` };
     };
     let i = 0;
     while (i + 1 < VERBS.length && VERBS[i + 1].t <= t) i++;
@@ -182,17 +186,19 @@ VIDEOS.hood = {
     const away = eio(p(t, C, C + 0.35));
     const last = away < 1 ? `<div class="layer" style="opacity:${1 - away};transform:scale(${1 - 0.4 * away})">${this.verbs(C - 0.001).html}</div>` : '';
     const eyeS = lerp(0, 1, back(p(t, C + 0.1, C + 0.55)));
-    const eye = eyeEl(pose(this, t), { x: W / 2, y: fy(0.15), size: 300, bg: INK, scale: eyeS });
+    const L = land();
+    const eye = eyeEl(pose(this, t), L ? { x: W * 0.25, y: H / 2, size: 560, bg: INK, scale: eyeS } : { x: W / 2, y: fy(0.15), size: 300, bg: INK, scale: eyeS });
     const [sx, sy] = shake(t, C + 2.7, 18, 0.35);
-    const lines = words('See it on', t, C + 0.7, { size: 150, st: 0.06 }) + words('your site', t, C + 1.0, { size: 150, st: 0.06 }) + words('today.', t, C + 1.3, { size: 150, st: 0.06 });
-    const lit = t >= C + 2.65 ? slam(t, C + 2.7, `<div class="tight" style="font-size:${u(150)};color:${CORAL}">Literally.</div>`, 1.5) : '';
+    const cs = land() ? 172 : 150;
+    const lines = words('See it on', t, C + 0.7, { size: cs, st: 0.06 }) + words('your site', t, C + 1.0, { size: cs, st: 0.06 }) + words('today.', t, C + 1.3, { size: cs, st: 0.06 });
+    const lit = t >= C + 2.65 ? slam(t, C + 2.7, `<div class="tight" style="font-size:${u(cs)};color:${CORAL}">Literally.</div>`, 1.5) : '';
     const pin = eo(p(t, C + 3.45, C + 3.85));
     const pulse = 1 + 0.06 * Math.max(0, Math.sin(p(t, C + 5.3, C + 5.8) * Math.PI));
     const pill = `<div style="display:inline-block;margin-top:${u(50)};padding:${u(22)} ${u(40)};border-radius:999px;background:${WHITE};color:${INK};font-size:${u(46)};letter-spacing:-.02em;opacity:${pin};transform-origin:0 50%;transform:translateY(${u(24 * (1 - pin))}) scale(${pulse})">ignoranceisbliss.ai</div>`;
     const fl = flash(t, C + 2.7, 0.45, 0.16);
     return {
       bg: INK,
-      html: last + `<div class="layer" style="transform:translate(${sx}px,${sy}px)">${eye}${block(fy(0.33), lines + lit + pill)}</div>` + (fl ? `<div class="layer" style="background:#fff;opacity:${fl}"></div>` : ''),
+      html: last + `<div class="layer" style="transform:translate(${sx}px,${sy}px)">${eye}${L ? `<div style="position:absolute;left:${W * 0.47}px;right:${u(96)};top:${H * 0.17}px">${lines + lit + pill}</div>` : block(fy(0.33), lines + lit + pill)}</div>` + (fl ? `<div class="layer" style="background:#fff;opacity:${fl}"></div>` : ''),
     };
   },
 };

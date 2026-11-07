@@ -19,7 +19,7 @@ const { chromium } = require('playwright');
 const ts = require('typescript');
 
 const FPS = 30;
-const FORMATS = { vertical: [1080, 1920], square: [1080, 1080] };
+const FORMATS = { vertical: [1080, 1920], square: [1080, 1080], landscape: [1920, 1080] };
 
 const args = process.argv.slice(2);
 const opt = (name) => { const i = args.indexOf(name); return i >= 0 ? args[i + 1] : undefined; };
