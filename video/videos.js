@@ -300,4 +300,6 @@ window.renderFrame = (id, t, fps = 30) => {
   st.style.setProperty('--u', U + 'px');
   st.style.background = r.bg;
   st.innerHTML = r.html;
+  // Footage frames and screenshots: wait until every image is decoded, so no frame is captured half-drawn.
+  return Promise.all([...st.querySelectorAll('img')].map((i) => i.decode().catch(() => {})));
 };

@@ -11,3 +11,4 @@ next-env.d.ts
 # social video renders
 /video/out/
 /video/eye.js
+/video/.cache/

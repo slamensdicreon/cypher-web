@@ -7,8 +7,8 @@
 //
 // Needs Playwright's Chromium and ffmpeg. Each frame is a pure function of time (videos.js), so
 // renders are exact and repeatable.
-import { spawn } from 'node:child_process';
-import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { spawn, spawnSync } from 'node:child_process';
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
@@ -35,6 +35,14 @@ const body = js.replace(/^export\s+/gm, '').replace(/^\s*export\s*\{\s*\};?\s*$/
 writeFileSync(join(here, 'eye.js'), `(() => {\n${body}\nwindow.draw = draw;\nwindow.HERO_GEO = HERO_GEO;\n})();\n`);
 
 mkdirSync(outDir, { recursive: true });
+
+// The Floor footage for "Under the hood", as numbered JPEG frames the player can show one at a time.
+const floorDir = join(here, '.cache', 'floor');
+if (!existsSync(join(floorDir, 'f_0001.jpg'))) {
+  mkdirSync(floorDir, { recursive: true });
+  const r = spawnSync('ffmpeg', ['-loglevel', 'error', '-y', '-i', join(here, 'assets', 'hood', 'floor.mp4'), '-q:v', '2', join(floorDir, 'f_%04d.jpg')], { stdio: 'inherit' });
+  if (r.status !== 0) throw new Error('could not extract the Floor frames');
+}
 const browser = await chromium.launch();
 
 for (const format of formats) {
