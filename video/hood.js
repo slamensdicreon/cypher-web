@@ -12,7 +12,9 @@
  *  28.32                        You make / three / decisions. That's the job now.
  *  31.0  bass drops out         the eye returns: See it on your site today.
  *  32.98 biggest hit            Literally.
- *  33.56                        ignoranceisbliss.ai; the outro closes the eye: nothing needs you.
+ *  33.56                        ignoranceisbliss.ai
+ *  37.64 / 38.23 / 38.53         Cypher swallows the screen: it inhales the words, gulps, and lunges until its pupil is all there is
+ *  39.5  outro                  in the dark, the resting eye and the address; fade.
  *
  * The screens are real captures of the platform running against its simulator (assets/hood); the
  * Floor is its own replay, recorded frame by frame. */
@@ -79,8 +81,8 @@ VIDEOS.hood = {
       { t: 3.6, open: 1, pr: 7.2 }, { t: 19.6, gx: 0, gy: 0, open: 1, pr: 7.2 }, { t: 20.35, gx: 0.35, gy: 0.85 }, { t: 21.7, gx: 0, gy: 0, open: 1.1, pr: 9.5 },
       { t: 22.2, open: 1, pr: 7.2 }, { t: 31.1, gx: 0, gy: 0 }, { t: 31.5, gx: 0.5, gy: 0.7 }, { t: 32.98, open: 1.12, pr: 10.2 },
       { t: 33.7, open: 1, pr: 7.4, gx: 0.4, gy: 0.85 }, { t: 35.32, gx: 0, gy: 0, open: 1.1, pr: 9.6 }, { t: 36.2, open: 1, pr: 7.4 },
-      { t: 37.64, gx: -0.85, gy: 0.1 }, { t: 38.23, gx: 0.85, gy: 0.1 }, { t: 38.53, gx: 0, gy: 0 }, { t: 40.6, open: 0 }],
-    blinks: [2.7, 34.6, 37.0, 39.4],
+      { t: 36.7, gx: 0.45, gy: 0.8 }, { t: 37.5, open: 1.15, pr: 11 }, { t: 38.15, gx: 0, gy: 0 }, { t: 38.45, open: 1.12, pr: 12.5 }],
+    blinks: [2.7, 34.6, 38.25],
   },
 
   frame(t) {
@@ -271,23 +273,46 @@ VIDEOS.hood = {
     const C = CTA, L = land();
     const away = eio(p(t, C, C + 0.3));
     const last = away < 1 ? `<div class="layer" style="opacity:${1 - away};transform:scale(${1 - 0.4 * away})">${this.verbs(C - 0.001).html}</div>` : '';
-    const eyeS = back(p(t, C + 0.02, C + 0.4));
-    const eye = eyeEl(pose(this, t), L ? { x: W * 0.25, y: H / 2, size: 560, bg: INK, scale: eyeS } : { x: W / 2, y: fy(0.15), size: 300, bg: INK, scale: eyeS });
+    if (t >= 39.2) return this.signoff(t);
+    // where the eye is: its CTA spot, then (from the lunge on 38.53) the middle of the frame
+    const home = L ? { x: W * 0.25, y: H / 2, size: 560 } : { x: W / 2, y: fy(0.15), size: 300 };
+    const go = eio(p(t, 38.45, 38.75));
+    const ex = lerp(home.x, W / 2, go), ey = lerp(home.y, H / 2, go);
+    const gulp = Math.sin(clamp((t - 38.23) / 0.28) * Math.PI); // a squash on the gulp
+    const eyeS = back(p(t, C + 0.02, C + 0.4)) * (1 + 0.12 * eo(p(t, 37.5, 37.9)));
+    const eye = eyeEl(pose(this, t), { x: ex, y: ey, size: home.size, bg: INK, scale: eyeS });
+    const lunge = t < 38.6 ? 1 : Math.pow(2, 10 * Math.pow(p(t, 38.6, 39.2), 1.6) * 0.62);
+    const eyeLayer = `<div class="layer" style="transform-origin:${ex}px ${ey}px;transform:scale(${lunge}) scale(${1 + 0.16 * gulp},${1 - 0.16 * gulp})">${eye}</div>`;
     const cs = L ? 172 : 150;
     const lines = words('See it on', t, C + 0.25, { size: cs, st: 0.06 }) + words('your site', t, C + 0.6, { size: cs, st: 0.06 }) + words('today.', t, 32.1, { size: cs, st: 0.06 });
     const lit = t >= 32.93 ? slam(t, 32.98, `<div class="tight" style="font-size:${u(cs)};color:${CORAL}">Literally.</div>`, 1.5) : '';
     const pin = eo(p(t, 33.56, 33.9));
     const pulse = 1 + 0.08 * (t >= 33.88 ? 1 - eo(p(t, 33.88, 34.15)) : 0) + 0.06 * Math.max(0, Math.sin(p(t, 36.15, 36.6) * Math.PI));
     const pill = `<div style="display:inline-block;margin-top:${u(50)};padding:${u(22)} ${u(40)};border-radius:999px;background:${WHITE};color:${INK};font-size:${u(46)};letter-spacing:-.02em;opacity:${pin};transform-origin:0 50%;transform:translateY(${u(24 * (1 - pin))}) scale(${pulse})">ignoranceisbliss.ai</div>`;
-    const tag = `<div style="margin-top:${u(30)};font-size:${u(36)};font-weight:500;color:${LAV};opacity:${eo(p(t, 39.6, 40.4)) * 0.9}">Ignorance is bliss.</div>`;
-    let [sx, sy] = shake(t, 32.98, 18, 0.35);
-    for (const h of [33.88, 35.32, 37.64, 38.23, 38.53]) { const [a, b] = shake(t, h, 5, 0.2); sx += a; sy += b; }
-    const body = lines + lit + pill + tag;
+    const body = lines + lit + pill;
     const bodyEl = L ? `<div style="position:absolute;left:${W * 0.47}px;right:${u(96)};top:${H * 0.15}px">${body}</div>` : block(fy(0.33), body);
-    const end = p(t, 41.5, 42.15);
+    // the inhale on 37.64: everything is pulled into the eye, spinning, shrinking to its pupil
+    const suck = Math.pow(p(t, 37.64, 38.22), 2.2);
+    const words_ = suck < 1 ? `<div class="layer" style="transform-origin:${home.x}px ${home.y}px;transform:scale(${1 - suck}) rotate(${-38 * suck}deg);opacity:${1 - Math.pow(suck, 3)}">${bodyEl}</div>` : '';
+    let [sx, sy] = shake(t, 32.98, 18, 0.35);
+    for (const h of [33.88, 35.32]) { const [a2, b2] = shake(t, h, 5, 0.2); sx += a2; sy += b2; }
+    { const [a2, b2] = shake(t, 38.23, 12, 0.25); sx += a2; sy += b2; }
     return {
       bg: INK,
-      html: last + `<div class="layer" style="transform:translate(${sx}px,${sy}px)">${eye}${bodyEl}</div>` + whiteout(flash(t, 32.98, 0.5, 0.16) + flash(t, 33.88, 0.12)) + (end > 0 ? `<div class="layer" style="background:${INK};opacity:${end}"></div>` : ''),
+      html: last + `<div class="layer" style="transform:translate(${sx}px,${sy}px)">${words_}${eyeLayer}</div>` + whiteout(flash(t, 32.98, 0.5, 0.16) + flash(t, 33.88, 0.12)),
     };
+  },
+
+  /** Swallowed: in the dark, the resting eye (nothing needs you) and the address, then a fade. */
+  signoff(t) {
+    const L = land();
+    const a = eo(p(t, 39.6, 40.1)), b = eo(p(t, 39.9, 40.4)), c = eo(p(t, 40.15, 40.65));
+    const rest = { gx: 0, gy: 0, open: 0, pr: 7, bx: 0, by: 0, bvx: 0, bvy: 0 };
+    const eye = eyeEl(rest, { x: W / 2, y: H / 2 - 130 * U, size: 190, bg: INK, scale: lerp(0.7, 1, a) });
+    const text = `<div style="position:absolute;left:0;right:0;top:${H / 2 + 10 * U}px;text-align:center">
+      <div style="font-size:${u(L ? 46 : 50)};color:${WHITE};letter-spacing:-.02em;opacity:${b};transform:translateY(${u(16 * (1 - b))})">ignoranceisbliss.ai</div>
+      <div style="margin-top:${u(16)};font-size:${u(34)};font-weight:500;color:${LAV};opacity:${c * 0.9}">Ignorance is bliss.</div></div>`;
+    const end = p(t, 41.5, 42.15);
+    return { bg: INK, html: `<div style="opacity:${a}">${eye}</div>` + text + (end > 0 ? `<div class="layer" style="background:${INK};opacity:${end}"></div>` : '') };
   },
 };
