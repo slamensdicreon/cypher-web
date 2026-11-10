@@ -4,7 +4,7 @@ import AdminNav from '@/components/admin/AdminNav';
 import { Resting } from '@/components/SiteHeader';
 import { adminConfigured, isAdmin, safeNext } from '@/lib/admin';
 import { dashboard, submissions, TABS, type Count, type Dashboard, type Tab } from '@/lib/adminData';
-import { USE_CASES } from '@/lib/postcards';
+import { RETIRED, USE_CASES } from '@/lib/postcards';
 import type { Row } from '@/lib/store';
 
 export const dynamic = 'force-dynamic';
@@ -28,12 +28,10 @@ const when = (d: Date) =>
 const shortDay = (iso: string) =>
   new Intl.DateTimeFormat('en-US', { timeZone: 'UTC', month: 'short', day: 'numeric' }).format(new Date(`${iso}T00:00:00Z`));
 
-/** Every card's place and version, by id, for the postcard table. */
-const CARD_INFO = new Map(
-  USE_CASES.flatMap((u) =>
-    u.cards.map((c, i) => [c.id, { place: u.place, version: u.cards.length === 2 ? (i ? 'B' : 'A') : `${u.n}${i + 1}`, line: c.line }] as const),
-  ),
-);
+/** The six cards in print, by id, for the postcard table. */
+const CARD_INFO = new Map(USE_CASES.flatMap((u) => u.cards.map((c, i) => [c.id, { place: 'Print run', version: `${u.n}${i + 1}`, line: c.line }] as const)));
+/** Retired cards: off the pages, but a scan of one still gets its name. */
+const RETIRED_INFO = new Map(RETIRED.flatMap((u) => u.cards.map((c) => [c.id, { place: `Retired · ${u.place}`, version: '', line: c.line }] as const)));
 
 function Login({ error, next }: { error?: string; next: string }) {
   return (
@@ -160,7 +158,8 @@ function Funnel({ d }: { d: Dashboard }) {
 
 function Cards({ d }: { d: Dashboard }) {
   const rows = [...CARD_INFO.keys()].map((id) => d.cards.find((c) => c.card === id) ?? { card: id, scans: 0, ok: 0, declined: 0 });
-  const other = d.cards.filter((c) => !CARD_INFO.has(c.card));
+  // retired or unknown cards only appear once they have scans
+  const other = d.cards.filter((c) => !CARD_INFO.has(c.card) && (c.scans || c.ok || c.declined));
   rows.sort((a, b) => b.scans - a.scans || b.ok - a.ok || a.card.localeCompare(b.card));
   return (
     <section className="ad-card ad-wide">
@@ -172,7 +171,7 @@ function Cards({ d }: { d: Dashboard }) {
           </thead>
           <tbody>
             {[...rows, ...other].map((c) => {
-              const info = CARD_INFO.get(c.card);
+              const info = CARD_INFO.get(c.card) ?? RETIRED_INFO.get(c.card);
               return (
                 <tr key={c.card} className={c.scans || c.ok ? undefined : 'ad-dim'}>
                   <td><b>{c.card}</b>{info && <span className="ad-v"> {info.version}</span>}</td>

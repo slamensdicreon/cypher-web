@@ -1,12 +1,13 @@
 /**
- * The postcard campaign: eleven places around the Swan and Dolphin, two versions of the card for
- * each, so the better line can be told by its scans; and six evergreen cards for anywhere.
+ * The postcard campaign. It started as eleven places around the Swan and Dolphin with two versions of
+ * the card each, plus evergreen cards; the print run is now six cards that work anywhere (USE_CASES).
+ * The rest are RETIRED: off the pages, kept so their scans still have a name.
  * Every QR code carries the card's id in `?c=`, so each submission says which card earned it.
  * Guardrails: no Icreon branding, $512 is the cost of a run (never the price), and nothing hints
  * at who gets declined.
  */
 /** The card's colours, from the brand palette. */
-export type Theme = 'ink' | 'coral' | 'lavender' | 'white' | 'violet';
+export type Theme = 'ink' | 'coral' | 'lavender' | 'white' | 'violet' | 'iris';
 
 /** A still pose of the eye: where it looks (-1..1), how open it is, the pupil radius. */
 export type EyeState = { name: string; gx: number; gy: number; open: number; pr: number };
@@ -51,7 +52,7 @@ const c = (id: string, theme: Theme, eye: keyof typeof EYE, line: string, payoff
   kicker,
 });
 
-export const USE_CASES: UseCase[] = [
+const ALL_EARLIER: UseCase[] = [
   { n: '01', place: 'In the bathroom', cards: [
     c('pc01a', 'ink', 'closed', 'You’ve been in this bathroom longer than our last migration.', 'Take your time.', 'Wash your hands first.'),
     c('pc01b', 'lavender', 'side', 'Somewhere, an agency is billing for this break.', 'We’d have shipped the homepage.', 'Flush with confidence.'),
@@ -119,3 +120,23 @@ export const USE_CASES: UseCase[] = [
     c('pcnews1', 'ink', 'side', 'Some models get you investigated.', 'Ours gets you promoted.', 'The only model worth the headlines.'),
   ] },
 ];
+
+/**
+ * The print run: the six cards we actually print, 4.25 × 5.5 in, one per sheet, each in its own colour.
+ * They keep the ids they were born with, so their QR codes and their scans carry on.
+ */
+export const USE_CASES: UseCase[] = [
+  { n: 'P', place: 'The print run', note: 'The six we print: 4.25 × 5.5 in, portrait, one per sheet, each in its own colour. Handed out or left anywhere; none needs a particular spot.', cards: [
+    c('pcev1', 'ink', 'side', 'You weren’t supposed to find this.', 'But since you did.', 'Act natural.'),
+    c('pcev2', 'coral', 'stare', 'Someone handed you this for a reason.', 'They think you can handle it.', 'Don’t make them regret it.'),
+    c('pcnews1', 'violet', 'squint', 'Some models get you investigated.', 'Ours gets you promoted.', 'The only model worth the headlines.'),
+    c('pcsl1', 'white', 'think', 'It’s smarter than it was this morning.', 'Is your agency?', 'Every build rewrites its own playbook.'),
+    c('pcev4', 'lavender', 'roll', 'No kickoff. No workshop. No six-month plan.', 'Just the website.', 'Your agency will hate this card.'),
+    c('pc08a', 'iris', 'wide', 'Someone here is about to look like they hired a hundred people.', 'Make sure it’s you.', 'They didn’t hire anyone.'),
+  ] },
+];
+
+/** Every earlier card, retired from print but kept so their scans still have a name in the admin. */
+const PRINT_IDS = new Set(USE_CASES.flatMap((u) => u.cards.map((x) => x.id)));
+export const RETIRED: UseCase[] = ALL_EARLIER.map((u) => ({ ...u, cards: u.cards.filter((x) => !PRINT_IDS.has(x.id)) })).filter((u) => u.cards.length);
+
