@@ -279,6 +279,9 @@ a.btn{display:inline-block;text-decoration:none;text-align:center}
 .qcw figcaption{margin-top:14px;font-size:13px;line-height:1.5;color:var(--on-ink-quiet)}
 .qcw figcaption b{color:var(--on-ink);font-weight:800}
 .qcw figcaption a{color:var(--on-ink-muted)}
+.qc-dl{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.qc-dl a{font-size:13px;font-weight:800;color:var(--ink);background:var(--on-ink);text-decoration:none;padding:7px 12px;border-radius:999px}
+.qc-dl a:hover{background:var(--on-ink-soft)}
 
 .pc{aspect-ratio:2/3;display:flex;flex-direction:column;background:var(--pc-bg);color:var(--pc-fg);border-radius:18px;padding:9cqw 8cqw 8cqw;box-shadow:0 0 0 1px var(--ink-3),0 30px 60px -30px rgba(0,0,0,.7);overflow:hidden}
 .pc-eye{position:relative;width:46cqw;aspect-ratio:1;margin:0 auto 9cqw;display:grid;place-items:center;flex:none}

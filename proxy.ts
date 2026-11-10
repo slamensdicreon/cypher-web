@@ -13,8 +13,8 @@ export function proxy(req: NextRequest) {
     return res;
   }
   const path = req.nextUrl.pathname;
-  // A file (an ad, the ZIP) gets a plain not-found; a page goes to the PIN screen and comes back.
-  if (/\.(png|zip)$/i.test(path)) return new NextResponse('Not found', { status: 404 });
+  // A file (an ad, a print PDF, a ZIP) gets a plain not-found; a page goes to the PIN screen and comes back.
+  if (/\.(png|zip|pdf)$/i.test(path)) return new NextResponse('Not found', { status: 404 });
   const url = new URL('/admin', req.url);
   url.searchParams.set('next', path);
   return NextResponse.redirect(url, 307);
