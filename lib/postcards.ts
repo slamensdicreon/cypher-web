@@ -114,4 +114,8 @@ export const USE_CASES: UseCase[] = [
     c('pcm3', 'violet', 'roll', '5,000 hours to move 23 sites to XM Cloud.', 'At partner rates: $750K to $1.25M.', 'Hours: Forrester TEI, 2025. Dollars: our estimate at $150–$250/hr.'),
     c('pcm4', 'white', 'squint', 'The going rate for an XM Cloud migration: $258K to $1.25M.', 'Cypher’s run cost: $512.', 'Forrester TEI 2025; top end our estimate. Run cost, not price.'),
   ] },
+  // Topical: a wink at this week's headlines. No names on the card; the line works without the story.
+  { n: 'N', place: 'In the news', note: 'Topical, for this week only. A wink at the headlines with no names on the card; it still lands for anyone who missed the story.', cards: [
+    c('pcnews1', 'ink', 'side', 'Some models get you investigated.', 'Ours gets you promoted.', 'The only model worth the headlines.'),
+  ] },
 ];
