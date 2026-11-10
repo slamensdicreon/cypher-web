@@ -128,6 +128,11 @@ export default function Terms() {
             <p>This Agreement constitutes the entire understanding of the Parties, there being nothing else You need to know. Acceptance shall be signified by putting Your company forward, and shall be reciprocated, if at all, by Cypher, in its sole and considerable discretion.</p>
           </section>
 
+          <section>
+            <h2><span>Article 13.</span> Notices</h2>
+            <p>All notices, questions, and requests for a twenty-sixth place shall be addressed to <a href="mailto:cy@ignoranceisbliss.ai">cy@ignoranceisbliss.ai</a>, and shall be deemed received upon sending, read promptly, and answered in the order of their ambition.</p>
+          </section>
+
           <div className="sign">
             <div>
               <span className="who">Cypher</span>
