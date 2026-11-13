@@ -3,11 +3,12 @@
  * the platforms Cypher names, and the demo time slots. Used by the client and the server.
  */
 
-export type NavItem = { href: string; label: string; note: string; group: 'Product' | 'Outcomes' | 'Platforms' | 'Company'; live: boolean };
+export type NavItem = { href: string; label: string; note: string; group: 'Product' | 'Outcomes' | 'Platforms' | 'Company'; live: boolean; top?: boolean };
 
 /** Pages join the navigation and footer as they ship: flip `live` when a page is built. */
 export const NAV: NavItem[] = [
-  { href: '/product', label: 'How it works', note: 'The guided tour', group: 'Product', live: false },
+  { href: '/how-it-works', label: 'How it works', note: 'One project, start to finish', group: 'Product', live: true, top: true },
+  { href: '/playbooks', label: 'Playbooks', note: 'The method, written down', group: 'Product', live: true, top: true },
   { href: '/product/team', label: 'The team', note: 'The specialists and the mind that runs them', group: 'Product', live: false },
   { href: '/product/decisions', label: 'Three decisions', note: 'You decide; it does the rest', group: 'Product', live: false },
   { href: '/product/learning', label: 'It asks once', note: 'Every answer becomes a rule', group: 'Product', live: false },
@@ -25,6 +26,8 @@ export const NAV: NavItem[] = [
 ];
 
 export const live = (group?: NavItem['group']) => NAV.filter((n) => n.live && (!group || n.group === group));
+/** The header's links: live pages marked as top level. */
+export const topNav = () => NAV.filter((n) => n.live && n.top);
 
 /** The platforms the site names. Anything else is welcome too ("Something else"). */
 export const PLATFORMS = ['Sitecore', 'Optimizely', 'Contentful'] as const;

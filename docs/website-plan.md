@@ -16,6 +16,8 @@ Three moves:
 
 About seven weeks of build, in six phases (section 10). Nothing bought: pages are built in the site's own code, the scheduler is ours, and content is kept as data the admin's CMS can take over later (admin plan, Phase 5).
 
+**Progress (November 13):** Book a demo, the header and footer, and Privacy are live. Built next, from the product screens we already had: **How it works** (the product tour, one project start to finish), **Playbooks** (what's in one, the phases and gates, the playbooks by outcome) and an enterprise pass on Home (the product under the hero, a how-it-works preview, "Built for people who get audited"). The capture run (section 6.1) replaces these screens with fresh ones when the demo projects exist.
+
 ## 2. Who it's for and what they need to see
 
 | Visitor | Arrives from | Their question | What convinces them | The page that answers |

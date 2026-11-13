@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import CtaLink from '@/components/site/CtaLink';
-import { live } from '@/lib/site';
+import { topNav } from '@/lib/site';
 
 /** The closed, resting eye: Cypher, saying nothing. */
 export const Resting = ({ size }: { size: number }) => (
@@ -15,17 +15,13 @@ export const Resting = ({ size }: { size: number }) => (
  * action, Book a demo. Until there are pages, the line keeps its place.
  */
 export default function SiteHeader() {
-  const groups = (['Product', 'Outcomes', 'Platforms'] as const).map((g) => ({ g, items: live(g) })).filter((x) => x.items.length);
-  const extra = live('Company').filter((n) => n.href !== '/demo');
+  const items = topNav();
   return (
     <header className="top">
       <Link className="wordmark" href="/"><Resting size={30} />cypher</Link>
-      {groups.length || extra.length ? (
+      {items.length ? (
         <nav className="site-nav" aria-label="Site">
-          {groups.map(({ g, items }) => (
-            <Link key={g} href={items[0].href}>{g}</Link>
-          ))}
-          {extra.map((n) => <Link key={n.href} href={n.href}>{n.label}</Link>)}
+          {items.map((n) => <Link key={n.href} href={n.href}>{n.label}</Link>)}
         </nav>
       ) : (
         <span className="count lower top-line">there is no spoon.</span>
