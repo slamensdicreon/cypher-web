@@ -940,3 +940,16 @@ label.f .opt,.wants legend .opt{font-weight:600;text-transform:none;letter-spaci
 /* privacy */
 .privacy h2{font-size:22px}
 .privacy a{color:var(--coral-text)}
+
+/* the home page's demo band: one field and the button; the full form lives on /demo */
+.demo-home{display:grid;grid-template-columns:minmax(0,1fr);gap:24px;align-items:center}
+.dh-copy h2{margin:0;font-size:40px;font-weight:800;letter-spacing:-.045em;line-height:1}
+.dh-copy p{margin:12px 0 0;font-size:18px;line-height:1.5;color:var(--on-ink-soft);max-width:460px}
+.demo-start-form{display:flex;flex-direction:column;gap:10px;width:100%;max-width:520px}
+.demo-start-form input{font:inherit;font-size:17px;padding:15px 18px;border-radius:999px;border:1px solid var(--ink-3);background:var(--ink);color:var(--on-ink);min-width:0;flex:1}
+.demo-start-form input::placeholder{color:var(--on-ink-quiet)}
+.demo-start-form input:focus{outline:3px solid rgba(183,166,255,.5);outline-offset:2px}
+.demo-start-form .site-cta{border:0;cursor:pointer;font-family:inherit}
+@media (min-width:560px){.demo-start-form{flex-direction:row}}
+@media (min-width:900px){.demo-home{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.demo-start-form{justify-self:end}}
+.demo-form{scroll-margin-top:24px}

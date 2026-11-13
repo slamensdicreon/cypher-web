@@ -67,6 +67,8 @@ export default function InterestForm() {
   // Dates and the time zone are the visitor's own, so they're worked out in the browser.
   useEffect(() => {
     setDays(nextWeekdays(6));
+    const handed = new URLSearchParams(window.location.search).get('email');
+    if (handed) setEmail(handed.slice(0, 254));
     try { setTz(Intl.DateTimeFormat().resolvedOptions().timeZone || ''); } catch { /* old browser */ }
   }, []);
 

@@ -46,7 +46,7 @@ export default function Demo() {
             />
             <div className="demo-eye" aria-hidden="true"><Eye /></div>
           </div>
-          <InterestForm />
+          <div id="book" className="demo-form"><InterestForm /></div>
         </div>
 
         <section className="s band white">

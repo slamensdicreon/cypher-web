@@ -1,11 +1,11 @@
 import Decisions from '@/components/Decisions';
 import Eye from '@/components/Eye';
-import InterestForm from '@/components/InterestForm';
 import Reveal from '@/components/Reveal';
 import Track from '@/components/Track';
 import SiteFooter from '@/components/SiteFooter';
 import SiteHeader from '@/components/SiteHeader';
 import CtaLink from '@/components/site/CtaLink';
+import DemoStart from '@/components/site/DemoStart';
 
 export default function Page() {
   return (
@@ -83,15 +83,12 @@ export default function Page() {
           <p className="weeknote">Also on the menu: thirty brand sites on one design system, storefronts, intranets, member portals, A/B tests, accessibility, performance, SEO. Weekends are for whatever your agency said would take a quarter.</p>
         </section>
 
-        <section className="s">
-          <div className="join" id="join">
-            <div className="copy">
-              <h2>See it on your site.</h2>
-              <p>Book a demo. Tell Cypher where you live online and what you want done: the build, the migration, the personalization you never switched on, the speed you keep being promised. In the demo it works on your site, on whatever platform you run, while you watch.</p>
-              <p className="close">Pick your times. We’ll do the rest.</p>
-            </div>
-            <InterestForm />
+        <section className="s band dark demo-home" id="join">
+          <div className="dh-copy">
+            <h2>See it on your site.</h2>
+            <p>Book a demo. Cypher works on your site, on whatever platform you run, while you watch.</p>
           </div>
+          <DemoStart label="home-band" />
         </section>
 
       </main>
