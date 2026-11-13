@@ -90,7 +90,7 @@ export default async function Pipeline({ searchParams }: { searchParams: Promise
             <p className="ad-empty">{q ? 'Nothing matches.' : 'No deals yet. Sign-ups from the website appear here on their own.'}</p>
           ) : (
             <div className="ad-scroll">
-              <table className="ad-tbl">
+              <table className="ad-tbl crm-table">
                 <thead><tr><th>Score</th><th>Deal</th><th>Stage</th><th className="r">Value</th><th>Owner</th><th>Next step</th><th>Source</th><th>Updated</th></tr></thead>
                 <tbody>
                   {deals.map((d) => (

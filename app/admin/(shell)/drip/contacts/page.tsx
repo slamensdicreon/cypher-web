@@ -6,7 +6,7 @@ import { contacts } from '@/lib/drip/stats';
 import { hasStore } from '@/lib/store';
 
 export const dynamic = 'force-dynamic';
-export const metadata: Metadata = { title: 'Contacts | Cypher', robots: { index: false, follow: false } };
+export const metadata: Metadata = { title: 'Lists | Cypher', robots: { index: false, follow: false } };
 
 const STATUSES = [
   { key: '', label: 'Everyone', count: 'all' },
@@ -29,7 +29,7 @@ export default async function Contacts({ searchParams }: { searchParams: Promise
     <main className="wrap ad">
       <header className="ad-top">
         <div>
-          <h1>Contacts</h1>
+          <h1>Lists</h1>
           <p>Upload a CSV, then enroll contacts in a sequence. Unsubscribes, bounces and spam complaints are kept, so nobody is emailed again by re-uploading them.</p>
         </div>
       </header>

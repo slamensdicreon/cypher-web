@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 export type RailItem = { href: string; label: string; icon: keyof typeof ICONS; group: string; external?: boolean };
 
@@ -33,6 +33,18 @@ export default function Rail({ items, user }: { items: RailItem[]; user: { name:
   // The most specific match wins (Contacts lives under Email).
   const active = items.filter((i) => on(i.href)).sort((a, b) => b.href.length - a.href.length)[0]?.href;
   const groups = [...new Set(items.map((i) => i.group))];
+  // On a phone the open menu covers the page: hold the page still, and let Escape close it.
+  useEffect(() => {
+    if (!open) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    const esc = (e: KeyboardEvent) => e.key === 'Escape' && setOpen(false);
+    window.addEventListener('keydown', esc);
+    return () => {
+      document.body.style.overflow = prev;
+      window.removeEventListener('keydown', esc);
+    };
+  }, [open]);
   return (
     <aside className={open ? 'adr open' : 'adr'}>
       <div className="adr-head">

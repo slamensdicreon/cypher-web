@@ -38,7 +38,7 @@ export default async function SequencePage({ params, searchParams }: { params: P
 
   return (
     <main className="wrap ad">
-      <p className="ad-crumb"><Link href="/admin/drip">← All sequences</Link></p>
+      <p className="crm-crumbs"><Link href="/admin/drip">Email</Link> / {q.name}</p>
       <header className="ad-top">
         <div>
           <form method="post" action="/api/admin/drip/rename" className="ad-rename">
