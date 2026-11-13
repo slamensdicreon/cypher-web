@@ -1,11 +1,9 @@
 import Link from 'next/link';
-import CtaLink from '@/components/site/CtaLink';
 import { SITE_URL } from '@/lib/site';
 
 /**
  * The building blocks of the site's internal pages. Every page uses the same few pieces, so the site
- * reads as one thing: breadcrumbs and a page hero, numbered steps, questions and answers, and the
- * demo band.
+ * reads as one thing: breadcrumbs and a page hero, numbered steps, and questions and answers.
  */
 
 export type Crumb = { name: string; href: string };
@@ -65,18 +63,5 @@ export function Faq({ items }: { items: { q: string; a: string }[] }) {
         </details>
       ))}
     </div>
-  );
-}
-
-/** The band every page ends on: the one action. */
-export function DemoBand({ line = 'See it on your site.', sub = 'Book a demo. Cypher works on your site while you watch.', label }: { line?: string; sub?: string; label: string }) {
-  return (
-    <section className="s band dark demo-band">
-      <div>
-        <h2>{line}</h2>
-        <p>{sub}</p>
-      </div>
-      <CtaLink href="/demo" label={label} className="site-cta big">Book a demo</CtaLink>
-    </section>
   );
 }

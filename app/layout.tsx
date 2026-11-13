@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import { Plus_Jakarta_Sans } from 'next/font/google';
 import './globals.css';
+import './bliss.css';
 import WakeUp from '@/components/WakeUp';
 import { matrixRain, SOURCE_MESSAGE } from '@/lib/matrix';
 
@@ -9,7 +10,7 @@ const SOURCE_ART = `<!--\n\n${matrixRain(96, 36, SOURCE_MESSAGE)}\n\n-->`;
 
 const jakarta = Plus_Jakarta_Sans({
   subsets: ['latin'],
-  weight: ['300', '500', '700', '800'],
+  weight: ['300', '400', '500', '600', '700', '800'],
   variable: '--font-jakarta',
   display: 'swap',
 });

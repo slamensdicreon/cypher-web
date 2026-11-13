@@ -1,14 +1,13 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import SiteFooter from '@/components/SiteFooter';
 import SiteHeader from '@/components/SiteHeader';
 import Track from '@/components/Track';
 import CtaLink from '@/components/site/CtaLink';
-import { FeatureRow, PhaseStrip, ProductShot, SectionHead } from '@/components/site/Product';
-import { BlissEverything, FloorLoop } from '@/components/site/ProductMotion';
-import { DemoBand, Faq, PageHero } from '@/components/site/parts';
+import { Check, EyeMark } from '@/components/site/Marks';
+import { Breadcrumbs, Faq } from '@/components/site/parts';
 
 const description =
-  'How Cypher runs a project, start to finish: day zero, the plan of record, a team of twenty-one, your three decisions, every move on the record, and a handover that’s yours. On Sitecore, Optimizely, Contentful or any enterprise platform.';
+  'How Cypher works with marketers: tell it what you want to grow, approve the plan once, answer about three questions, and edit everything on day one. On Sitecore, Optimizely, Contentful or any enterprise platform.';
 
 export const metadata: Metadata = {
   title: 'How it works | Cypher',
@@ -18,110 +17,210 @@ export const metadata: Metadata = {
   twitter: { card: 'summary_large_image', title: 'How Cypher works', description },
 };
 
+export const viewport: Viewport = { themeColor: '#f6f5fc', colorScheme: 'light' };
+
+/** The ten phases, coloured by the team that owns each; two of them are the marketer's. */
+const PHASES = [
+  ['Intake', 'iris'], ['Discovery', 'iris'], ['Blueprint', 'iris', true], ['Foundation', 'blue'], ['Components', 'blue'],
+  ['Templates', 'blue'], ['Migration', 'teal'], ['Experience', 'teal'], ['Deployment', 'blue'], ['UAT', 'gold', true],
+] as const;
+
+const TEAM = [
+  ['AJ', 'Aisha', 'Solution architect', 'iris'],
+  ['MG', 'Maria', 'Content analyst', 'teal'],
+  ['EC', 'Emily', 'Component engineer', 'blue'],
+  ['RM', 'Ryan', 'Deployment engineer', 'blue'],
+  ['PP', 'Priya', 'Accessibility QA', 'gold'],
+] as const;
+
 const HANDOVER = [
-  ['Your code', 'In your repository, readable, commented where it matters. No lock-in, no ransom.'],
-  ['Your hosting', 'Deployed where you run things, with the environments named and the keys yours.'],
-  ['An editor guide', 'How your marketers edit every page and component. They edit on day one.'],
-  ['A component catalog', 'Every component, its fields, its variants and where it’s used.'],
-  ['The evidence', 'Parity, accessibility and performance reports, page by page.'],
-  ['A known-gaps report', 'Anything not done, and why, in writing. No surprises in month three.'],
+  ['Pages your team edits', 'Built in your platform, the way you already work.'],
+  ['Components you reuse', 'Every component, its fields and its variants, in a catalog.'],
+  ['An editor guide', 'How to change every page, written for marketers.'],
+  ['Your code and keys', 'In your repository and your hosting. No lock-in.'],
+  ['The evidence', 'Speed, accessibility and parity reports, page by page.'],
+  ['A known-gaps report', 'Anything not done, and why, in writing.'],
 ] as const;
 
 const QA = [
-  { q: 'What do you need from us to start?', a: 'Your site, your platform and what you want done. For the build itself, access to the platform and a repository. Cypher records what it can see and asks for nothing it doesn’t need.' },
-  { q: 'Who is actually doing the work?', a: 'Cypher’s team of specialists, each one an agent with a brief, a lead and checks on its work, run by Cypher. People who know the platforms stand behind every project.' },
-  { q: 'How often will you need me?', a: 'About three times a build, for decisions that are genuinely yours. Each comes with Cypher’s pick and a deadline, and if you say nothing, it goes ahead with its pick.' },
-  { q: 'Can we see everything it does?', a: 'Everything. Switch to Everything for the full console, or read the activity log: every action, who took it, with which tool, what happened and what it cost.' },
+  { q: 'How much of my time does it take?', a: 'About three decisions a build, each with my pick and a deadline. The rest is on me.' },
+  { q: 'Do I need a developer?', a: 'No. You bring the goals and the calls. My specialists build, and people who know the platforms stand behind every project.' },
+  { q: 'Will my team be able to edit it?', a: 'On day one. Everything is built in your platform, with an editor guide written for marketers.' },
   { q: 'Which platforms?', a: 'Any enterprise platform. Sitecore, Optimizely and Contentful are home turf.' },
 ];
 
-/** How it works: one project, start to finish, on the real screens. */
+/** How it works: how Cypher and a marketer work together, start to launch. */
 export default function HowItWorks() {
   return (
-    <>
+    <div className="bl">
       <SiteHeader />
-      <main className="wrap">
-        <div className="page-top">
-          <PageHero
-            trail={[{ name: 'How it works', href: '/how-it-works' }]}
-            title="Point it at your site. Watch it work."
-            lead="Cypher runs a project the way your best team would, if your best team never slept, never forgot and wrote everything down. Here’s the whole thing, start to finish, on the real screens."
-          >
-            <CtaLink href="/demo" label="how-hero" className="site-cta big">Book a demo</CtaLink>
-          </PageHero>
-          <ProductShot shot="everything" priority caption="Mission control: the phases and gates, what’s registered, cost against budget, what needs you, and the team at work." />
-        </div>
 
-        <section className="s band white">
-          <SectionHead title="Ten phases. Two gates. You hold both." intro="Every project runs the same phases, in order, from a playbook. Nothing moves past a gate without your approval." />
-          <PhaseStrip />
-        </section>
-
-        <section className="s steps-run">
-          <FeatureRow
-            title="Tell it what you run."
-            body="Your site, your platform, what you want done. It verifies access, records what it finds and writes down the facts it will build on. No kickoff. No workshop. No discovery invoice."
-            points={['Verifies credentials and records the platform’s facts', 'Crawls the live site and inventories every page', 'Lists components, routes and assets before anyone builds']}
-            shot="plan"
-          />
-          <FeatureRow
-            flip
-            title="It writes the Blueprint. You approve it once."
-            body="Discovery ends in an Implementation Blueprint: every component, template, page and media item the team will build, and how. You approve it at the first gate. After that, nothing changes without you knowing."
-            points={['Component inventory, page inventory, platform notes', 'Versioned, with who wrote it and when you approved it']}
-            shot="workbench"
-          />
-          <FeatureRow
-            title="Twenty-one specialists. One mind running them."
-            body="Discovery, engineering, content, quality and release, each with a lead. They pick up work in order, hand it on and check each other’s. The same crew every day, on any platform."
-            points={['Solution architect, content analyst, component engineer, migrators', 'Parity auditor, performance and accessibility QA, deployment engineer', 'Cypher as chief of staff, so you talk to one voice']}
-          >
-            <FloorLoop caption="The Floor: who’s working, on what, and what they handed on." />
-          </FeatureRow>
-          <FeatureRow
-            flip
-            title="It asks you three things. Not three hundred."
-            body="When something is genuinely yours (a source of truth, a trade-off, a risk), it arrives as a card: the question, Cypher’s pick and why, and a deadline. Say nothing and it goes ahead with its pick. Everything else is on pace."
-            points={['Every card says what happens if you don’t answer', 'Defer it, or ask the specialist who raised it']}
-            shot="bliss"
-          />
-          <FeatureRow
-            title="Every move checked. Every move logged."
-            body="Every action passes one gateway and lands in an append-only log: who, which tool, what happened, how long it took and what it cost. Validators review each component before it moves on. Any build can be replayed, step by step."
-            points={['Export the log any time', 'Warnings and failures surface on their own']}
-            shot="activity"
-          />
-          <FeatureRow
-            flip
-            title="You always know. Without a status meeting."
-            body="Phases, gates, what’s running and what’s queued, decisions settled without you, recommendations taken, and spend by phase. Or just ask Cypher, in a sentence."
-            points={['A scorecard for every project', 'Cost of the run against its budget, as it happens']}
-            shot="scorecard"
-          />
-        </section>
-
-        <section className="s band white">
-          <SectionHead title="One sentence, or the whole console. Your choice, per screen." intro="Most days you want to know two things: is it on pace, and what’s mine. On the days you want the rest, it’s all there." />
-          <BlissEverything />
-        </section>
-
-        <section className="s">
-          <SectionHead title="When it’s done, it’s yours." intro="No retainer to keep the lights on. No knowledge that leaves when a team rolls off." />
-          <div className="handover">
-            {HANDOVER.map(([t, b]) => (
-              <div key={t}><b>{t}</b><p>{b}</p></div>
-            ))}
+      <main>
+        <section className="bl-w bl-inner-hero">
+          <div className="bl-stack-sm">
+            <Breadcrumbs trail={[{ name: 'How it works', href: '/how-it-works' }]} />
+            <h1 className="bl-voice-h1 inner">Here’s how we work together. <b>You stay in charge of the brand.</b></h1>
+            <p className="bl-hero-p left">You bring the goals and the brand. I bring twenty-one specialists who build, test and launch. You approve the plan, answer about three questions and say when it goes live.</p>
+            <div className="bl-ctas left"><CtaLink href="/demo" label="how-hero" className="bl-btn bl-btn-ink">Book a demo</CtaLink></div>
+          </div>
+          <div className="bl-hero-mark">
+            <span className="bl-halo bl-halo-quiet"><EyeMark state="watching" size={150} label="Cypher, watching" /></span>
           </div>
         </section>
 
-        <section className="s">
-          <SectionHead title="Questions people ask" />
+        <section className="bl-w bl-after">
+          <div className="bl-panel bl-phases">
+            <div className="bl-phases-head">
+              <h2 className="bl-h3">Ten steps from brief to launch. Two of them are yours.</h2>
+              <span className="bl-legend">
+                <span><i className="bg-iris" />Discovery</span><span><i className="bg-blue" />Engineering</span><span><i className="bg-teal" />Content</span><span><i className="bg-gold" />Quality</span>
+              </span>
+            </div>
+            <ol className="bl-phase-list">
+              {PHASES.map(([name, team, gate]) => (
+                <li key={name}><span className={`bl-seg bg-${team}`} aria-hidden="true" /><b>{name}</b>{gate && <span className="bl-gate">Your gate</span>}</li>
+              ))}
+            </ol>
+          </div>
+        </section>
+
+        <section className="bl-w bl-steps">
+          <div className="bl-step">
+            <div className="bl-step-copy">
+              <span className="bl-step-n" aria-hidden="true">1</span>
+              <h3>Tell me what you want to grow.</h3>
+              <p>Your site, your platform, what you want to launch. I read your brand, inventory every page and write down what I find. No kickoff workshop, no discovery invoice.</p>
+            </div>
+            <ul className="bl-panel bl-list bl-list-panel">
+              <li><Check />Your brand recorded: colors, type, components</li>
+              <li><Check />Every page on your site inventoried</li>
+              <li><Check />Platform access checked</li>
+              <li><Check />Your goals written down before anyone builds</li>
+            </ul>
+          </div>
+
+          <div className="bl-step">
+            <div className="bl-step-copy">
+              <span className="bl-step-n" aria-hidden="true">2</span>
+              <h3>I write the plan. You approve it once.</h3>
+              <p>Every page, component and audience I’ll build, and how they look in your brand. You approve it once. After that, nothing changes without you knowing.</p>
+            </div>
+            <div className="bl-panel" aria-hidden="true">
+              <span className="bl-doc-head"><b>Spring launch plan</b><span className="bl-meta">Version 1 · written by Aisha, Discovery</span></span>
+              <span className="bl-doc-row">Pages and templates</span>
+              <span className="bl-doc-row">Components, in your brand</span>
+              <span className="bl-doc-row">Audiences and variants</span>
+              <span className="bl-row-end"><span className="bl-chip">Approve</span><span className="bl-dec-label c-coral">Your sign-off</span></span>
+            </div>
+          </div>
+
+          <div className="bl-step">
+            <div className="bl-step-copy">
+              <span className="bl-step-n" aria-hidden="true">3</span>
+              <h3>Twenty-one specialists. One voice.</h3>
+              <p>Content, engineering and quality, each with a lead, checking each other’s work. You never chase a developer or wait in a queue. You talk to me.</p>
+            </div>
+            <ul className="bl-team">
+              {TEAM.map(([ini, name, role, team]) => (
+                <li key={name} className="bl-person"><span className={`bl-av bg-${team}`} aria-hidden="true">{ini}</span><span><b>{name}</b><span className="bl-meta">{role}</span></span></li>
+              ))}
+              <li className="bl-person more">and sixteen more</li>
+            </ul>
+          </div>
+
+          <div className="bl-step">
+            <div className="bl-step-copy">
+              <span className="bl-step-n" aria-hidden="true">4</span>
+              <h3>I ask about three things. The ones only you can answer.</h3>
+              <p>Brand, audience, offer: when a call is genuinely yours, it arrives with my pick, my reason and a deadline. Say nothing and I go ahead.</p>
+            </div>
+            <div className="bl-yours raised" aria-label="A decision card">
+              <span className="bl-yours-label"><EyeMark state="needs" size={20} />Yours<span className="bl-push">4:00</span></span>
+              <b className="bl-card-title">Which call to action leads the product page?</b>
+              <p>Both are on brand. The page can only lead with one.</p>
+              <span className="bl-pick"><span><b>I’d lead with ‘Find a store’.</b> It matches the spring campaign.</span></span>
+              <span className="bl-chips" aria-hidden="true"><span className="bl-chip">Find a store</span><span className="bl-chip alt">Shop online</span></span>
+              <span className="bl-meta">Raised by Maria, Content · 6 min ago</span>
+            </div>
+          </div>
+
+          <div className="bl-step">
+            <div className="bl-step-copy">
+              <span className="bl-step-n" aria-hidden="true">5</span>
+              <h3>You edit everything on day one.</h3>
+              <p>Every page is built in your platform, the way your team already works. Change a headline, swap an image, launch a variant: no ticket, no developer.</p>
+            </div>
+            <div className="bl-panel" aria-hidden="true">
+              <span className="bl-doc-head row"><b>Spring hero</b><span className="bl-meta">Sitecore · Optimizely · Contentful</span></span>
+              <span className="bl-field"><span>Headline</span><span className="bl-field-v">Spring, sorted.</span></span>
+              <span className="bl-field"><span>Call to action</span><span className="bl-field-v">Find a store</span></span>
+              <span className="bl-field"><span>Who sees it</span><span className="bl-field-v">Returning visitors</span></span>
+              <span className="bl-row-end"><span className="bl-chip">Publish</span><span className="bl-chip alt">Preview</span></span>
+            </div>
+          </div>
+
+          <div className="bl-step">
+            <div className="bl-step-copy">
+              <span className="bl-step-n" aria-hidden="true">6</span>
+              <h3>You always know. Without a status meeting.</h3>
+              <p>Where it stands, what’s live and what I settled without you. Every change is on the record, so you can show anyone exactly what happened.</p>
+            </div>
+            <div className="bl-panel roomy">
+              <span className="bl-said"><EyeMark state="resting" size={56} /><span className="bl-voice small">On pace. <b>Nothing needs you</b> until Thursday.</span></span>
+              <span className="bl-track" aria-hidden="true">{PHASES.map(([name, team], i) => <span key={name} className={i < 5 ? `bg-${team}` : ''} />)}</span>
+              <span className="bl-meta">Halfway to launch. Eleven questions settled without you this week.</span>
+            </div>
+          </div>
+        </section>
+
+        <section className="bl-band">
+          <div className="bl-w bl-sec bl-stack">
+            <div className="bl-head">
+              <h2 className="bl-h2">One sentence, or every detail.</h2>
+              <p className="bl-lead">Most days you want two things: is it on track, and what needs you. When your CMO wants the detail, it’s one tap away.</p>
+            </div>
+            <div className="bl-modes">
+              <div className="bl-mode light">
+                <b>Bliss</b>
+                <p className="bl-voice small">The spring pages are live. <b>One thing needs you</b> before 2:24.</p>
+                <span className="bl-meta">The default. A sentence, at most three things that are yours, one line for everything else.</span>
+              </div>
+              <div className="bl-mode dark">
+                <b>Everything</b>
+                <span className="bl-kpis">
+                  <span className="bl-kpi"><span>Pages built</span><b>8 <i>of 16</i></b></span>
+                  <span className="bl-kpi"><span>Tests running</span><b>3</b></span>
+                </span>
+                <span className="bl-mode-note">The full console: tables, metrics, the activity log, and Cypher as a chat.</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="bl-w bl-sec bl-stack">
+          <h2 className="bl-h2">When it’s done, it’s yours.</h2>
+          <ul className="bl-hand">
+            {HANDOVER.map(([t, b]) => (
+              <li key={t}><Check size={22} /><span><b>{t}</b><span>{b}</span></span></li>
+            ))}
+          </ul>
+        </section>
+
+        <section className="bl-w bl-after bl-faq-sec">
+          <h2 className="bl-h2">Questions people ask.</h2>
           <Faq items={QA} />
         </section>
-        <DemoBand label="how-band" line="See it on your site." sub="Thirty minutes. Cypher on your site, on your platform. No slides." />
+
+        <section className="bl-w bl-after">
+          <div className="bl-cta-card">
+            <span className="bl-said"><EyeMark state="needs" size={64} /><span className="bl-voice small">Thirty minutes, on your site. <b>No slides.</b></span></span>
+            <CtaLink href="/demo" label="how-band" className="bl-btn bl-btn-ink">Book a demo</CtaLink>
+          </div>
+        </section>
       </main>
+
       <SiteFooter />
       <Track />
-    </>
+    </div>
   );
 }

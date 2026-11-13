@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import SiteFooter from '@/components/SiteFooter';
 import SiteHeader from '@/components/SiteHeader';
 import Track from '@/components/Track';
@@ -13,12 +13,14 @@ export const metadata: Metadata = {
   openGraph: { type: 'website', url: '/privacy', siteName: 'Cypher', locale: 'en_US', title: 'Privacy', description },
 };
 
+export const viewport: Viewport = { themeColor: '#f6f5fc', colorScheme: 'light' };
+
 const CONTACT = 'cy@ignoranceisbliss.ai';
 
 /** The privacy notice. Plain words; unlike the Terms of Use, this one is meant literally. */
 export default function Privacy() {
   return (
-    <>
+    <div className="bl">
       <SiteHeader />
       <main className="wrap legal">
         <div className="legal-head">
@@ -74,6 +76,6 @@ export default function Privacy() {
       </main>
       <SiteFooter />
       <Track />
-    </>
+    </div>
   );
 }

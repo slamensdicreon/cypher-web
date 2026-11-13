@@ -1,13 +1,15 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import SiteHeader from '@/components/SiteHeader';
 
 export const metadata: Metadata = { title: 'Unsubscribe | Cypher', robots: { index: false, follow: false } };
+
+export const viewport: Viewport = { themeColor: '#f6f5fc', colorScheme: 'light' };
 
 /** Asks before unsubscribing, so link scanners in mail security tools can't unsubscribe people by accident. */
 export default async function Unsubscribe({ searchParams }: { searchParams: Promise<{ t?: string; done?: string; bad?: string }> }) {
   const sp = await searchParams;
   return (
-    <>
+    <div className="bl">
       <SiteHeader />
       <main className="wrap legal">
         <div className="legal-head">
@@ -33,6 +35,6 @@ export default async function Unsubscribe({ searchParams }: { searchParams: Prom
           )}
         </div>
       </main>
-    </>
+    </div>
   );
 }

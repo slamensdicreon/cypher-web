@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import Eye from '@/components/Eye';
 import InterestForm from '@/components/InterestForm';
 import SiteFooter from '@/components/SiteFooter';
@@ -15,6 +15,8 @@ export const metadata: Metadata = {
   openGraph: { type: 'website', url: '/demo', siteName: 'Cypher', locale: 'en_US', title: 'Book a demo of Cypher', description },
   twitter: { card: 'summary_large_image', title: 'Book a demo of Cypher', description },
 };
+
+export const viewport: Viewport = { themeColor: '#f6f5fc', colorScheme: 'light' };
 
 const NEXT = [
   { title: 'You pick the times.', body: 'Three that suit you, in your own time zone. We confirm one within one business day, with a calendar invite.' },
@@ -34,7 +36,7 @@ const QA = [
 /** Book a demo: the site's one action, with what happens next. */
 export default function Demo() {
   return (
-    <>
+    <div className="bl">
       <SiteHeader />
       <main className="wrap">
         <div className="demo-top">
@@ -61,6 +63,6 @@ export default function Demo() {
       </main>
       <SiteFooter />
       <Track />
-    </>
+    </div>
   );
 }

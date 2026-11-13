@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import Link from 'next/link';
 import SiteFooter from '@/components/SiteFooter';
 import SiteHeader, { Resting } from '@/components/SiteHeader';
@@ -16,10 +16,12 @@ export const metadata: Metadata = {
   twitter: { card: 'summary_large_image', title: 'Terms of Use', description },
 };
 
+export const viewport: Viewport = { themeColor: '#f6f5fc', colorScheme: 'light' };
+
 /** A parody: Cypher's sales pitch, dressed in the deepest legalese. Not a contract. */
 export default function Terms() {
   return (
-    <>
+    <div className="bl">
       <SiteHeader />
       <main className="wrap legal">
         <div className="legal-head">
@@ -157,6 +159,6 @@ export default function Terms() {
       </main>
       <SiteFooter />
       <Track />
-    </>
+    </div>
   );
 }

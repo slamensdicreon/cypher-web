@@ -1,8 +1,8 @@
 import Link from 'next/link';
-import CtaLink from '@/components/site/CtaLink';
-import { topNav } from '@/lib/site';
+import { EyeMark } from '@/components/site/Marks';
+import SiteMenu from '@/components/site/SiteMenu';
 
-/** The closed, resting eye: Cypher, saying nothing. */
+/** The closed, resting eye, drawn for the shell. The Terms' signature block uses it. */
 export const Resting = ({ size }: { size: number }) => (
   <svg width={size} height={size} viewBox="0 0 72 72" aria-hidden="true">
     <circle cx="36" cy="36" r="31" fill="#ffffff" />
@@ -10,23 +10,14 @@ export const Resting = ({ size }: { size: number }) => (
   </svg>
 );
 
-/**
- * The site's header: the wordmark, the pages that are live (they join as they ship), and the one
- * action, Book a demo. Until there are pages, the line keeps its place.
- */
+/** The site's header: the wordmark, the line, and the menu. */
 export default function SiteHeader() {
-  const items = topNav();
   return (
-    <header className="top">
-      <Link className="wordmark" href="/"><Resting size={30} />cypher</Link>
-      {items.length ? (
-        <nav className="site-nav" aria-label="Site">
-          {items.map((n) => <Link key={n.href} href={n.href}>{n.label}</Link>)}
-        </nav>
-      ) : (
-        <span className="count lower top-line">there is no spoon.</span>
-      )}
-      <CtaLink href="/demo" label="header" className="site-cta">Book a demo</CtaLink>
+    <header className="bl-w bl-top">
+      <Link className="bl-mark" href="/" aria-label="Cypher, home">
+        <EyeMark state="resting" size={30} />cypher
+      </Link>
+      <SiteMenu />
     </header>
   );
 }

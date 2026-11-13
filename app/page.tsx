@@ -1,142 +1,168 @@
-import Decisions from '@/components/Decisions';
+import type { Viewport } from 'next';
 import Eye from '@/components/Eye';
-import Reveal from '@/components/Reveal';
-import Track from '@/components/Track';
 import SiteFooter from '@/components/SiteFooter';
 import SiteHeader from '@/components/SiteHeader';
+import Track from '@/components/Track';
 import CtaLink from '@/components/site/CtaLink';
 import DemoStart from '@/components/site/DemoStart';
-import HeroVideo from '@/components/site/HeroVideo';
-import EyeTile from '@/components/site/EyeTile';
-import { SectionHead } from '@/components/site/Product';
+import { Check, EyeMark } from '@/components/site/Marks';
 
+export const viewport: Viewport = { themeColor: '#f6f5fc', colorScheme: 'light' };
+
+const HANDLED = [
+  ['The spring landing page, live and editable in your CMS.', '10:02'],
+  ['Returning visitors now see their own hero.', '9:48'],
+  ['Every old campaign URL redirected. Nothing lost.', '9:31'],
+] as const;
+
+const FOUR = [
+  ['Launch.', 'New sites, campaign pages, portals and storefronts, pixel for pixel. Your team edits them on day one.'],
+  ['Migrate.', 'Move platforms without losing a page or a URL. Every page checked against the original.'],
+  ['Personalize.', 'The personalization you paid for and never switched on. Audiences, variants and tests, checked first.'],
+  ['Optimize.', 'Faster, accessible and easier to find, with the reports to prove it.'],
+] as const;
+
+const WEEK = [
+  ['Mon', 'The new site.', 'Pixel for pixel. Your team edits it on day one.'],
+  ['Tue', 'The campaign pages.', 'Built, tested and live.'],
+  ['Wed', 'The migration.', 'Six sites into one. Every URL kept.'],
+  ['Thu', 'Personalization.', 'Switched on. Finally.'],
+  ['Fri', 'Yours.', 'The idea nobody would fund. Bring it.'],
+] as const;
+
+/** Home: Cypher, speaking to the marketer who wants to grow a brand on their platform. */
 export default function Page() {
   return (
-    <>
+    <div className="bl">
       <SiteHeader />
 
-      <main className="wrap">
-        <div className="hero-v">
-          <div className="hero">
-            <Eye />
-            <div>
-              <h1 className="line">Ignorance is bliss.</h1>
-              <p>Cypher is twenty-one specialists and the mind that runs them. Point it at any enterprise platform and it builds, migrates, personalizes and optimizes, pixel perfect, for a rounding error of what you pay now. It doesn’t replace you. It promotes you.</p>
-              <div className="hero-cta">
-                <CtaLink href="/demo" label="home-hero" className="site-cta big">Book a demo</CtaLink>
-                <span className="hero-note">Sitecore, Optimizely, Contentful, or whatever you run.</span>
+      <main>
+        <section className="bl-w bl-hero">
+          <Eye />
+          <h1 className="bl-voice-h1">Your whole marketing roadmap, live in a week. <b>You make three decisions.</b></h1>
+          <p className="bl-hero-p">I’m Cypher: twenty-one specialists and the mind that runs them. Bring me the new site, the campaign, the personalization you paid for and never switched on. I build it on Sitecore, Optimizely, Contentful or whatever you run, your team edits it on day one, and I only ask what a marketer should decide.</p>
+          <div className="bl-ctas">
+            <CtaLink href="/demo" label="home-hero" className="bl-btn bl-btn-ink">Book a demo</CtaLink>
+            <CtaLink href="/how-it-works" label="home-how" className="bl-btn bl-btn-ghost">See how it works</CtaLink>
+          </div>
+        </section>
+
+        <section className="bl-w bl-after">
+          <figure className="bl-mock" aria-label="Cypher in Bliss mode, on a spring launch">
+            <div className="bl-mock-top" aria-hidden="true">
+              <span className="bl-project"><span className="bl-initials bg-blue">NW</span>Spring launch · Northwind</span>
+              <span className="bl-dial"><span className="on">Bliss</span><span>Everything</span></span>
+            </div>
+            <p className="bl-voice">The spring pages are built. <b>One thing is yours,</b> before 2:24. Everything else is on pace.</p>
+            <div className="bl-mock-grid">
+              <div className="bl-yours">
+                <span className="bl-yours-label"><EyeMark state="needs" size={20} />Yours<span className="bl-push">2:24</span></span>
+                <h2 className="bl-card-title">Which hero leads the spring campaign?</h2>
+                <p>Both versions are built and on brand. Maria is ready to publish.</p>
+                <span className="bl-pick"><EyeMark state="watching" size={22} /><span><b>I’d test both.</b> Half your visitors see each, and I keep the winner.</span></span>
+                <span className="bl-chips" aria-hidden="true"><span className="bl-chip">Test both</span><span className="bl-chip alt">Pick one</span></span>
+                <span className="bl-meta">If you say nothing: I test both, at 2:24.</span>
+              </div>
+              <div className="bl-handled">
+                <h3>Handled without you.</h3>
+                <ul className="bl-list">
+                  {HANDLED.map(([t, at]) => (
+                    <li key={t}><Check /><span className="bl-grow">{t}</span><span className="bl-meta">{at}</span></li>
+                  ))}
+                </ul>
+                <div className="bl-team-line">
+                  <span className="bl-faces" aria-hidden="true">
+                    <span className="bg-iris">AJ</span><span className="bg-blue">EC</span><span className="bg-teal">MG</span><span className="bg-gold">RP</span>
+                  </span>
+                  <span>Maria is waiting on you. <b>Everyone else is fine.</b></span>
+                </div>
               </div>
             </div>
-          </div>
-        </div>
+          </figure>
+        </section>
 
-        <section className="s home-product">
-          <div className="tic">
-            <div className="tic-copy">
-              <h2>This is Cypher.</h2>
-              <p>Twenty-one specialists, one floor, every move on the record. Forty-two seconds under the hood.</p>
-              <ul className="tic-points">
-                <li><b>Any enterprise platform</b><span>Sitecore, Optimizely, Contentful and the rest</span></li>
-                <li><b>You hold the gates</b><span>Nothing ships past a gate without your approval</span></li>
-                <li><b>Every action on the record</b><span>One gateway, an append-only log, any build replayed</span></li>
-                <li><b>Yours when it’s done</b><span>Your code, your hosting, your keys</span></li>
-              </ul>
+        <section className="bl-w bl-after bl-stack">
+          <h2 className="bl-h2 bl-measure">Four things marketers wait months for. Done in days.</h2>
+          <div className="bl-four">
+            {FOUR.map(([t, b]) => (
+              <div key={t}><h3>{t}</h3><p>{b}</p></div>
+            ))}
+          </div>
+        </section>
+
+        <section className="bl-band">
+          <div className="bl-w bl-sec bl-stack">
+            <div className="bl-head">
+              <h2 className="bl-h2">Three decisions. Not three hundred.</h2>
+              <p className="bl-lead">The calls only a marketer can make, each with my pick and a deadline. Everything technical, I handle.</p>
             </div>
-            <HeroVideo />
-          </div>
-        </section>
-
-        <section className="s band lav">
-          <Decisions />
-        </section>
-
-        <section className="s band white">
-          <div className="beats">
-            <div className="beat big"><h2>Your platform. <em>Our</em> problem.</h2><p>Any enterprise platform. It doesn’t stop at the build. <span className="mbr">That’s where most agencies stop.</span></p></div>
-          </div>
-          <div className="outcomes">
-            <div className="outcome"><b>Build.</b><p>Websites, customer and member portals, storefronts, intranets. Pixel for pixel, and your marketers edit it on day one.</p></div>
-            <div className="outcome"><b>Migrate.</b><p>Old platform to new, with nothing left behind. Content parity checked, every redirect kept, every page diffed against the original.</p></div>
-            <div className="outcome"><b>Personalize.</b><p>The personalization you paid for and never switched on. Audiences, variants and A/B tests, set up and checked before you see them.</p></div>
-            <div className="outcome"><b>Optimize.</b><p>Faster, accessible, findable. Lighthouse and axe on every representative page, SEO and redirects done, with the reports as evidence.</p></div>
-          </div>
-        </section>
-
-        <section className="s">
-          <SectionHead title="Point it at your site. Watch it work." intro="It plans, the team builds and checks, and you make about three decisions. That’s the job now." />
-          <div className="hiw-cards">
-            <EyeTile id="plan" theme="coral" eye="think" n="01" title="It writes the plan." payoff="You approve it once." body="Discovery ends in a Blueprint: every component, template and page, and how. After that, nothing changes without you knowing." />
-            <EyeTile id="decide" theme="lavender" eye="stare" n="02" title="You make three decisions." payoff="Not three hundred." body="Each arrives with Cypher’s pick and a deadline. Say nothing and it goes ahead. Everything else is on pace." />
-            <EyeTile id="record" theme="iris" eye="side" n="03" title="Every move is on the record." payoff="No status meetings." body="Checked before it moves on, logged as it happens, replayable after. Export it any time." />
-          </div>
-          <p className="sec-more"><CtaLink href="/how-it-works" label="home-how" className="more-link">See how it works</CtaLink></p>
-        </section>
-
-        <section className="s band dark">
-          <div className="proofs">
-            <div className="proof">
-              <div className="num">$<i>512</i></div>
-              <p>What it cost to run a build an agency quoted at <b>$400,000+</b>. We have the receipts.</p>
-              <p className="fine">The cost of the run, not the price of Cypher.</p>
-            </div>
-            <div className="pillars">
-              <div className="pillar"><b>Self-learning.</b><p>Every question becomes a rule. It never asks twice. Agencies ask the same question every project, and bill you for it.</p></div>
-              <div className="pillar"><b>Self-healing.</b><p>Things break. It finds why, fixes it and carries on, before anyone thinks to file a ticket.</p></div>
-              <div className="pillar"><b>Self-enhancing.</b><p>Every build rewrites its own playbook. It finishes better than it started. Name one vendor who can say that.</p></div>
+            <div className="bl-cards3">
+              <article className="bl-dec">
+                <span className="bl-dec-label c-iris">Gate 1 · The plan</span>
+                <h3 className="bl-card-title">Approve the plan?</h3>
+                <p>Every page, component and audience I’ll build, and how they look in your brand.</p>
+                <span className="bl-pick"><span><b>I’d approve.</b> After this, nothing changes without you knowing.</span></span>
+                <span className="bl-meta">If you say nothing: I wait. It’s your call.</span>
+              </article>
+              <article className="bl-dec coral">
+                <span className="bl-dec-label c-coral">A question only you can answer</span>
+                <h3 className="bl-card-title">Who sees the spring offer first?</h3>
+                <p>Two audiences qualify. The offer can only lead for one.</p>
+                <span className="bl-pick"><span><b>I’d start with returning visitors.</b> They already know the brand.</span></span>
+                <span className="bl-meta">If you say nothing: returning visitors, at 4:00.</span>
+              </article>
+              <article className="bl-dec">
+                <span className="bl-dec-label c-gold">Gate 2 · Launch</span>
+                <h3 className="bl-card-title">Ready to go live?</h3>
+                <p>Every page checked on phone, tablet and desktop, for speed and accessibility.</p>
+                <span className="bl-pick"><span><b>It’s ready.</b> Anything not done is in writing.</span></span>
+                <span className="bl-meta">If you say nothing: I wait. It’s your launch.</span>
+              </article>
             </div>
           </div>
         </section>
 
-        <section className="s band white">
-          <div className="proofclose">
-            <p>We don’t need you to believe us. Point it at your site and watch.</p>
-            <p>We’ve watched it conduct over <b>225,000</b> events. We don’t need you to tell us it works.</p>
+        <section className="bl-ink">
+          <div className="bl-w bl-proof">
+            <div className="bl-proof-num">
+              <span className="bl-num">$512</span>
+              <p>What it cost to run a build an agency quoted at <b>$400,000+</b>. Think about what the rest of your budget could do.</p>
+              <p className="bl-fine">The cost of the run, not the price of Cypher.</p>
+            </div>
+            <div>
+              <div className="bl-pillars">
+                <div><h3>Self-learning.</h3><p>Answer once and it’s a rule. I never ask twice.</p></div>
+                <div><h3>Self-healing.</h3><p>Things break. I fix them before anyone files a ticket.</p></div>
+                <div><h3>Self-enhancing.</h3><p>Every launch makes the next one better.</p></div>
+              </div>
+              <p className="bl-proof-more"><b>225,000</b> events conducted. Twenty-five years of engineering, written down.</p>
+            </div>
           </div>
         </section>
 
-        <section className="s band lav">
-          <div className="creds">
-            <div className="cred"><b>25</b><span>years of engineering, written down so it never has to be relearned.</span></div>
-            <div className="cred"><b>10</b><span>years of enterprise platforms. Every pitfall, every workaround, every 2 AM fix.</span></div>
-            <div className="cred"><b>MVPs</b><span>Platform MVPs built this. Yes, really.</span></div>
+        <section className="bl-w bl-sec bl-stack">
+          <div className="bl-head">
+            <h2 className="bl-h2">Your annual roadmap. In a week.</h2>
+            <p className="bl-lead">No dev queue. No change orders. No waiting for next quarter. Playbooks, not projects.</p>
           </div>
+          <div className="bl-week">
+            {WEEK.map(([d, t, l]) => (
+              <div key={d} className="bl-day"><span className="bl-dn">{d}</span><b>{t}</b><span className="bl-dl">{l}</span></div>
+            ))}
+          </div>
+          <CtaLink href="/playbooks" label="home-playbooks" className="bl-more">Explore the playbooks</CtaLink>
         </section>
 
-        <section className="s">
-          <div className="plhead"><h2>Your annual roadmap. In a week.</h2><p>Playbooks, not projects. Same crew every day, on any platform, and not one change order.</p></div>
-          <div className="week">
-            <div className="day"><span className="dn">Mon</span><b>The website.</b><span className="dl">Pixel for pixel. Marketers edit it on day one.</span></div>
-            <div className="day"><span className="dn">Tue</span><b>The customer portal.</b><span className="dl">Log in, self-serve, done.</span></div>
-            <div className="day"><span className="dn">Wed</span><b>The migration.</b><span className="dl">Six sites into one. Every redirect kept.</span></div>
-            <div className="day"><span className="dn">Thu</span><b>Personal­ization.</b><span className="dl">Switched on. Finally.</span></div>
-            <div className="day yours"><span className="dn">Fri</span><b>Yours.</b><span className="dl">The idea nobody would fund. <span className="mbr">Bring it.</span></span></div>
-          </div>
-          <p className="weeknote">Also on the menu: thirty brand sites on one design system, storefronts, intranets, member portals, A/B tests, accessibility, performance, SEO. Weekends are for whatever your agency said would take a quarter.</p>
-          <p className="sec-more"><CtaLink href="/playbooks" label="home-playbooks" className="more-link">Explore the playbooks</CtaLink></p>
-        </section>
-
-        <section className="s band white">
-          <SectionHead title="Built for people who get audited." intro="Cypher moves fast. It doesn’t move loose." />
-          <div className="ent-grid">
-            <div><b>Governed</b><p>Playbooks with phases and gates. Roles that can’t mark their own work. You approve the Blueprint and sign off UAT.</p></div>
-            <div><b>On the record</b><p>Every action through one gateway into an append-only log: who, which tool, what happened, what it cost. Export it any time.</p></div>
-            <div><b>Contained</b><p>Each client in its own space. Cypher asks for the access a job needs and records what it can see.</p></div>
-            <div><b>Yours</b><p>Your code in your repository, your hosting, your keys. An editor guide, a component catalog and a known-gaps report at handover.</p></div>
-          </div>
-        </section>
-
-        <section className="s band dark demo-home" id="join">
-          <div className="dh-copy">
-            <h2>See it on your site.</h2>
-            <p>Book a demo. Cypher works on your site, on whatever platform you run, while you watch.</p>
-          </div>
+        <section className="bl-w bl-closing" id="join">
+          <EyeMark state="resting" size={72} />
+          <h2 className="bl-giant">Ignorance is bliss.</h2>
+          <p className="bl-closing-p">Book a demo. <b>I’ll rebuild your homepage while you watch.</b></p>
           <DemoStart label="home-band" />
         </section>
-
       </main>
+
       <SiteFooter />
-      <Reveal />
       <Track />
-    </>
+    </div>
   );
 }

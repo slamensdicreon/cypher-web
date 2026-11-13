@@ -1,34 +1,23 @@
 import Link from 'next/link';
 import CtaLink from '@/components/site/CtaLink';
-import { Resting } from '@/components/SiteHeader';
-import { live } from '@/lib/site';
+import { EyeMark } from '@/components/site/Marks';
 
-/** The site's footer: every live page by group, the legal pages, and the line. */
+/** The site's footer: the wordmark and the line, the pages, the legal pages. */
 export default function SiteFooter() {
-  const groups = (['Product', 'Outcomes', 'Platforms', 'Company'] as const).map((g) => ({ g, items: live(g) })).filter((x) => x.items.length);
   return (
-    <footer className="site-foot">
-      <div className="sf-top">
-        <div className="sf-brand">
-          <Link className="wordmark" href="/"><Resting size={26} />cypher</Link>
+    <footer className="bl-foot">
+      <div className="bl-w bl-foot-in">
+        <div className="bl-foot-brand">
+          <Link className="bl-mark bl-mark-sm" href="/" aria-label="Cypher, home"><EyeMark state="resting" size={24} />cypher</Link>
           <p>Twenty-one specialists and the mind that runs them. Any enterprise platform.</p>
-          <CtaLink href="/demo" label="footer" className="site-cta">Book a demo</CtaLink>
         </div>
-        <nav className="sf-cols" aria-label="Footer">
-          {groups.map(({ g, items }) => (
-            <div key={g}>
-              <b>{g}</b>
-              {items.map((n) => <Link key={n.href} href={n.href}>{n.label}</Link>)}
-            </div>
-          ))}
-          <div>
-            <b>Legal</b>
-            <Link href="/terms">Terms of Use</Link>
-            <Link href="/privacy">Privacy</Link>
-          </div>
+        <nav className="bl-foot-nav" aria-label="Footer">
+          <span><Link href="/how-it-works">How it works</Link><Link href="/playbooks">Playbooks</Link></span>
+          <span><CtaLink href="/demo" label="footer">Book a demo</CtaLink></span>
+          <span><Link href="/terms">Terms of Use</Link><Link href="/privacy">Privacy</Link></span>
         </nav>
       </div>
-      <p className="sf-line">Not affiliated with your agency. Obviously.</p>
+      <p className="bl-w bl-foot-line">Not affiliated with your agency. Obviously.</p>
     </footer>
   );
 }
