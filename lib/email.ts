@@ -37,7 +37,8 @@ export type Message = {
   reply_to?: string;
 };
 
-export async function send(m: Message, idempotencyKey: string | null): Promise<void> {
+/** Sends one email through Resend and returns its id (for looking up delivery later). */
+export async function send(m: Message, idempotencyKey: string | null): Promise<string | null> {
   const headers: Record<string, string> = {
     Authorization: `Bearer ${apiKey}`,
     'Content-Type': 'application/json',
@@ -53,6 +54,8 @@ export async function send(m: Message, idempotencyKey: string | null): Promise<v
     const body = (await res.json().catch(() => ({}))) as { message?: string };
     throw new Error(`Resend refused the email (${res.status}): ${body.message ?? res.statusText}`);
   }
+  const ok = (await res.json().catch(() => ({}))) as { id?: string };
+  return ok.id ?? null;
 }
 
 export const esc = (s: string) =>

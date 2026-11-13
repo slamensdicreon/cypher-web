@@ -208,4 +208,12 @@ export const MIGRATIONS: Migration[] = [
       );
     `,
   },
+  {
+    id: '0003_link_delivery',
+    sql: `
+      -- Which email carried a sign-in link or invitation, so the admin can ask Resend whether it arrived.
+      alter table login_links add column if not exists email_id text;
+      alter table login_links add column if not exists email_error text;
+    `,
+  },
 ];

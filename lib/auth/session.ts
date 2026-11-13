@@ -76,13 +76,25 @@ async function ensureOwner(email: string): Promise<User | null> {
 
 type LinkPurpose = 'sign_in' | 'invite' | 'confirm';
 
-async function createLink(user: User, purpose: LinkPurpose, next: string, ipHash: string): Promise<string> {
+async function createLink(user: User, purpose: LinkPurpose, next: string, ipHash: string): Promise<{ url: string; id: number }> {
   const t = token();
   const minutes = purpose === 'invite' ? INVITE_HOURS * 60 : LINK_MIN;
-  await db()`
+  const [row] = await db()<{ id: string }[]>`
     insert into login_links (user_id, token_hash, purpose, next, expires_at, ip_hash)
-    values (${user.id}, ${hash(t)}, ${purpose}, ${safeNext(next)}, now() + make_interval(mins => ${minutes}), ${ipHash})`;
-  return `${adminOrigin()}/admin/auth/verify?t=${encodeURIComponent(t)}`;
+    values (${user.id}, ${hash(t)}, ${purpose}, ${safeNext(next)}, now() + make_interval(mins => ${minutes}), ${ipHash})
+    returning id`;
+  return { url: `${adminOrigin()}/admin/auth/verify?t=${encodeURIComponent(t)}`, id: Number(row.id) };
+}
+
+/** Sends a link's email and records which email carried it (or why it didn't go). */
+async function mailLink(linkId: number, m: Parameters<typeof send>[0]): Promise<void> {
+  try {
+    const emailId = await send(m, null);
+    await db()`update login_links set email_id = ${emailId}, email_error = null where id = ${linkId}`;
+  } catch (err) {
+    await db()`update login_links set email_error = ${(err as Error).message.slice(0, 300)} where id = ${linkId}`;
+    throw err;
+  }
 }
 
 function linkEmail(user: User, url: string, purpose: LinkPurpose, inviter?: string) {
@@ -120,15 +132,15 @@ export async function requestLink(emailRaw: string, next: string, h: Headers, pu
   const [{ n: perUser }] = await db()<{ n: string }[]>`
     select count(*) as n from login_links where user_id = ${user.id} and created_at > now() - interval '15 minutes'`;
   if (Number(perUser) >= 5) return 'limited';
-  const url = await createLink(user, purpose, next, ipHash);
-  await send(linkEmail(user, url, purpose), null);
+  const link = await createLink(user, purpose, next, ipHash);
+  await mailLink(link.id, linkEmail(user, link.url, purpose));
   return 'sent';
 }
 
 /** Invites a person (or re-sends their invitation). */
 export async function sendInvite(user: User, inviter: User, h: Headers): Promise<void> {
-  const url = await createLink(user, 'invite', '/admin', keyedHash(`admin|${clientIp(h)}`));
-  await send(linkEmail(user, url, 'invite', inviter.name || inviter.email), null);
+  const link = await createLink(user, 'invite', '/admin', keyedHash(`admin|${clientIp(h)}`));
+  await mailLink(link.id, linkEmail(user, link.url, 'invite', inviter.name || inviter.email));
 }
 
 /** Is this link still good? Doesn't use it up (the confirm page calls this to show the button). */
