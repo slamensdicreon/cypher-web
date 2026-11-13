@@ -5,9 +5,9 @@ November 13, 2026. A plan to turn `/admin` into the one place Cypher's business 
 **Decided (November 13)**
 
 - **CRM first** after the foundations.
-- **Simple sign-in by email link** for named people. *Open: one conversation also chose WorkOS for the platform section; `/admin` gets one sign-in (see section 11, decision 1).*
+- **Our own one-time email-link sign-in** for named people, for all of `/admin` (platform screens included). No WorkOS.
 - **Build our own tools.** No bought CRM, CMS, scheduler, booking or signature product; Resend stays as the email pipe.
-- **All management and administration of the Launchworks app moves into this `/admin`** and out of the app (section 9a).
+- **All management and administration of the Launchworks app moves into this `/admin`** and out of the app (section 9a). **This plan builds the `/admin/platform` screens**, with a knowledge transfer from the platform conversation; that conversation keeps the platform-side API work.
 - **Social publishing and the running budget wait** until the foundations are done.
 
 ## 1. Summary
@@ -240,7 +240,7 @@ The current drip engine becomes the sending engine underneath; the module grows 
 
 ## 9a. Platform administration (Launchworks)
 
-*Being planned and built in a separate conversation ("Multi-tenant architecture and role hierarchy"). This section records what that plan says so far and how it fits; it will be updated when that plan is final.*
+*Planned with the platform conversation ("Multi-tenant architecture and role hierarchy"), which builds the platform-side API; the screens are built here. This section is updated as its handover arrives.*
 
 **What moves out of the app and into `/admin`**
 
@@ -263,7 +263,7 @@ The current drip engine becomes the sending engine underneath; the module grows 
 |---|---|---|
 | Launchworks (icreon-claude) | Service-key access to the admin API; acting-person on every call; remove the Icreon-only screens from the app; organization creation takes the first Director explicitly | The platform conversation |
 | cypher-web `/admin` | Sign-in, roles, audit log and shell (Foundations, one system for all of `/admin`) | This plan, Phase 0 |
-| cypher-web `/admin/platform` | The organization, license, usage, support access and product management screens, on the shared shell | To agree between the two conversations (section 11, decision 2) |
+| cypher-web `/admin/platform` | The organization, license, usage, support access and product management screens, on the shared shell | This plan (Phase 1P), from the platform conversation's handover |
 
 ## 10. The roadmap
 
@@ -425,8 +425,8 @@ Sizes: **S** about a day, **M** two or three days, **L** about a week. Weeks are
 
 **Decisions needed**
 
-1. **One sign-in for all of `/admin`:** our own email links (recommended: it's what you chose here, it's simple, and it's ours), or WorkOS (chosen in the platform conversation; adds Google and Microsoft sign-in and multi-factor, but it's a bought service). The platform's history keeps names either way, because each call names the person acting.
-2. **Who builds the platform screens in cypher-web:** the platform conversation (it knows the API) on top of the shared sign-in and shell built here, or this conversation once the platform side's API is ready.
+1. ~~One sign-in for all of `/admin`~~ **Decided:** our own email links.
+2. ~~Who builds the platform screens~~ **Decided:** this plan, with a handover from the platform conversation.
 3. **Who gets which role:** names for Owner, Platform, Marketing, Sales and Viewer.
 4. **Proposals:** what a standard proposal contains (scope by outcome, pricing model, terms).
 5. **Later, after the foundations:** social publishing (direct or schedule-and-remind) and the running budget.
