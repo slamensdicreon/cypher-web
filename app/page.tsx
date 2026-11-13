@@ -1,4 +1,5 @@
 import Decisions from '@/components/Decisions';
+import Eye from '@/components/Eye';
 import Reveal from '@/components/Reveal';
 import Track from '@/components/Track';
 import SiteFooter from '@/components/SiteFooter';
@@ -16,9 +17,10 @@ export default function Page() {
       <main className="wrap">
         <div className="hero-v">
           <HeroVideo />
-          <div className="hero-v-copy">
-            <h1 className="line">Ignorance is bliss.</h1>
+          <div className="hero">
+            <Eye />
             <div>
+              <h1 className="line">Ignorance is bliss.</h1>
               <p>Cypher is twenty-one specialists and the mind that runs them. Point it at any enterprise platform and it builds, migrates, personalizes and optimizes, pixel perfect, for a rounding error of what you pay now. It doesn’t replace you. It promotes you.</p>
               <div className="hero-cta">
                 <CtaLink href="/demo" label="home-hero" className="site-cta big">Book a demo</CtaLink>
