@@ -5,7 +5,7 @@ import { Score, StagePill, money, when } from '@/components/admin/crm/parts';
 import { requireUser } from '@/lib/auth/request';
 import { can } from '@/lib/auth/roles';
 import { OUTCOMES } from '@/lib/config';
-import { owners, pipeline, rescorePending, stages } from '@/lib/crm/data';
+import { catchUpLeads, owners, pipeline, rescorePending, stages } from '@/lib/crm/data';
 
 type Search = { msg?: string; q?: string; who?: string; view?: string };
 
@@ -13,6 +13,7 @@ type Search = { msg?: string; q?: string; who?: string; view?: string };
 export default async function Pipeline({ searchParams }: { searchParams: Promise<Search> }) {
   const s = await requireUser('crm', 'read', '/admin/crm');
   const sp = await searchParams;
+  await catchUpLeads();
   await rescorePending();
   const mine = sp.who === 'me';
   const table = sp.view === 'table';

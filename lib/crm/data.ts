@@ -535,6 +535,24 @@ export async function rescore(dealId: number): Promise<void> {
 }
 
 /** Scores any deal that hasn't been scored (the backfilled ones). */
+/**
+ * Records any accepted sign-up the CRM missed: one that came in after the CRM's tables were made but
+ * before the site started recording leads (preview and production share a database), or one whose
+ * recording failed. Skips the last two minutes, which the form is still recording itself.
+ */
+export async function catchUpLeads(): Promise<number> {
+  await migrate();
+  const missed = await db()<{ id: number; email: string; domain: string; company: string; site: string; wants: string; level: number | null; source: string }[]>`
+    select s.id::int as id, s.email, s.domain, s.company, s.site, s.wants, s.level, s.source from submissions s
+    where s.outcome = 'ok' and s.domain <> '' and s.created_at < now() - interval '2 minutes'
+      and not exists (select 1 from activities a where a.kind = 'form' and (a.meta->>'submission_id')::bigint = s.id)
+    order by s.created_at limit 200`;
+  for (const m of missed) {
+    await recordLead({ email: m.email, domain: m.domain, company: m.company, site: m.site, wants: m.wants, level: m.level ?? 0, source: m.source, submissionId: m.id });
+  }
+  return missed.length;
+}
+
 export async function rescorePending(): Promise<void> {
   await migrate();
   const rows = await db()<{ id: number }[]>`select id::int as id from deals where scored_at is null limit 500`;

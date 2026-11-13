@@ -120,3 +120,18 @@ test('new website leads follow the owner rule in Settings', { skip }, async () =
   const z = await crm.recordLead({ email: 'x@zeta.example', domain: 'zeta.example', company: 'Zeta', site: '', wants: '', level: 1, source: '', submissionId: null });
   assert.equal((await crm.deal(z.dealId))!.ownerId, null);
 });
+
+test('sign-ups the CRM missed are caught up once, and recent ones are left to the form', { skip }, async () => {
+  const [old] = await store.sql!`insert into submissions (id, created_at, email, domain, company, outcome, level, site, wants, source)
+    values (1000, now() - interval '1 hour', 'kim@missed.example', 'missed.example', 'Missed Co', 'ok', 2, 'missed.example', 'Optimize', 'postcard') returning id::int as id`;
+  await store.sql!`insert into submissions (id, email, domain, company, outcome, level) values (1001, 'new@fresh.example', 'fresh.example', 'Fresh', 'ok', 1)`;
+  await store.sql!`insert into submissions (id, created_at, email, domain, company, outcome) values (1002, now() - interval '1 hour', 'x@gmail.com', 'gmail.com', 'Gmail', 'personal')`;
+  assert.equal(await crm.catchUpLeads(), 1);
+  assert.equal(await crm.catchUpLeads(), 0);
+  const [d] = await crm.pipeline({ q: 'Missed Co' });
+  assert.equal(d.contactEmail, 'kim@missed.example');
+  assert.deepEqual(d.outcomes, ['Optimize']);
+  assert.ok((await crm.timeline({ dealId: d.id })).some((a) => a.kind === 'form'));
+  assert.equal((await crm.pipeline({ q: 'Fresh' })).length, 0);
+  void old;
+});
