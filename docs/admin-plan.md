@@ -1,6 +1,14 @@
 # Cypher Admin: Build Plan
 
-November 13, 2026. A plan to turn `/admin` into the one place Cypher's go-to-market runs: the CRM, email marketing, the website CMS, the marketing plan and calendar, and the analytics that say whether any of it works.
+November 13, 2026. A plan to turn `/admin` into the one place Cypher's business runs: the CRM, email marketing, the website CMS, the marketing plan and calendar, the analytics that say whether any of it works, and the administration of the Launchworks platform itself.
+
+**Decided (November 13)**
+
+- **CRM first** after the foundations.
+- **Simple sign-in by email link** for named people. *Open: one conversation also chose WorkOS for the platform section; `/admin` gets one sign-in (see section 11, decision 1).*
+- **Build our own tools.** No bought CRM, CMS, scheduler, booking or signature product; Resend stays as the email pipe.
+- **All management and administration of the Launchworks app moves into this `/admin`** and out of the app (section 9a).
+- **Social publishing and the running budget wait** until the foundations are done.
 
 ## 1. Summary
 
@@ -13,6 +21,7 @@ November 13, 2026. A plan to turn `/admin` into the one place Cypher's go-to-mar
 | **Website CMS** | Edit every word on the site, build campaign landing pages, publish with a preview and an undo | Code changes for copy |
 | **Marketing plans** | The evergreen plan, goals, campaigns, a content calendar, the asset library, social publishing | The plan document and ad hoc posting |
 | **Analytics** | Website, email, social and ads in one place, tied to the pipeline: what brought the lead, what it became, what it was worth | Six dashboards in six tools |
+| **Platform administration** | Launchworks customers: organizations, licenses, usage, support access, and the product's own settings, rules, knowledge and diagnostics | The Icreon-only screens inside the app |
 
 **A command center** sits on top: one screen that says what needs you today.
 
@@ -22,9 +31,10 @@ November 13, 2026. A plan to turn `/admin` into the one place Cypher's go-to-mar
 2. **Cypher's own design language.** The admin borrows the platform's two faces: **Bliss** (one sentence, at most three things that are yours, each with a recommended next step) and **Everything** (the full tables, metrics and logs). Same data, one switch.
 3. **The pipeline is the spine.** Every module writes to and reads from the same contacts, companies and deals, so a LinkedIn post, an email click and a signed proposal are one story.
 4. **Proper accounts before personal data.** The CRM holds people's details; real user accounts, roles and an audit log come first.
-5. **No Icreon on the label.** The admin is internal, but anything it publishes (site, emails, landing pages, proposals) follows the brand guardrails, checked automatically.
+5. **Separate from the product.** Nothing that administers Launchworks lives in the app customers use; the admin talks to the platform server to server.
+6. **No Icreon on the label.** The admin is internal, but anything it publishes (site, emails, landing pages, proposals) follows the brand guardrails, checked automatically.
 
-**Build order** (section 10): Foundations → CRM → Command center and analytics → Email marketing → Demos and proposals → Website CMS → Marketing plans and social → Hardening. About **16 to 19 weeks** of build if done in sequence, with a usable CRM in about four.
+**Build order** (section 10): Foundations → CRM, with platform administration alongside → Command center and analytics → Email marketing → Demos and proposals → Website CMS → Marketing plans and social → Hardening. About **16 to 19 weeks** of build if done in sequence, with a usable CRM in about five.
 
 ## 2. Where we are today
 
@@ -56,9 +66,10 @@ Everything else depends on these.
 
 **Accounts, roles and sessions**
 
-- Individual users invited by email; sign in with a **magic link** (sent through Resend) or **Google sign-in** if the team uses Google Workspace.
-- Roles: **Owner** (everything, including billing-level settings and deleting data), **Marketing** (CMS, email, plans, analytics), **Sales** (CRM, proposals, analytics), **Viewer** (read-only).
-- Sessions stored in the database so they can be revoked; the shared PIN retires.
+- Individual, named people on an allowlist, invited by email; sign in with a **one-time email link** (sent through Resend, valid for 15 minutes, single use). No passwords.
+- Roles: **Owner** (everything, including deleting data), **Platform** (Launchworks organizations, licenses, support access and product settings), **Marketing** (CMS, email, plans, analytics), **Sales** (CRM, proposals, analytics), **Viewer** (read-only). A person can hold several.
+- Sessions stored in the database so they can be revoked; shorter sessions and a fresh sign-in for sensitive actions (granting a license, giving support access, deleting data).
+- The shared PIN retires.
 
 **Audit log.** Every create, change, publish, send and delete records who, what, when and the before-and-after. Viewable per record and globally.
 
@@ -72,6 +83,8 @@ Everything else depends on these.
 
 - Move from "create table if not exists" in code to **numbered SQL migrations** run on deploy, so the schema can grow safely.
 - The core tables: `users`, `sessions`, `roles`, `audit_log`, `settings`, `companies`, `contacts`, `deals`, `deal_stages`, `activities`, `tasks`, `meetings`, `proposals`, `segments`, `campaigns`, `templates`, `content_pages`, `content_versions`, `media`, `plans`, `goals`, `marketing_campaigns`, `content_items`, `social_accounts`, `social_posts`, `metrics_daily`, `ad_spend`. Existing tables are migrated in, not replaced.
+
+**A separate admin address.** Serve the admin at `admin.ignoranceisbliss.ai` from the same project: its own cookies, no admin code shipped to the public site, and the public site's forms and webhooks kept apart from the admin's keys.
 
 **Settings and integrations health.** One page for the sender name and postal address (the missing `DRIP_POSTAL_ADDRESS` becomes a field), reply-to, and every connection (Resend, LinkedIn, YouTube, X, calendar, ads) with its status and a "test" button.
 
@@ -225,6 +238,33 @@ The current drip engine becomes the sending engine underneath; the module grows 
 
 **Privacy.** The website analytics stay cookieless; a visitor's history is joined to a contact only after they submit the form, using a first-party identifier set at that moment and disclosed in the privacy notice.
 
+## 9a. Platform administration (Launchworks)
+
+*Being planned and built in a separate conversation ("Multi-tenant architecture and role hierarchy"). This section records what that plan says so far and how it fits; it will be updated when that plan is final.*
+
+**What moves out of the app and into `/admin`**
+
+- **Customers:** organizations, each organization's people and projects, creating an organization and inviting its first Director.
+- **Licenses:** the license editor and its history.
+- **Usage:** Claude spend and tokens, sandbox minutes, agent tool minutes, Vercel deployments and build minutes, in total and per project (built and live in the app today).
+- **Support access:** granting a named Icreon person time-limited access to a customer's projects.
+- **The product's own management:** Settings, In force, Rules, Knowledge and Diagnostics (and the related review screens), which today are Icreon-only pages inside the app.
+
+**How it connects (security)**
+
+- The platform's admin API stops accepting browser sign-ins and accepts only a **service key** that the admin keeps on its server and never sends to a browser.
+- Every call names the Icreon person acting, so the platform's history keeps names, not "admin".
+- Only people with the **Platform** role see these screens; sensitive actions ask for a fresh sign-in.
+- The admin's own audit log records the same actions on this side.
+
+**Who builds what**
+
+| Side | Work | Built by |
+|---|---|---|
+| Launchworks (icreon-claude) | Service-key access to the admin API; acting-person on every call; remove the Icreon-only screens from the app; organization creation takes the first Director explicitly | The platform conversation |
+| cypher-web `/admin` | Sign-in, roles, audit log and shell (Foundations, one system for all of `/admin`) | This plan, Phase 0 |
+| cypher-web `/admin/platform` | The organization, license, usage, support access and product management screens, on the shared shell | To agree between the two conversations (section 11, decision 2) |
+
 ## 10. The roadmap
 
 Sizes: **S** about a day, **M** two or three days, **L** about a week. Weeks are build weeks; phases 3 to 6 can overlap if two people work in parallel.
@@ -234,13 +274,14 @@ Sizes: **S** about a day, **M** two or three days, **L** about a week. Weeks are
 | # | Task | Size | Depends on |
 |---|---|---|---|
 | F1 | Numbered SQL migrations, run on deploy; move existing tables under it | M | — |
-| F2 | Users, invites, magic-link and Google sign-in, sessions, roles and permission checks | L | F1 |
+| F2 | Users, invites, one-time email-link sign-in, sessions, roles (including Platform) and permission checks; fresh sign-in for sensitive actions | L | F1 |
 | F3 | Audit log and record history | M | F2 |
 | F4 | App shell: rail, top bar, Bliss/Everything switch, Ctrl/⌘+K search, notifications tray, phone layout | L | F2 |
 | F5 | Shared components: tables with saved views, record page with timeline, kanban, calendar, forms, charts | L | F4 |
 | F6 | Settings and integrations health page (postal address, sender, reply-to, connection tests) | M | F2 |
 | F7 | Media store (Vercel Blob) with upload and alt text | S | F1 |
 | F8 | Tests, continuous checks, seeded preview databases, error monitoring | M | F1 |
+| F9 | Serve the admin at `admin.ignoranceisbliss.ai` with its own cookies; public site ships no admin code | M | F2 |
 
 **Done when:** each person signs in with their own account, the PIN is retired, and every change is in the audit log.
 
@@ -258,6 +299,20 @@ Sizes: **S** about a day, **M** two or three days, **L** about a week. Weeks are
 | C8 | CSV import with column mapping; bulk actions; export | M | C1 |
 
 **Done when:** a form submission appears as a new deal within seconds, the owner is notified, and it can be moved through every stage to Won or Lost with notes and tasks.
+
+### Phase 1P: Platform administration (alongside Phase 1, provisional)
+
+| # | Task | Size | Depends on |
+|---|---|---|---|
+| L1 | Platform side: service-key admin API, acting person on every call, Icreon-only screens removed from the app | L | Platform conversation |
+| L2 | Server-side platform client in the admin; the key held only on the server | S | F2, L1 |
+| L3 | Organizations: list, record, people and projects, create and invite the first Director | M | L2, F5 |
+| L4 | Licenses: editor and history | M | L3 |
+| L5 | Usage: totals and per project | S | L3 |
+| L6 | Support access: grant and revoke, time-limited, with a fresh sign-in | M | L3 |
+| L7 | Product management: Settings, In force, Rules, Knowledge, Diagnostics | L | L2 |
+
+**Done when:** every Icreon-only screen is gone from the app, and each action taken in `/admin/platform` shows the person's name in both the platform's history and the admin's audit log.
 
 ### Phase 2: Command center and analytics v1 (about 2 weeks)
 
@@ -290,11 +345,11 @@ Sizes: **S** about a day, **M** two or three days, **L** about a week. Weeks are
 
 | # | Task | Size | Depends on |
 |---|---|---|---|
-| P1 | Demo booking (calendar link) feeding meetings and the Demo booked stage | M | C3 |
+| P1 | Our own demo booking page: availability, time zones, confirmation and reminder emails, calendar invite (.ics); feeds meetings and the Demo booked stage | L | C3 |
 | P2 | Demo records: the replay or "See it on your site" preview link, notes, outcome | S | P1 |
 | P3 | Proposal builder: templates, scope by outcome, line items, terms, PDF | L | C3 |
 | P4 | Tracked proposal links: viewed, how often, accept button | M | P3 |
-| P5 | Electronic signature (provider) and Won handover checklist | M | P4 |
+| P5 | Our own acceptance: typed-name signature, timestamp, IP and document fingerprint recorded, signed PDF emailed to both sides; Won handover checklist | M | P4 |
 
 **Done when:** a demo is booked from an email, shown, and followed by a proposal whose views and acceptance land on the deal.
 
@@ -340,13 +395,13 @@ Sizes: **S** about a day, **M** two or three days, **L** about a week. Weeks are
 
 | Weeks | 1–2 | 3–5 | 6–7 | 8–10 | 11–12 | 13–15 | 16–18 | 19 |
 |---|---|---|---|---|---|---|---|---|
-| Phase | Foundations | CRM | Command center, analytics | Email | Demos, proposals | CMS | Plans, social | Hardening |
+| Phase | Foundations | CRM (+ platform admin) | Command center, analytics | Email | Demos, proposals | CMS | Plans, social | Hardening |
 
 **Two quick wins before Phase 0**, so nothing waits on the build: set the postal address so emails can send, and apply for LinkedIn's Community Management API now, because approval can take weeks.
 
 ## 11. Costs, risks and decisions needed
 
-**Running costs** (approximate; confirm current pricing before committing)
+**Running costs** (approximate; confirm current pricing before committing; to be settled after the foundations)
 
 | Item | Why | Rough cost |
 |---|---|---|
@@ -356,8 +411,6 @@ Sizes: **S** about a day, **M** two or three days, **L** about a week. Weeks are
 | Vercel Blob | Media storage | Usage-based, small |
 | X API | Posting and metrics on X | About $200 a month for the basic tier |
 | LinkedIn and YouTube APIs | Publishing and metrics | No fee; needs approval |
-| Calendar booking | Demo booking | Free tier available |
-| Electronic signature | Proposal signing | About $20 to $50 a month |
 | Error monitoring | Catch problems early | Free to about $30 a month |
 
 **Risks**
@@ -366,15 +419,14 @@ Sizes: **S** about a day, **M** two or three days, **L** about a week. Weeks are
 - **Personal data.** The CRM holds names, emails and notes. Real accounts, roles, the audit log and the privacy work are not optional, and they come first.
 - **API approvals.** LinkedIn access can take weeks and may be refused; the schedule-and-remind step works without it.
 - **Deliverability.** Broadcasting to cold lists can damage the domain's reputation. Warm up, segment, and keep consent records.
-- **Build versus buy.** Every module here exists as a product (HubSpot, Pipedrive, Sanity, Buffer). Building it in-house buys one connected system with our design and our data; it costs build time and upkeep.
+- **Building everything ourselves.** Decided: one connected system with our design and our data, at the cost of build time and upkeep. The riskiest home-built pieces are sign-in, booking and signatures; each gets tests and a security review before it handles real customers.
+- **Two conversations, one repo.** The platform administration work and this plan both touch cypher-web's `/admin`. One sign-in, one shell and one audit log, built once; agree the split before either builds them.
+- **The admin as a target.** It will hold the key that administers every Launchworks customer. The separate admin address, server-only key, named allowlist, fresh sign-in for sensitive actions and the audit log are the controls.
 
 **Decisions needed**
 
-1. **Build order:** CRM first (recommended, because leads are arriving now), or the content calendar first because social is launching now?
-2. **Sign-in:** Google sign-in (if the team is on Google Workspace) or magic links? And who gets which role?
-3. **CRM:** fully in-house, or in-house with a sync to a CRM someone already uses?
-4. **CMS:** in-house (recommended, it keeps the site's design and animation), or run the site on an enterprise DXP as a showcase for Cypher itself?
-5. **Social publishing:** schedule-and-remind only, or pay for direct publishing on X and apply for LinkedIn access?
-6. **Proposals:** which signature provider, and what does a standard proposal contain (scope by outcome, pricing model, terms)?
-7. **Demo booking:** which calendar (Google, Microsoft or a booking tool)?
-8. **Budget:** approve the running costs above.
+1. **One sign-in for all of `/admin`:** our own email links (recommended: it's what you chose here, it's simple, and it's ours), or WorkOS (chosen in the platform conversation; adds Google and Microsoft sign-in and multi-factor, but it's a bought service). The platform's history keeps names either way, because each call names the person acting.
+2. **Who builds the platform screens in cypher-web:** the platform conversation (it knows the API) on top of the shared sign-in and shell built here, or this conversation once the platform side's API is ready.
+3. **Who gets which role:** names for Owner, Platform, Marketing, Sales and Viewer.
+4. **Proposals:** what a standard proposal contains (scope by outcome, pricing model, terms).
+5. **Later, after the foundations:** social publishing (direct or schedule-and-remind) and the running budget.
