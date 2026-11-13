@@ -472,7 +472,14 @@ export async function deleteTask(id: number): Promise<void> {
 
 // ---------------------------------------------------------------- leads from the site
 
-export type LeadInput = { email: string; domain: string; company: string; site: string; wants: string; level: number; source: string; submissionId: number | null };
+export type LeadInput = {
+  email: string; domain: string; company: string; site: string; wants: string; level: number; source: string; submissionId: number | null;
+  /** From the demo form: who they are, their platform, the page they came from, and the times that suit them. */
+  name?: string; platform?: string; page?: string; demo?: { times: string; tz: string } | null;
+};
+
+/** Stages a demo request moves a deal out of (anything earlier than Demo booked). */
+const BEFORE_DEMO = ['new', 'qualified', 'nurture'];
 
 /**
  * Who gets a new website lead, from Settings: nobody, one person, or taking turns (the person with
@@ -507,7 +514,9 @@ export async function recordLead(l: LeadInput): Promise<{ companyId: number; con
     on conflict ((lower(domain))) where domain <> '' do update set
       website = case when companies.website = '' then excluded.website else companies.website end, updated_at = now()
     returning id::int as id`;
-  const contactId = await upsertContact({ email: l.email, companyId: co.id, source: l.source, company: l.company });
+  if (l.platform) await db()`update companies set platform = ${l.platform.slice(0, 60)} where id = ${co.id} and platform = ''`;
+  const [first, ...rest] = (l.name ?? '').trim().split(/\s+/);
+  const contactId = await upsertContact({ email: l.email, companyId: co.id, source: l.source, company: l.company, firstName: first ?? '', lastName: rest.join(' ') });
   const outcomes = l.wants ? l.wants.split(', ').filter(Boolean) : [];
   const [open] = await db()<{ id: number }[]>`
     select d.id::int as id from deals d join pipeline_stages s on s.id = d.stage
@@ -523,6 +532,14 @@ export async function recordLead(l: LeadInput): Promise<{ companyId: number; con
         outcomes = (select coalesce(array_agg(distinct x), '{}') from unnest(outcomes || ${outcomes}::text[]) x),
         stage = case when stage = 'nurture' then 'new' else stage end
       where id = ${dealId}`;
+    if (l.demo) {
+      const [cur] = await db()<{ stage: string }[]>`select stage from deals where id = ${dealId}`;
+      if (cur && BEFORE_DEMO.includes(cur.stage)) {
+        await db()`update deals set stage = 'demo_booked', stage_changed_at = now() where id = ${dealId}`;
+        const all = await stages();
+        await addActivity(null, { kind: 'stage', subject: `${all.find((x) => x.id === cur.stage)?.label ?? cur.stage} → Demo booked`, dealId, meta: { from: cur.stage, to: 'demo_booked' } });
+      }
+    }
     await db()`insert into deal_contacts (deal_id, contact_id) values (${dealId}, ${contactId}) on conflict do nothing`;
   } else {
     dealId = await createDeal(null, {
@@ -533,33 +550,44 @@ export async function recordLead(l: LeadInput): Promise<{ companyId: number; con
       level: l.level,
       source: l.source,
       ownerId: owner,
+      stage: l.demo ? 'demo_booked' : 'new',
       submissionId: l.submissionId,
     });
     created = true;
   }
   await addActivity(null, {
     kind: 'form',
-    subject: 'Asked to see it on their site',
-    body: [l.site, l.wants].filter(Boolean).join(' · '),
+    subject: l.demo ? 'Asked for a demo' : 'Asked to see it on their site',
+    body: [l.site, l.platform, l.wants, l.demo?.times ? `Times that suit: ${l.demo.times}${l.demo.tz ? ` (${l.demo.tz})` : ''}` : ''].filter(Boolean).join(' · '),
     dealId,
     companyId: co.id,
     contactId,
-    meta: { submission_id: l.submissionId, source: l.source, site: l.site, wants: l.wants, level: l.level },
+    meta: { submission_id: l.submissionId, source: l.source, site: l.site, wants: l.wants, level: l.level, platform: l.platform ?? '', page: l.page ?? '', ...(l.demo ? { demo: l.demo } : {}) },
   });
+  if (l.demo) {
+    // The demo host confirms one of their times: the next step, and a task due today.
+    const [d] = await db()<{ ownerId: number | null }[]>`select owner_id::int as owner_id from deals where id = ${dealId}`;
+    await db()`update deals set next_step = 'Confirm the demo time', next_step_at = (now() at time zone 'America/New_York')::date where id = ${dealId}`;
+    await db()`
+      insert into tasks (title, notes, due_at, owner_id, deal_id, company_id, contact_id)
+      values (${`Confirm a demo time with ${l.name?.trim() || l.email}`.slice(0, 200)}, ${`Times that suit: ${l.demo.times || 'not given'}${l.demo.tz ? ` (${l.demo.tz})` : ''}`},
+              now() + interval '4 hours', ${d?.ownerId ?? null}, ${dealId}, ${co.id}, ${contactId})`;
+  }
   await rescore(dealId);
   return { companyId: co.id, contactId, dealId, created };
 }
 
 /** Works out a deal's score from what's known about it, and stores the score with its reasons. */
 export async function rescore(dealId: number): Promise<void> {
-  const [d] = await db()<{ level: number | null; outcomes: string[]; source: string; title: string | null; platform: string | null; site: string | null; requests: number }[]>`
+  const [d] = await db()<{ level: number | null; outcomes: string[]; source: string; title: string | null; platform: string | null; site: string | null; requests: number; demo: boolean }[]>`
     select d.level, d.outcomes, d.source, ct.title, co.platform,
            (select a.meta->>'site' from activities a where a.deal_id = d.id and a.kind = 'form' and coalesce(a.meta->>'site', '') <> '' order by a.at desc limit 1) as site,
-           (select count(*)::int from activities a where a.deal_id = d.id and a.kind = 'form') as requests
+           (select count(*)::int from activities a where a.deal_id = d.id and a.kind = 'form') as requests,
+           exists (select 1 from activities a where a.deal_id = d.id and a.kind = 'form' and a.meta ? 'demo') as demo
     from deals d left join contacts ct on ct.id = d.primary_contact_id left join companies co on co.id = d.company_id
     where d.id = ${dealId}`;
   if (!d) return;
-  const r = scoreLead({ level: d.level, outcomes: d.outcomes, site: d.site ?? '', source: d.source, requests: d.requests, title: d.title ?? '', platform: d.platform ?? '' });
+  const r = scoreLead({ level: d.level, outcomes: d.outcomes, site: d.site ?? '', source: d.source, requests: d.requests, title: d.title ?? '', platform: d.platform ?? '', demo: d.demo });
   await db()`update deals set score = ${r.score}, score_reasons = ${db().json(r.reasons)}, scored_at = now() where id = ${dealId}`;
 }
 
@@ -571,13 +599,16 @@ export async function rescore(dealId: number): Promise<void> {
  */
 export async function catchUpLeads(): Promise<number> {
   await migrate();
-  const missed = await db()<{ id: number; email: string; domain: string; company: string; site: string; wants: string; level: number | null; source: string }[]>`
-    select s.id::int as id, s.email, s.domain, s.company, s.site, s.wants, s.level, s.source from submissions s
+  const missed = await db()<{ id: number; email: string; domain: string; company: string; site: string; wants: string; level: number | null; source: string; kind: string; name: string; platform: string; times: string; tz: string; page: string }[]>`
+    select s.id::int as id, s.email, s.domain, s.company, s.site, s.wants, s.level, s.source, s.kind, s.name, s.platform, s.times, s.tz, s.page from submissions s
     where s.outcome = 'ok' and s.domain <> '' and s.created_at < now() - interval '2 minutes'
       and not exists (select 1 from activities a where a.kind = 'form' and (a.meta->>'submission_id')::bigint = s.id)
     order by s.created_at limit 200`;
   for (const m of missed) {
-    await recordLead({ email: m.email, domain: m.domain, company: m.company, site: m.site, wants: m.wants, level: m.level ?? 0, source: m.source, submissionId: m.id });
+    await recordLead({
+      email: m.email, domain: m.domain, company: m.company, site: m.site, wants: m.wants, level: m.level ?? 0, source: m.source, submissionId: m.id,
+      name: m.name, platform: m.platform, page: m.page, demo: m.kind === 'demo' ? { times: m.times, tz: m.tz } : null,
+    });
   }
   return missed.length;
 }

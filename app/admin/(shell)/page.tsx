@@ -179,7 +179,7 @@ function People({ tab, q, rows, counts }: { tab: Tab; q: string; rows: Row[]; co
   return (
     <section className="ad-card ad-wide" id="people">
       <div className="ad-people-head">
-        <h3>Everyone who filled in the form</h3>
+        <h3>Demo requests and sign-ups</h3>
         <a className="ad-btn" href={`/api/admin/export?tab=${tab}`}>Download CSV</a>
       </div>
       <nav className="ad-tabs" aria-label="Filter submissions">
@@ -200,7 +200,7 @@ function People({ tab, q, rows, counts }: { tab: Tab; q: string; rows: Row[]; co
         <div className="ad-scroll">
           <table className="ad-tbl">
             <thead>
-              <tr><th>When (ET)</th><th>Company</th><th>Email</th><th>Result</th><th>Site</th><th>Wants</th><th>How badly</th><th>Source</th><th>Emails</th></tr>
+              <tr><th>When (ET)</th><th>Company</th><th>Email</th><th>Result</th><th>Platform</th><th>Times that suit</th><th>Site</th><th>Wants</th><th>How badly</th><th>Source</th><th>Emails</th></tr>
             </thead>
             <tbody>
               {rows.map((r) => (
@@ -209,6 +209,8 @@ function People({ tab, q, rows, counts }: { tab: Tab; q: string; rows: Row[]; co
                   <td><b>{r.company}</b></td>
                   <td><a href={`mailto:${r.email}`}>{r.email}</a></td>
                   <td><span className={`ad-pill ${r.outcome === 'ok' ? 'ok' : 'no'}`}>{OUTCOME[r.outcome] ?? r.outcome}</span></td>
+                  <td>{r.platform || <span className="ad-dim">–</span>}</td>
+                  <td className="ad-line">{r.times ? <>{r.times}{r.tz ? <><br /><span className="ad-dim">{r.tz.replace(/_/g, ' ')}</span></> : null}</> : <span className="ad-dim">–</span>}</td>
                   <td>{r.site ? <a href={/^https?:\/\//.test(r.site) ? r.site : `https://${r.site}`} target="_blank" rel="noreferrer noopener">{r.site.replace(/^https?:\/\//, '').replace(/\/$/, '')}</a> : <span className="ad-dim">–</span>}</td>
                   <td>{r.wants || <span className="ad-dim">–</span>}</td>
                   <td>{r.interest ?? <span className="ad-dim">–</span>}</td>

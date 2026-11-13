@@ -18,6 +18,12 @@ export type Submission = {
   wants: string;
   ua: string;
   ipHash: string;
+  kind?: string;
+  name?: string;
+  platform?: string;
+  times?: string;
+  tz?: string;
+  page?: string;
 };
 
 export type Row = {
@@ -32,6 +38,12 @@ export type Row = {
   source: string;
   site: string;
   wants: string;
+  kind: string;
+  name: string;
+  platform: string;
+  times: string;
+  tz: string;
+  page: string;
   internalSentAt: Date | null;
   confirmationSentAt: Date | null;
   emailError: string | null;
@@ -62,9 +74,10 @@ export async function save(s: Submission): Promise<number | null> {
   }
   await migrate();
   const [row] = await sql<{ id: string }[]>`
-    insert into submissions (email, domain, company, outcome, level, interest, source, site, wants, ua, ip_hash)
+    insert into submissions (email, domain, company, outcome, level, interest, source, site, wants, ua, ip_hash, kind, name, platform, times, tz, page)
     values (${s.email}, ${s.domain}, ${s.company}, ${s.outcome}, ${s.level}, ${s.interest},
-            ${s.source}, ${s.site}, ${s.wants}, ${s.ua}, ${s.ipHash})
+            ${s.source}, ${s.site}, ${s.wants}, ${s.ua}, ${s.ipHash}, ${s.kind ?? 'interest'}, ${s.name ?? ''}, ${s.platform ?? ''},
+            ${s.times ?? ''}, ${s.tz ?? ''}, ${s.page ?? ''})
     returning id`;
   return Number(row.id);
 }
@@ -124,7 +137,7 @@ export async function all(opts: { outcome?: Outcome } = {}): Promise<Row[]> {
   await migrate();
   return sql<Row[]>`
     select id::int as id, created_at, email, domain, company, outcome, level, interest, source, site, wants,
-           internal_sent_at, confirmation_sent_at, email_error
+           kind, name, platform, times, tz, page, internal_sent_at, confirmation_sent_at, email_error
     from submissions
     ${opts.outcome ? sql`where outcome = ${opts.outcome}` : sql``}
     order by created_at desc`;

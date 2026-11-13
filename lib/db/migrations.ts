@@ -385,4 +385,18 @@ export const MIGRATIONS: Migration[] = [
         and not exists (select 1 from activities a where a.kind = 'form' and (a.meta->>'submission_id')::bigint = s.id);
     `,
   },
+  {
+    id: '0005_demo_requests',
+    sql: `
+      -- The site's form asks for a demo now: who, which platform, and when suits them.
+      alter table submissions add column if not exists kind text not null default 'interest';
+      alter table submissions add column if not exists name text not null default '';
+      alter table submissions add column if not exists platform text not null default '';
+      alter table submissions add column if not exists times text not null default '';
+      alter table submissions add column if not exists tz text not null default '';
+      alter table submissions add column if not exists page text not null default '';
+      -- Which button was pressed, for clicks on the site's calls to action.
+      alter table events add column if not exists label text not null default '';
+    `,
+  },
 ];

@@ -2,6 +2,7 @@ import { after, NextResponse } from 'next/server';
 import { classify } from '@/lib/rules';
 import { companyOf, domainOf } from '@/lib/company';
 import { LEVELS, OUTCOMES } from '@/lib/config';
+import { MAX_SLOTS, PLATFORMS, SLOT, slotLabel } from '@/lib/site';
 import { notify } from '@/lib/email';
 import { recordLead } from '@/lib/crm/data';
 import { clientIp, keyedHash } from '@/lib/keys';
@@ -10,7 +11,20 @@ import { companiesSoFar, confirmedRecently, markEmails, save, underLimit } from 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
-type Body = { email?: unknown; level?: unknown; source?: unknown; website?: unknown; site?: unknown; wants?: unknown };
+type Body = { email?: unknown; level?: unknown; source?: unknown; website?: unknown; site?: unknown; wants?: unknown; name?: unknown; platform?: unknown; times?: unknown; tz?: unknown; page?: unknown };
+
+const text = (v: unknown, max: number) => (typeof v === 'string' ? v.replace(/[\u0000-\u001f]/g, ' ').trim().slice(0, max) : '');
+
+/** Up to three slots within the next five weeks, as readable words ("Mon, Nov 16, morning"). */
+function cleanTimes(v: unknown): string {
+  if (!Array.isArray(v)) return '';
+  const soon = Date.now() + 35 * 86400_000;
+  const keys = [...new Set(v.filter((k): k is string => typeof k === 'string' && SLOT.test(k)))]
+    .filter((k) => Date.parse(k.slice(0, 10)) < soon && Date.parse(k.slice(0, 10)) > Date.now() - 2 * 86400_000)
+    .sort()
+    .slice(0, MAX_SLOTS);
+  return keys.map(slotLabel).join('; ');
+}
 
 /** A site address as typed (acme.com, www.acme.com/en, https://acme.com): kept short and plain. */
 function cleanSite(v: unknown): string {
@@ -56,6 +70,13 @@ export async function POST(req: Request) {
   const ok = kind === 'ok';
   const site = cleanSite(body.site);
   const wants = Array.isArray(body.wants) ? OUTCOMES.filter((o) => (body.wants as unknown[]).includes(o)).join(', ') : '';
+  // The demo request: a name, their platform (one we name, or what they typed), and the times that suit them.
+  const name = text(body.name, 80);
+  const typed = text(body.platform, 60);
+  const platform = PLATFORMS.find((p) => p.toLowerCase() === typed.toLowerCase()) ?? typed;
+  const times = cleanTimes(body.times);
+  const tz = text(body.tz, 60).replace(/[^\w/+-]/g, '');
+  const page = text(body.page, 120).replace(/[^\w/.-]/g, '') || '/';
 
   // Every real attempt is kept, declined ones included, so the team can see who tried.
   let id: number | null;
@@ -72,6 +93,12 @@ export async function POST(req: Request) {
       wants,
       ua: (req.headers.get('user-agent') || '').slice(0, 200),
       ipHash,
+      kind: 'demo',
+      name,
+      platform,
+      times,
+      tz,
+      page,
     });
   } catch (err) {
     console.error('[interest] save failed', err);
@@ -83,7 +110,7 @@ export async function POST(req: Request) {
   // The CRM and the emails happen after the response, so the visitor never waits on them.
   after(async () => {
     try {
-      await recordLead({ email, domain, company, site, wants, level, source, submissionId: id });
+      await recordLead({ email, domain, company, site, wants, level, source, submissionId: id, name, platform, page, demo: { times, tz } });
     } catch (err) {
       console.error('[interest] CRM lead failed', err);
     }
@@ -92,7 +119,7 @@ export async function POST(req: Request) {
     try {
       const [recent, soFar] = await Promise.all([confirmedRecently(email), companiesSoFar()]);
       const result = await notify(
-        { id, email, domain, company, level, interest: LEVELS[level], source, site, wants },
+        { id, email, domain, company, level, interest: LEVELS[level], source, site, wants, name, platform, times, tz, page },
         { confirm: !recent, soFar },
       );
       if (id !== null) await markEmails(id, result);

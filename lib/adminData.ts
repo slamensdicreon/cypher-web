@@ -153,8 +153,8 @@ export async function submissions(tab: Tab, q: string, limit = 500): Promise<{ r
     tab === 'all' ? db`` : tab === 'declined' ? db`and outcome <> 'ok'` : db`and outcome = ${tab}`;
   const [rows, counts] = await Promise.all([
     db<Row[]>`
-      select id::int as id, created_at, email, domain, company, outcome, level, interest, source,
-             internal_sent_at, confirmation_sent_at, email_error
+      select id::int as id, created_at, email, domain, company, outcome, level, interest, source, site, wants,
+             kind, name, platform, times, tz, page, internal_sent_at, confirmation_sent_at, email_error
       from submissions where true ${filter} ${search}
       order by created_at desc limit ${limit}`,
     db<{ outcome: string; n: string }[]>`select outcome, count(*) as n from submissions where true ${search} group by outcome`,

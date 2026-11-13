@@ -1,5 +1,5 @@
 /** Client side: send one analytics event. Fire and forget; never blocks or throws. */
-export function track(kind: 'view' | 'form_start' | 'card_flip' | 'card_approve', extra: Record<string, string> = {}) {
+export function track(kind: 'view' | 'form_start' | 'card_flip' | 'card_approve' | 'cta', extra: Record<string, string> = {}) {
   if (typeof window === 'undefined') return;
   try {
     const params = new URLSearchParams(window.location.search);

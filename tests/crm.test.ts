@@ -135,3 +135,28 @@ test('sign-ups the CRM missed are caught up once, and recent ones are left to th
   assert.equal((await crm.pipeline({ q: 'Fresh' })).length, 0);
   void old;
 });
+
+test('a demo request opens the deal at Demo booked, with a task to confirm the time', { skip }, async () => {
+  const r = await crm.recordLead({
+    email: 'ria@demo-co.example', domain: 'demo-co.example', company: 'Demo Co', site: 'demo-co.example', wants: 'Migrate', level: 2, source: '',
+    submissionId: 2001, name: 'Ria Patel', platform: 'Contentful', page: '/demo', demo: { times: 'Mon, Nov 16, morning; Tue, Nov 17, afternoon', tz: 'America/Chicago' },
+  });
+  const d = (await crm.deal(r.dealId))!;
+  assert.equal(d.stage, 'demo_booked');
+  assert.equal(d.nextStep, 'Confirm the demo time');
+  assert.ok(d.scoreReasons.some((x) => x.includes('asked for a demo')));
+  assert.ok(d.scoreReasons.some((x) => x.includes('runs Contentful')));
+  assert.equal(d.contactName, 'Ria Patel');
+  const t = await crm.tasks({ dealId: r.dealId, scope: 'open' });
+  assert.equal(t.length, 1);
+  assert.match(t[0].title, /Confirm a demo time with Ria Patel/);
+  assert.match(t[0].notes, /Mon, Nov 16, morning/);
+  const form = (await crm.timeline({ dealId: r.dealId })).find((a) => a.kind === 'form')!;
+  assert.equal(form.subject, 'Asked for a demo');
+  // A company with an earlier deal moves it up to Demo booked rather than opening a second one.
+  const early = await crm.recordLead({ email: 'x@early.example', domain: 'early.example', company: 'Early', site: '', wants: '', level: 1, source: '', submissionId: 2002 });
+  assert.equal((await crm.deal(early.dealId))!.stage, 'new');
+  const again = await crm.recordLead({ email: 'y@early.example', domain: 'early.example', company: 'Early', site: '', wants: '', level: 1, source: '', submissionId: 2003, demo: { times: '', tz: '' } });
+  assert.equal(again.dealId, early.dealId);
+  assert.equal((await crm.deal(early.dealId))!.stage, 'demo_booked');
+});

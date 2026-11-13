@@ -185,7 +185,7 @@ The main action needs a tool of its own, built rather than bought. It's the admi
 | W1.2 | Components: product frame, feature row, stat with source, steps, FAQ, demo band, video | L | W1.1 |
 | W1.3 | Page content as data files (CMS-ready) | S | W1.1 |
 | W1.4 | Privacy page; cookieless analytics per page and per button | S | — |
-| W1.5 | Request a demo: form with preferred times, platform and outcome, into the CRM at *Demo booked* | M | — |
+| W1.5 | Request a demo: form with preferred times, platform and outcome, into the CRM at *Demo booked* | M | — (built November 13) |
 
 ### Phase W2: Show the product (2 weeks)
 
@@ -246,7 +246,9 @@ The main action needs a tool of its own, built rather than bought. It's the admi
 5. **Screens:** any can be public; the visual ones lead.
 6. **Proof:** you sign off. No logos from our projects.
 
-Still open, small: who runs demos and their availability (for the scheduler), and the video link to use (your meeting tool).
+7. **Demos:** you run them for now; the scheduler supports more hosts from the start, for the people who join later.
+
+Still open, small: your availability for demos and the video link to use (your meeting tool), both needed for the scheduler (W4).
 
 ## 12. Risks
 

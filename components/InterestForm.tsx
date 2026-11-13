@@ -5,6 +5,7 @@ import { companyOf, domainOf } from '@/lib/company';
 import { NOTED, OUTCOMES } from '@/lib/config';
 import { eye, eyeLook, eyeMood } from './eyeBus';
 import { track } from '@/lib/track';
+import { MAX_SLOTS, PARTS, PLATFORMS, dayLabel, nextWeekdays, type Part } from '@/lib/site';
 import LivingEye from './LivingEye';
 import Morph from './Morph';
 
@@ -30,7 +31,7 @@ type Phase =
   | { kind: 'reply'; reply: ReplyKind }
   | { kind: 'noted'; company: string; level: number; site: string };
 
-const STORE_KEY = 'iib-seen';
+const STORE_KEY = 'iib-demo';
 const reducedMotion = () =>
   typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -39,6 +40,13 @@ export default function InterestForm() {
   const [email, setEmail] = useState('');
   const [site, setSite] = useState('');
   const [wants, setWants] = useState<string[]>([]);
+  // The demo: who, on which platform, and when suits them (in their own time zone).
+  const [name, setName] = useState('');
+  const [platform, setPlatform] = useState('');
+  const [otherPlatform, setOtherPlatform] = useState('');
+  const [slots, setSlots] = useState<string[]>([]);
+  const [days, setDays] = useState<string[]>([]);
+  const [tz, setTz] = useState('');
   // The dial moves continuously under the finger and settles on a level when let go.
   const [raw, setRaw] = useState(1);
   const rawRef = useRef(1);
@@ -55,6 +63,12 @@ export default function InterestForm() {
   const company = domain ? companyOf(domain) : '';
   if (company) lastCompany.current = company;
   const L = LEVELS[level];
+
+  // Dates and the time zone are the visitor's own, so they're worked out in the browser.
+  useEffect(() => {
+    setDays(nextWeekdays(6));
+    try { setTz(Intl.DateTimeFormat().resolvedOptions().timeZone || ''); } catch { /* old browser */ }
+  }, []);
 
   useEffect(() => {
     try {
@@ -147,7 +161,10 @@ export default function InterestForm() {
       const res = await fetch('/api/interest', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, site, wants, level, source, website: website.current?.value || '' }),
+        body: JSON.stringify({
+          email, site, wants, level, source, website: website.current?.value || '',
+          name, platform: platform === 'other' ? otherPlatform : platform, times: slots, tz, page: window.location.pathname,
+        }),
       });
       const data = (await res.json().catch(() => ({ status: 'error' }))) as { status: string; company?: string };
       if (data.status === 'ok') {
@@ -174,6 +191,10 @@ export default function InterestForm() {
     setEmail('');
     setSite('');
     setWants([]);
+    setName('');
+    setPlatform('');
+    setOtherPlatform('');
+    setSlots([]);
     setPhase({ kind: 'form' });
   }
 
@@ -198,21 +219,21 @@ export default function InterestForm() {
         <div className="reply" style={{ background: '#141433', color: '#ffffff' }}>
           <span className="t" style={{ color: '#b7a6ff' }}>
             <LivingEye variant="dial" level={phase.level} className="mini" />
-            See it on your site
+            Your demo
           </span>
-          <h3>Noted, {phase.company}.</h3>
+          <h3>You’re on the list, {phase.company}.</h3>
           <p>{NOTED[phase.level]}</p>
           <p style={{ color: '#d6d0f5' }}>
-            Cypher is taking a look at {phase.site || `${phase.company}’s site`}. If it’s a fit, the next thing you see is your site, rebuilt. Ignorance is bliss.
+            We’ll confirm one of your times within one business day, with a calendar invite. In the demo, you watch Cypher work on {phase.site || `${phase.company}’s site`}. Ignorance is bliss.
           </p>
         </div>
-        <button className="btn light" type="button" onClick={reset}>Another site</button>
+        <button className="btn light" type="button" onClick={reset}>Book another</button>
       </div>
     );
   } else {
     content = (
       <form className="card" onSubmit={(e) => { e.preventDefault(); submit(); }} noValidate>
-        <h2>See it on your site.</h2>
+        <h2>Book a demo.</h2>
         <label className="f" htmlFor="email">
           Work email
           <input
@@ -233,6 +254,20 @@ export default function InterestForm() {
             <span>For:</span> {company || lastCompany.current}
           </span>
         </label>
+        <label className="f" htmlFor="name">
+          <span>Your name <span className="opt">optional</span></span>
+          <input
+            id="name"
+            type="text"
+            autoComplete="name"
+            placeholder="First and last"
+            maxLength={80}
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            onFocus={() => eye('focus')}
+            onBlur={() => eye('unfocus')}
+          />
+        </label>
         <label className="f" htmlFor="site">
           Your site
           <input
@@ -249,6 +284,36 @@ export default function InterestForm() {
             onBlur={() => eye('unfocus')}
           />
         </label>
+        <fieldset className="wants">
+          <legend>Your platform</legend>
+          <div className="chips">
+            {[...PLATFORMS, 'other'].map((p) => {
+              const on = platform === p;
+              return (
+                <button
+                  key={p}
+                  type="button"
+                  className={on ? 'chip on' : 'chip'}
+                  aria-pressed={on}
+                  onClick={() => { setPlatform(on ? '' : p); eye(on ? 'blink' : 'widen', 500); }}
+                >
+                  {p === 'other' ? 'Something else' : p}
+                </button>
+              );
+            })}
+          </div>
+          {platform === 'other' && (
+            <input
+              className="other"
+              type="text"
+              aria-label="Which platform?"
+              placeholder="Which one? AEM, Drupal, Contentstack…"
+              maxLength={60}
+              value={otherPlatform}
+              onChange={(e) => setOtherPlatform(e.target.value)}
+            />
+          )}
+        </fieldset>
         <fieldset className="wants">
           <legend>What should it do?</legend>
           <div className="chips">
@@ -267,6 +332,35 @@ export default function InterestForm() {
               );
             })}
           </div>
+        </fieldset>
+        <fieldset className="wants slots">
+          <legend>When suits you? <span className="opt">pick up to {MAX_SLOTS}</span></legend>
+          <div className="slot-grid">
+            {days.map((d) => (
+              <div className="slot-day" key={d}>
+                <span>{dayLabel(d)}</span>
+                {(Object.keys(PARTS) as Part[]).map((p) => {
+                  const k = `${d}|${p}`;
+                  const on = slots.includes(k);
+                  const full = !on && slots.length >= MAX_SLOTS;
+                  return (
+                    <button
+                      key={k}
+                      type="button"
+                      className={on ? 'chip on' : 'chip'}
+                      aria-pressed={on}
+                      aria-label={`${dayLabel(d)}, ${PARTS[p].toLowerCase()}`}
+                      disabled={full}
+                      onClick={() => { setSlots((s) => (on ? s.filter((x) => x !== k) : [...s, k])); eye(on ? 'blink' : 'widen', 400); }}
+                    >
+                      {PARTS[p]}
+                    </button>
+                  );
+                })}
+              </div>
+            ))}
+          </div>
+          {tz && <p className="small">In your time zone ({tz.replace(/_/g, ' ')}). Mornings 9 to 12, afternoons 1 to 5.</p>}
         </fieldset>
         <div className="hp" aria-hidden="true">
           <label htmlFor="website">Website</label>
@@ -301,9 +395,9 @@ export default function InterestForm() {
           </div>
         </div>
         <button className={sending ? 'btn busy' : 'btn'} type="submit" disabled={sending}>
-          <span>{sending ? 'Cypher is reading…' : 'Show me'}</span>
+          <span>{sending ? 'Cypher is reading…' : 'Book my demo'}</span>
         </button>
-        <p className="small">Any enterprise platform. Your work email, so we know it’s really yours.</p>
+        <p className="small">Any enterprise platform. Your work email, so we know it’s really yours. In the demo, Cypher works on your site while you watch.</p>
       </form>
     );
   }

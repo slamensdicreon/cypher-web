@@ -10,6 +10,7 @@ export type ScoreInput = {
   requests: number; // how many times this company has asked
   title: string; // the contact's job title
   platform: string; // the platform the company runs
+  demo?: boolean; // asked for a demo
 };
 
 export type Score = { score: number; reasons: string[] };
@@ -38,6 +39,7 @@ export function scoreLead(i: ScoreInput): Score {
   if (/\b(chief|c[etmdi]o|vp|vice president|head|director|svp|evp|founder|owner|partner)\b/i.test(i.title)) add(15, 'senior title');
   else if (/\bmanager|lead\b/i.test(i.title)) add(8, 'manager title');
   if (i.platform) add(5, `runs ${i.platform}`);
+  if (i.demo) add(10, 'asked for a demo');
   return { score: Math.min(100, s), reasons };
 }
 

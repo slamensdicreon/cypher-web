@@ -27,6 +27,12 @@ export type PutForward = {
   source: string;
   site: string;
   wants: string;
+  /** The demo request's details (empty for older submissions). */
+  name?: string;
+  platform?: string;
+  times?: string;
+  tz?: string;
+  page?: string;
 };
 
 export type Message = {
@@ -82,27 +88,34 @@ ${inner}
 export function confirmation(p: PutForward): Message {
   const noted = NOTED[p.level] ?? NOTED[1];
   const company = esc(p.company);
+  const first = (p.name ?? '').trim().split(/\s+/)[0];
   const where = p.site ? esc(p.site) : `${company}’s site`;
-  const next = `Cypher is taking a look at ${p.site || `${p.company}’s site`}. If it’s a fit, the next thing you see is your site, rebuilt. Ignorance is bliss.`;
+  const times = p.times ? `${p.times}${p.tz ? ` (${p.tz.replace(/_/g, ' ')})` : ''}` : '';
+  const when = times
+    ? `We’ll confirm one of your times within one business day, with a calendar invite: ${times}.`
+    : 'We’ll write within one business day with a few times and a calendar invite.';
   const html = frame(
-    `<tr><td style="padding:0 0 8px;font-size:13px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#b7a6ff;">See it on your site</td></tr>
-<tr><td style="padding:0 0 16px;font-size:34px;line-height:1.15;font-weight:800;letter-spacing:-0.02em;">Noted, ${company}.</td></tr>
+    `<tr><td style="padding:0 0 8px;font-size:13px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#b7a6ff;">Your demo</td></tr>
+<tr><td style="padding:0 0 16px;font-size:34px;line-height:1.15;font-weight:800;letter-spacing:-0.02em;">${first ? `${esc(first)}, you’re` : 'You’re'} on the list, ${company}.</td></tr>
 <tr><td style="padding:0 0 16px;font-size:17px;line-height:1.55;">${esc(noted)}</td></tr>
-<tr><td style="padding:0 0 32px;font-size:17px;line-height:1.55;color:#d6d0f5;">Cypher is taking a look at ${where}. If it’s a fit, the next thing you see is your site, rebuilt. Ignorance is bliss.</td></tr>
-<tr><td style="padding:24px 0 0;border-top:1px solid #2c2c5a;font-size:13px;line-height:1.6;color:#8f8cb3;">You’re getting this because ${esc(p.email)} asked to see Cypher at <a href="${esc(siteUrl)}" style="color:#b7a6ff;">${esc(siteUrl.replace(/^https?:\/\//, ''))}</a>. If that wasn’t you, ignore this. Nothing else will arrive.</td></tr>`,
-    `Cypher is taking a look at ${p.site || `${p.company}’s site`}.`,
+<tr><td style="padding:0 0 16px;font-size:17px;line-height:1.55;color:#d6d0f5;">${esc(when)}</td></tr>
+<tr><td style="padding:0 0 32px;font-size:17px;line-height:1.55;color:#d6d0f5;">In the meantime Cypher is taking a look at ${where}${p.platform ? ` on ${esc(p.platform)}` : ''}. In the demo, you watch it work on your own site. Ignorance is bliss.</td></tr>
+<tr><td style="padding:24px 0 0;border-top:1px solid #2c2c5a;font-size:13px;line-height:1.6;color:#8f8cb3;">You’re getting this because ${esc(p.email)} asked for a demo at <a href="${esc(siteUrl)}" style="color:#b7a6ff;">${esc(siteUrl.replace(/^https?:\/\//, ''))}</a>. If that wasn’t you, ignore this. Nothing else will arrive.</td></tr>`,
+    when,
   );
   const text = [
-    `Noted, ${p.company}.`,
+    `${first ? `${first}, you’re` : 'You’re'} on the list, ${p.company}.`,
     '',
     noted,
     '',
-    next,
+    when,
+    '',
+    `In the meantime Cypher is taking a look at ${p.site || `${p.company}’s site`}${p.platform ? ` on ${p.platform}` : ''}. In the demo, you watch it work on your own site. Ignorance is bliss.`,
     '',
     '--',
-    `You’re getting this because ${p.email} asked to see Cypher at ${siteUrl}. If that wasn’t you, ignore this. Nothing else will arrive.`,
+    `You’re getting this because ${p.email} asked for a demo at ${siteUrl}. If that wasn’t you, ignore this. Nothing else will arrive.`,
   ].join('\n');
-  const m: Message = { to: [p.email], subject: `Noted, ${p.company}.`, html, text };
+  const m: Message = { to: [p.email], subject: `Your Cypher demo, ${p.company}`, html, text };
   if (replyTo) m.reply_to = replyTo;
   return m;
 }
@@ -116,17 +129,19 @@ export function internalNotice(p: PutForward, soFar: number | null): Message {
   });
   const rows: [string, string][] = [
     ['Company', p.company],
-    ['Domain', p.domain],
+    ['Name', p.name || 'Not given'],
     ['Email', p.email],
     ['Site', p.site || 'Not given'],
+    ['Platform', p.platform || 'Not said'],
+    ['Times that suit', p.times ? `${p.times}${p.tz ? ` (${p.tz})` : ''}` : 'Not given'],
     ['Wants', p.wants || 'Not said'],
     ['How badly', `${p.interest} (${p.level + 1} of 4)`],
-    ['Source', p.source || 'Direct visit'],
+    ['Came from', `${p.page || '/'}${p.source ? ` · ${p.source}` : ''}`],
     ['When', `${at} ET`],
   ];
   if (soFar !== null) rows.push(['Companies so far', String(soFar)]);
   const html = frame(
-    `<tr><td style="padding:0 0 8px;font-size:13px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#b7a6ff;">New request: see it on our site</td></tr>
+    `<tr><td style="padding:0 0 8px;font-size:13px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#b7a6ff;">New demo request</td></tr>
 <tr><td style="padding:0 0 24px;font-size:30px;line-height:1.2;font-weight:800;letter-spacing:-0.02em;">${esc(p.company)} · ${esc(p.interest)}</td></tr>
 <tr><td><table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="font-size:15px;line-height:1.5;">
 ${rows
@@ -136,13 +151,13 @@ ${rows
   )
   .join('\n')}
 </table></td></tr>
-<tr><td style="padding:24px 0 0;font-size:13px;color:#8f8cb3;">Reply to this email to write to ${esc(p.email)} directly.</td></tr>`,
-    `${p.email} put ${p.company} forward: ${p.interest}.`,
+<tr><td style="padding:24px 0 0;font-size:13px;color:#8f8cb3;">Reply to this email to write to ${esc(p.email)} directly. The deal is in the pipeline at Demo booked, with a task to confirm the time.</td></tr>`,
+    `${p.name || p.email} at ${p.company} asked for a demo${p.platform ? ` (${p.platform})` : ''}.`,
   );
   const text = rows.map(([k, v]) => `${k}: ${v}`).join('\n');
   return {
     to: internalTo,
-    subject: `See it on our site: ${p.company}${p.site ? ` · ${p.site}` : ""} · ${p.interest}`,
+    subject: `Demo request: ${p.company}${p.platform ? ` · ${p.platform}` : ''}${p.site ? ` · ${p.site}` : ''}`,
     html,
     text,
     reply_to: p.email,

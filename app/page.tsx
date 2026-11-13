@@ -3,8 +3,9 @@ import Eye from '@/components/Eye';
 import InterestForm from '@/components/InterestForm';
 import Reveal from '@/components/Reveal';
 import Track from '@/components/Track';
+import SiteFooter from '@/components/SiteFooter';
 import SiteHeader from '@/components/SiteHeader';
-import Link from 'next/link';
+import CtaLink from '@/components/site/CtaLink';
 
 export default function Page() {
   return (
@@ -17,6 +18,10 @@ export default function Page() {
           <div>
             <h1 className="line">Ignorance is bliss.</h1>
             <p>Cypher is twenty-one specialists and the mind that runs them. Point it at any enterprise platform and it builds, migrates, personalizes and optimizes, pixel perfect, for a rounding error of what you pay now. It doesn’t replace you. It promotes you.</p>
+            <div className="hero-cta">
+              <CtaLink href="/demo" label="home-hero" className="site-cta big">Book a demo</CtaLink>
+              <span className="hero-note">Sitecore, Optimizely, Contentful, or whatever you run.</span>
+            </div>
           </div>
         </div>
 
@@ -82,18 +87,15 @@ export default function Page() {
           <div className="join" id="join">
             <div className="copy">
               <h2>See it on your site.</h2>
-              <p>Tell Cypher where you live online and what you want done: the build, the migration, the personalization you never switched on, the speed you keep being promised. It looks at what you run today, on whatever platform you run it, and shows you what it would do.</p>
-              <p className="close">Today. Literally.</p>
+              <p>Book a demo. Tell Cypher where you live online and what you want done: the build, the migration, the personalization you never switched on, the speed you keep being promised. In the demo it works on your site, on whatever platform you run, while you watch.</p>
+              <p className="close">Pick your times. We’ll do the rest.</p>
             </div>
             <InterestForm />
           </div>
         </section>
 
-        <div className="end">
-          <p className="q">Not affiliated with your agency. Obviously.</p>
-          <Link className="terms" href="/terms">Terms of Use</Link>
-        </div>
       </main>
+      <SiteFooter />
       <Reveal />
       <Track />
     </>

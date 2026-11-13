@@ -3,7 +3,7 @@ import { clientIp, keyedHash } from './keys';
 import { hasStore, migrate, sql } from './store';
 
 /** What the site records. Page views, and a few moments that matter. */
-export const KINDS = ['view', 'form_start', 'card_flip', 'card_approve'] as const;
+export const KINDS = ['view', 'form_start', 'card_flip', 'card_approve', 'cta'] as const;
 export type Kind = (typeof KINDS)[number];
 
 const BOT = /bot|crawl|spider|slurp|preview|facebookexternalhit|embedly|whatsapp|telegram|discord|headless|lighthouse|pingdom|monitor|curl|wget|python|node-fetch|vercel/i;
@@ -42,7 +42,7 @@ export async function record(body: Record<string, unknown>, headers: Headers): P
   const own = headers.get('host') || '';
   await migrate();
   await sql`
-    insert into events (kind, path, ref, card, utm, country, device, visitor)
+    insert into events (kind, path, ref, card, utm, country, device, visitor, label)
     values (
       ${kind},
       ${clean(body.path, 120) || '/'},
@@ -51,6 +51,7 @@ export async function record(body: Record<string, unknown>, headers: Headers): P
       ${clean(body.utm, 40)},
       ${clean(headers.get('x-vercel-ip-country'), 2, /[^A-Z]/g)},
       ${device(ua)},
-      ${keyedHash(`${day}|${clientIp(headers)}|${ua}`, 24)}
+      ${keyedHash(`${day}|${clientIp(headers)}|${ua}`, 24)},
+      ${typeof body.label === 'string' ? body.label.replace(/[^\w .:/-]/g, '').slice(0, 60) : ''}
     )`;
 }

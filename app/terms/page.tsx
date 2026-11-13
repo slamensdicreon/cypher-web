@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import SiteFooter from '@/components/SiteFooter';
 import SiteHeader, { Resting } from '@/components/SiteHeader';
 import Track from '@/components/Track';
 
@@ -147,11 +148,12 @@ export default function Terms() {
           </div>
 
           <div className="accept">
-            <Link className="btn" href="/#join">See it on your site</Link>
+            <Link className="btn" href="/demo">Book a demo</Link>
           </div>
         </article>
 
       </main>
+      <SiteFooter />
       <Track />
     </>
   );
