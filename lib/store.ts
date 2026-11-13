@@ -1,5 +1,6 @@
 import 'server-only';
 import postgres from 'postgres';
+import { ensureSchema } from './db/schema';
 
 /** What the form decided about a submission. Only `ok` is a company put forward. */
 export type Outcome = 'ok' | 'sitecore' | 'vendor' | 'personal' | 'bad';
@@ -47,65 +48,10 @@ export const sql = hasStore
   ? postgres(url, { max: 3, idle_timeout: 20, prepare: false, transform: postgres.camel, onnotice: () => {} })
   : null;
 
-let ready: Promise<unknown> | null = null;
-
-/** Creates the tables on first use. Idempotent, so instances starting together are fine. */
-export function migrate() {
+/** Creates or updates the tables on first use (lib/db/migrations.ts). Idempotent and memoised. */
+export function migrate(): Promise<unknown> {
   if (!sql) return Promise.resolve();
-  ready ??= sql
-    .begin(async (tx) => {
-      await tx`select pg_advisory_xact_lock(7420261113)`;
-      await tx`
-        create table if not exists submissions (
-          id bigserial primary key,
-          created_at timestamptz not null default now(),
-          email text not null,
-          domain text not null,
-          company text not null,
-          outcome text not null,
-          level smallint,
-          interest text,
-          source text not null default '',
-          ua text not null default '',
-          ip_hash text not null default '',
-          internal_sent_at timestamptz,
-          confirmation_sent_at timestamptz,
-          email_error text
-        )`;
-      await tx`alter table submissions add column if not exists site text not null default ''`;
-      await tx`alter table submissions add column if not exists wants text not null default ''`;
-      await tx`create index if not exists submissions_ip_recent on submissions (ip_hash, created_at)`;
-      await tx`create index if not exists submissions_email on submissions (lower(email), created_at)`;
-      // First-party analytics: no cookies, no IP addresses; `visitor` is a keyed hash that changes daily.
-      await tx`
-        create table if not exists events (
-          id bigserial primary key,
-          at timestamptz not null default now(),
-          kind text not null,
-          path text not null default '',
-          ref text not null default '',
-          card text not null default '',
-          utm text not null default '',
-          country text not null default '',
-          device text not null default '',
-          visitor text not null default ''
-        )`;
-      await tx`create index if not exists events_at on events (at)`;
-      await tx`create index if not exists events_kind_at on events (kind, at)`;
-      // Admin sign-in attempts, for the lockout.
-      await tx`
-        create table if not exists admin_attempts (
-          ip_hash text not null,
-          at timestamptz not null default now(),
-          ok boolean not null
-        )`;
-      await tx`create index if not exists admin_attempts_ip on admin_attempts (ip_hash, at)`;
-    })
-    .catch((err) => {
-      ready = null;
-      throw err;
-    });
-  return ready;
+  return ensureSchema(sql);
 }
 
 /** Saves a submission and returns its id. Without a database it goes to the server log instead. */
