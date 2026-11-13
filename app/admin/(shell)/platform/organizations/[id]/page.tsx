@@ -41,7 +41,7 @@ export default async function OrganizationPage({ params, searchParams }: { param
         <div>
           <h1>{org.name}</h1>
           <p className="crm-facts">
-            <span className={`lw-standing st-${org.license.standing}`}>{STANDING[org.license.standing]}{org.license.purgedAt ? ', data purged' : ''}</span>
+            <span className={`lw-standing st-${(org.license?.standing ?? 'none')}`}>{STANDING[(org.license?.standing ?? 'none')]}{org.license?.purgedAt ? ', data purged' : ''}</span>
             <span>{plural(org.directors, 'Director')}, {plural(org.watchers, 'Watcher')}</span>
             {org.invitations > 0 && <span>{plural(org.invitations, 'open invitation')}</span>}
             <span>{plural(org.projects, 'live project')}{org.running ? `, ${org.running} running` : ''}</span>
@@ -59,7 +59,7 @@ export default async function OrganizationPage({ params, searchParams }: { param
               <h3>License</h3>
               {!lic.ok ? <Refused err={lic.err} /> : !cat.ok ? <Refused err={cat.err} /> : (
                 <>
-                  {l?.suspended?.projects.length ? <p className="ad-banner bad">Paused by the license: {l.suspended.projects.join(', ')}. Renewing resumes exactly these.</p> : null}
+                  {l?.suspended?.projects?.length ? <p className="ad-banner bad">Paused by the license: {l.suspended.projects.join(', ')}. Renewing resumes exactly these.</p> : null}
                   {writable ? (
                     <form method="post" action="/api/admin/platform/save-license" className="ad-form">
                       <input type="hidden" name="id" value={id} />
@@ -68,11 +68,11 @@ export default async function OrganizationPage({ params, searchParams }: { param
                         <legend>Platforms and playbooks</legend>
                         {platforms.map(([pid, pname]) => (
                           <div key={pid} className="lw-plat">
-                            <label className="lw-plat-head"><input type="checkbox" name={`entity_${pid}`} defaultChecked={l ? l.entities.includes(pid) : false} /> <b>{pname}</b></label>
+                            <label className="lw-plat-head"><input type="checkbox" name={`entity_${pid}`} defaultChecked={l ? (l.entities ?? []).includes(pid) : false} /> <b>{pname}</b></label>
                             <div className="lw-pbs">
                               {cat.data.filter((p) => p.platform.id === pid).map((p) => (
                                 <label key={p.id} className="chip-check" title={p.description}>
-                                  <input type="checkbox" name={`playbook_${p.id}`} defaultChecked={l ? l.playbooks.includes(p.id) : false} /> <span>{p.name}</span>
+                                  <input type="checkbox" name={`playbook_${p.id}`} defaultChecked={l ? (l.playbooks ?? []).includes(p.id) : false} /> <span>{p.name}</span>
                                 </label>
                               ))}
                             </div>
@@ -88,7 +88,7 @@ export default async function OrganizationPage({ params, searchParams }: { param
                       <Confirm>I understand saving changes live behavior: taking out a platform or ending the term pauses this organization’s running projects now; renewing resumes the ones the license paused.</Confirm>
                       <div className="ad-actions">
                         <button className="ad-btn primary" type="submit">Save the license</button>
-                        <span className="ad-fine">{org.license.used} project{org.license.used === 1 ? '' : 's'} holding a place now.</span>
+                        <span className="ad-fine">{(org.license?.used ?? 0)} project{(org.license?.used ?? 0) === 1 ? '' : 's'} holding a place now.</span>
                       </div>
                     </form>
                   ) : l ? (
@@ -96,16 +96,16 @@ export default async function OrganizationPage({ params, searchParams }: { param
                   ) : (
                     <p className="ad-empty">No license.</p>
                   )}
-                  {lic.data.history.length > 0 && (
+                  {(lic.data.history ?? []).length > 0 && (
                     <details className="lw-history">
-                      <summary>History ({lic.data.history.length})</summary>
+                      <summary>History ({(lic.data.history ?? []).length})</summary>
                       <ol className="crm-tl">
-                        {[...lic.data.history].reverse().map((h, i) => (
+                        {[...(lic.data.history ?? [])].reverse().map((h, i) => (
                           <li key={i} className={`k-${h.kind === 'suspended' ? 'form' : h.kind === 'resumed' ? 'task' : 'stage'}`}>
                             <span className="crm-tl-dot" aria-hidden="true" />
                             <div className="crm-tl-body">
-                              <div className="crm-tl-head"><b>{KIND[h.kind]}</b><span>{h.license.entities.join(', ') || 'no platforms'} · {plural(h.license.playbooks.length, 'playbook')} · {plural(h.license.projectsIncluded, 'project')} · {day(h.license.startsAt)} to {day(h.license.endsAt)}</span></div>
-                              <span className="crm-tl-meta">{stamp(h.at)} · {byName(h.by)}</span>
+                              <div className="crm-tl-head"><b>{KIND[h.kind] ?? h.kind}</b><span>{h.license ? `${h.license.entities?.join(', ') || 'no platforms'} · ${plural(h.license.playbooks?.length ?? 0, 'playbook')} · ${plural(h.license.projectsIncluded ?? 0, 'project')} · ${day(h.license.startsAt)} to ${day(h.license.endsAt)}` : ''}</span></div>
+                              <span className="crm-tl-meta">{stamp(h.at)} · {byName(h.by ?? '')}</span>
                             </div>
                           </li>
                         ))}
@@ -122,22 +122,22 @@ export default async function OrganizationPage({ params, searchParams }: { param
             {!use.ok ? <Refused err={use.err} /> : (
               <>
                 <div className="ad-tiles lw-tiles">
-                  <div className="ad-tile"><span className="ad-tl">Claude</span><b>{usd(use.data.totals.claudeUsd)}</b><span className="ad-tn">{num(use.data.totals.claudeTokens)} tokens</span></div>
-                  <div className="ad-tile"><span className="ad-tl">Sandbox</span><b>{num(use.data.totals.sandboxMinutes)}</b><span className="ad-tn">minutes</span></div>
-                  <div className="ad-tile"><span className="ad-tl">Tools</span><b>{num(use.data.totals.toolMinutes)}</b><span className="ad-tn">minutes, from Nov 13</span></div>
-                  <div className="ad-tile"><span className="ad-tl">Vercel</span><b>{num(use.data.totals.vercelDeployments)}</b><span className="ad-tn">deployments, {num(use.data.totals.vercelBuildMinutes)} build min</span></div>
+                  <div className="ad-tile"><span className="ad-tl">Claude</span><b>{usd((use.data.totals?.claudeUsd ?? 0))}</b><span className="ad-tn">{num((use.data.totals?.claudeTokens ?? 0))} tokens</span></div>
+                  <div className="ad-tile"><span className="ad-tl">Sandbox</span><b>{num((use.data.totals?.sandboxMinutes ?? 0))}</b><span className="ad-tn">minutes</span></div>
+                  <div className="ad-tile"><span className="ad-tl">Tools</span><b>{num((use.data.totals?.toolMinutes ?? 0))}</b><span className="ad-tn">minutes, from Nov 13</span></div>
+                  <div className="ad-tile"><span className="ad-tl">Vercel</span><b>{num((use.data.totals?.vercelDeployments ?? 0))}</b><span className="ad-tn">deployments, {num((use.data.totals?.vercelBuildMinutes ?? 0))} build min</span></div>
                 </div>
-                {use.data.projects.length === 0 ? <p className="ad-empty">No projects.</p> : (
+                {(use.data.projects ?? []).length === 0 ? <p className="ad-empty">No projects.</p> : (
                   <div className="ad-scroll">
                     <table className="ad-tbl">
                       <thead><tr><th>Project</th><th className="r">Claude</th><th className="r">Hours</th><th className="r">Tool min</th><th>Vercel</th></tr></thead>
                       <tbody>
-                        {use.data.projects.map((p) => (
+                        {(use.data.projects ?? []).map((p) => (
                           <tr key={p.projectId}>
                             <td><b>{p.name}</b><br /><span className="ad-dim">{p.status}</span></td>
-                            <td className="r">{usd(p.claude.usd)}<br /><span className="ad-dim">{num(p.claude.tokens)}</span></td>
-                            <td className="r">{p.claude.hours.toFixed(1)}</td>
-                            <td className="r">{num(Object.values(p.toolMinutes).reduce((a, b) => a + b, 0))}</td>
+                            <td className="r">{usd(p.claude?.usd ?? 0)}<br /><span className="ad-dim">{num(p.claude?.tokens ?? 0)}</span></td>
+                            <td className="r">{(p.claude?.hours ?? 0).toFixed(1)}</td>
+                            <td className="r">{num(Object.values(p.toolMinutes ?? {}).reduce((a, b) => a + b, 0))}</td>
                             <td>{p.vercelNote ? <span className="ad-dim">{p.vercelNote}</span> : p.vercel ? <>{p.vercel.deployments} deploys{p.vercel.failed ? `, ${p.vercel.failed} failed` : ''} · {num(p.vercel.buildMinutes)} build min</> : <span className="ad-dim">–</span>}</td>
                           </tr>
                         ))}
@@ -145,7 +145,7 @@ export default async function OrganizationPage({ params, searchParams }: { param
                     </table>
                   </div>
                 )}
-                <p className="ad-fine">Vercel figures are cached {use.data.cachedForMinutes} minutes. Tool minutes count from November 13, 2026. Vercel gives no bandwidth or function time per project.</p>
+                <p className="ad-fine">Vercel figures are cached {use.data.cachedForMinutes ?? 15} minutes. Tool minutes count from November 13, 2026. Vercel gives no bandwidth or function time per project.</p>
               </>
             )}
           </section>
@@ -173,7 +173,7 @@ export default async function OrganizationPage({ params, searchParams }: { param
           )}
           <section className="ad-card">
             <h3>Spend so far</h3>
-            <p>{usd(org.usage.usd)} on Claude across {plural(org.projects, 'live project')}, {org.usage.hours.toFixed(1)} hours, {num(org.usage.sandboxMinutes)} sandbox minutes.</p>
+            <p>{usd((org.usage?.usd ?? 0))} on Claude across {plural(org.projects, 'live project')}, {(org.usage?.hours ?? 0).toFixed(1)} hours, {num((org.usage?.sandboxMinutes ?? 0))} sandbox minutes.</p>
           </section>
         </aside>
       </div>

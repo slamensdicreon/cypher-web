@@ -39,32 +39,33 @@ export default async function Organizations({ searchParams }: { searchParams: Pr
           <section className="ad-card ad-wide">
             <div className="ad-scroll">
               <table className="ad-tbl">
-                <thead><tr><th>Organization</th><th>People</th><th className="r">Projects</th><th className="r">Claude</th><th className="r">Sandbox</th><th>License</th></tr></thead>
+                <thead><tr><th>Organization</th><th>People</th><th className="r">Projects</th><th className="r">Claude</th><th className="r">Sandbox</th><th>License</th><th></th></tr></thead>
                 <tbody>
                   {got.data.map((o) => {
-                    const l = o.license;
-                    const icreon = o.id === ICREON;
+                    const l = o.license ?? { standing: 'none' as const, used: 0 };
+                    const href = `/admin/platform/organizations/${encodeURIComponent(o.id)}`;
                     return (
                       <tr key={o.id}>
                         <td>
-                          {icreon ? <b>{o.name}</b> : <Link href={`/admin/platform/organizations/${encodeURIComponent(o.id)}`}><b>{o.name}</b></Link>}
+                          <Link href={href}><b>{o.name}</b></Link>
                           <br /><span className="ad-dim">{o.slug} · since {day(o.createdAt)}</span>
                         </td>
                         <td>{o.directors} Director{o.directors === 1 ? '' : 's'}, {o.watchers} Watcher{o.watchers === 1 ? '' : 's'}{o.invitations ? <><br /><span className="ad-dim">{o.invitations} invitation{o.invitations === 1 ? '' : 's'} open</span></> : null}</td>
                         <td className="r">{o.projects}{o.running ? <><br /><span className="ad-dim">{o.running} running</span></> : null}</td>
-                        <td className="r">{usd(o.usage.usd)}<br /><span className="ad-dim">{num(o.usage.tokens)} tokens</span></td>
-                        <td className="r">{num(o.usage.sandboxMinutes)} min</td>
+                        <td className="r">{usd(o.usage?.usd ?? 0)}<br /><span className="ad-dim">{num(o.usage?.tokens ?? 0)} tokens</span></td>
+                        <td className="r">{num(o.usage?.sandboxMinutes ?? 0)} min</td>
                         <td>
                           <span className={`lw-standing st-${l.standing}`}>{STANDING[l.standing]}{l.purgedAt ? ', data purged' : ''}</span>
                           {l.projectsIncluded !== undefined && <><br /><span className="ad-dim">{l.used} of {l.projectsIncluded} projects{l.endsAt ? ` · to ${day(l.endsAt)}` : ''}</span></>}
                         </td>
+                        <td className="r"><Link className="ad-btn small" href={href}>{o.id === ICREON ? 'Usage' : 'Manage'}</Link></td>
                       </tr>
                     );
                   })}
                 </tbody>
               </table>
             </div>
-            <p className="ad-fine">Icreon needs no license, and support access to it is refused, so it has no page.</p>
+            <p className="ad-fine">Icreon needs no license and can’t be given support access, so its page shows usage only.</p>
           </section>
         </>
       )}
