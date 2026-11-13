@@ -16,7 +16,7 @@ writeFileSync(join(here, 'eye.js'), `(() => {\n${js.replace(/^export\s+/gm, '').
 const jobs = [
   ['avatar-ink'], ['avatar-coral'], ['avatar-white'],
   ['linkedin-company'], ['linkedin-personal'], ['x-header'], ['youtube'], ['facebook-cover'], ['bluesky-banner'],
-  ['linkedin-company', 'proof'], ['linkedin-company', 'learn'], ['x-header', 'proof'], ['x-header', 'learn'], ['linkedin-personal', 'proof'], ['linkedin-personal', 'learn'],
+  ['linkedin-company', 'proof'], ['linkedin-company', 'learn'], ['x-header', 'proof'], ['x-header', 'learn'], ['linkedin-personal', 'proof'], ['linkedin-personal', 'learn'], ['linkedin-company', 'outcomes'], ['linkedin-personal', 'outcomes'], ['x-header', 'outcomes'],
 ];
 const b = await chromium.launch();
 const p = await b.newPage({ viewport: { width: 3000, height: 1500 } });

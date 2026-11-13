@@ -19,8 +19,9 @@ const grid = (gap, op = 0.5) => `<div style="position:absolute;inset:0;opacity:$
 
 /** The banner lines: the brand line first, then two alternates. */
 const COPY = {
-  brand: { head: [['Ignorance', WHITE], ['is bliss.', CORAL]], sub: 'Twenty-one specialists and the mind that runs them. Websites, portals and migrations, built and handed over running.' },
+  brand: { head: [['Ignorance', WHITE], ['is bliss.', CORAL]], sub: 'Twenty-one specialists and the mind that runs them. Build, migrate, personalize and optimize, on any enterprise platform.' },
   proof: { head: [['$400,000+ quoted.', WHITE], ['$512 to run.', CORAL]], sub: 'The cost of the run, not the price. Twenty-one specialists and the mind that runs them.' },
+  outcomes: { head: [['Build. Migrate.', WHITE], ['Personalize. Optimize.', CORAL]], sub: 'Any enterprise platform. Twenty-one specialists and the mind that runs them.' },
   learn: { head: [['It’s smarter than', WHITE], ['it was this morning.', CORAL]], sub: 'Every build rewrites its own playbook. It never asks the same question twice.' },
 };
 
@@ -50,7 +51,7 @@ function banner(s, variant) {
   const ex = x1 - d / 2, ey = y0 + bh / 2;
   const tw = bw - d - bh * 0.25; // the text column
   // the whole column (label, two lines, the sub line on taller banners, the pill) fits the box
-  const hs = Math.min(bh / (bh > 200 ? 4.6 : 3.6), tw / (variant === 'brand' ? 5.2 : 8.6));
+  const hs = Math.min(bh / (bh > 200 ? 4.6 : 3.6), tw / (variant === 'brand' ? 5.2 : variant === 'outcomes' ? 11 : 8.6));
   const ss = Math.max(hs * 0.3, 12);
   const glow = `<div style="position:absolute;left:${ex - d}px;top:${ey - d}px;width:${d * 2}px;height:${d * 2}px;border-radius:50%;background:radial-gradient(circle,rgba(232,85,61,.22),rgba(232,85,61,0) 62%)"></div>`;
   const text = `<div style="position:absolute;left:${x0}px;top:${y0}px;width:${tw}px;height:${bh}px;display:flex;flex-direction:column;justify-content:center">
