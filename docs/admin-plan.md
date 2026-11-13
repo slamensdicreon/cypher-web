@@ -329,7 +329,9 @@ Built: C1–C5 and C7 in full; C6 as a Settings rule (nobody, one person, or tak
 
 **Done when:** a form submission appears as a new deal within seconds, the owner is notified, and it can be moved through every stage to Won or Lost with notes and tasks.
 
-### Phase 1P: Platform administration (alongside Phase 1)
+### Phase 1P: Platform administration (alongside Phase 1) — L3–L10 built November 13, on the preview branch
+
+Built against the production platform's sources (commit e8fbe56) and tested against a local stand-in of the contract: Organizations and New organization; the license editor with the catalog by platform, history and the paused/resumed result; usage with Vercel notes; support access; In force; Rules (create, edit, approve, reject, retire, reactivate, history, propose from a project); Knowledge (filters, create, edit, approve, reject, retire, activate, history, export) with Cypher's proposal sort and apply-together; Diagnostics with the watchdog and test email behind buttons. Every live change needs a ticked confirmation and a sign-in from the last 15 minutes, and is recorded in the audit log here and by name on the platform. Nothing dangerous runs on page load, and the admin never calls the license check. L11 waits for these screens to be live in production.
 
 | # | Task | Size | Depends on |
 |---|---|---|---|

@@ -1,67 +1,88 @@
+import Link from 'next/link';
+import { Banner } from '@/components/admin/AdminNav';
+import { Back, Refused, attempt, day, num, usd } from '@/components/admin/platform/parts';
 import { requireUser } from '@/lib/auth/request';
-import { platformConfigured, platformMe } from '@/lib/platform';
+import { can } from '@/lib/auth/roles';
+import { ICREON, PlatformError, STANDING, platform, platformConfigured, platformMe, type Org } from '@/lib/platform';
 
-/** What each refusal from the platform means, and what fixes it. */
-const WHY: Record<string, { title: string; fix: string }> = {
-  unset: { title: 'The platform isn’t connected here.', fix: 'LAUNCHWORKS_API_URL and LAUNCHWORKS_ADMIN_KEY are set for production only, so preview and local copies can’t reach Launchworks.' },
-  unauthenticated: { title: 'Launchworks didn’t accept the admin’s key.', fix: 'LAUNCHWORKS_ADMIN_KEY here and ADMIN_CONSOLE_KEY on Launchworks don’t match (or the platform has no key). Reset both to one new value.' },
-  not_icreon_director: { title: 'Launchworks doesn’t know you as an Icreon Director.', fix: 'Your Icreon membership in Launchworks must carry the same email you sign in here with. Sign in here with that address, or have your membership’s email changed in Launchworks.' },
-  super_admin_only: { title: 'You’re in Icreon on Launchworks, but not as a Director.', fix: 'Platform administration needs the Director role in Icreon’s organization on Launchworks.' },
-  not_a_member: { title: 'You aren’t a member of Icreon on Launchworks.', fix: 'Ask an Icreon Director to add you in Launchworks, under the email you sign in here with.' },
-  no_actor: { title: 'The admin didn’t say who you are.', fix: 'This is a bug in the admin: it must send your email on every call.' },
-  unreachable: { title: 'Launchworks didn’t answer.', fix: 'Try again in a minute. If it persists, check the platform’s health.' },
-};
-
-const SCREENS = [
-  ['Organizations', 'Every customer, with people, projects, spend and license; create one and invite its first Director.'],
-  ['Licenses', 'Platforms, playbooks, projects included and term, with history. Saving can pause or resume projects.'],
-  ['Usage', 'Claude spend, sandbox and tool time, Vercel builds, per organization and per project.'],
-  ['Support access', 'Give yourself up to 72 hours in a customer’s organization, as Watcher or Director.'],
-  ['Rules, Knowledge, In force', 'How the Leads answer cards, and what every new build starts with.'],
-  ['Diagnostics', 'Services and orchestrators; the watchdog and test email behind buttons.'],
-] as const;
-
-/** Launchworks administration. For now: whether you can reach the platform, and why not if you can't. */
-export default async function Platform() {
+/** Launchworks organizations: every customer, its people, projects, spend and license. */
+export default async function Organizations({ searchParams }: { searchParams: Promise<{ msg?: string }> }) {
   const s = await requireUser('platform', 'read', '/admin/platform');
-  const me = platformConfigured() ? await platformMe(s.user) : ({ ok: false, code: 'unset', message: '' } as const);
-  const why = !me.ok ? WHY[me.code] ?? { title: 'Launchworks refused the call.', fix: me.message } : null;
+  const { msg } = await searchParams;
+  if (!platformConfigured()) return <Shell msg={msg}><Refused err={new PlatformError(503, 'unset', '')} /></Shell>;
+  const me = await platformMe(s.user);
+  if (!me.ok) return <Shell msg={msg}><Refused err={new PlatformError(403, me.code, me.message)} /></Shell>;
+  const got = await attempt(platform<Org[]>(s.user, 'GET', '/admin/organizations'));
+  const writable = can(s.user.roles, 'platform', 'write');
 
+  return (
+    <Shell msg={msg} who={me.name}>
+      {!got.ok ? (
+        <Refused err={got.err} />
+      ) : (
+        <>
+          {writable && (
+            <details className="ad-card ad-wide crm-new">
+              <summary>New organization</summary>
+              <form method="post" action="/api/admin/platform/create-org" className="ad-form">
+                <Back to="/admin/platform" />
+                <div className="ad-row2">
+                  <label className="ad-field"><span>Name</span><input className="ad-input" name="name" required minLength={2} maxLength={80} placeholder="Contoso" /></label>
+                  <label className="ad-field"><span>Address <small>optional; made from the name</small></span><input className="ad-input" name="slug" maxLength={40} pattern="[a-z0-9-]*" placeholder="contoso" /></label>
+                </div>
+                <label className="ad-field"><span>First Director’s email <small>optional; the invitation stays open 7 days</small></span><input className="ad-input" name="director_email" type="email" placeholder="name@contoso.com" /></label>
+                <p className="ad-fine">You become its kickoff Director. The customer can’t remove you for three months; after that their Directors can.</p>
+                <div className="ad-actions"><button className="ad-btn primary" type="submit">Create</button></div>
+              </form>
+            </details>
+          )}
+          <section className="ad-card ad-wide">
+            <div className="ad-scroll">
+              <table className="ad-tbl">
+                <thead><tr><th>Organization</th><th>People</th><th className="r">Projects</th><th className="r">Claude</th><th className="r">Sandbox</th><th>License</th></tr></thead>
+                <tbody>
+                  {got.data.map((o) => {
+                    const l = o.license;
+                    const icreon = o.id === ICREON;
+                    return (
+                      <tr key={o.id}>
+                        <td>
+                          {icreon ? <b>{o.name}</b> : <Link href={`/admin/platform/organizations/${encodeURIComponent(o.id)}`}><b>{o.name}</b></Link>}
+                          <br /><span className="ad-dim">{o.slug} · since {day(o.createdAt)}</span>
+                        </td>
+                        <td>{o.directors} Director{o.directors === 1 ? '' : 's'}, {o.watchers} Watcher{o.watchers === 1 ? '' : 's'}{o.invitations ? <><br /><span className="ad-dim">{o.invitations} invitation{o.invitations === 1 ? '' : 's'} open</span></> : null}</td>
+                        <td className="r">{o.projects}{o.running ? <><br /><span className="ad-dim">{o.running} running</span></> : null}</td>
+                        <td className="r">{usd(o.usage.usd)}<br /><span className="ad-dim">{num(o.usage.tokens)} tokens</span></td>
+                        <td className="r">{num(o.usage.sandboxMinutes)} min</td>
+                        <td>
+                          <span className={`lw-standing st-${l.standing}`}>{STANDING[l.standing]}{l.purgedAt ? ', data purged' : ''}</span>
+                          {l.projectsIncluded !== undefined && <><br /><span className="ad-dim">{l.used} of {l.projectsIncluded} projects{l.endsAt ? ` · to ${day(l.endsAt)}` : ''}</span></>}
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+            <p className="ad-fine">Icreon needs no license, and support access to it is refused, so it has no page.</p>
+          </section>
+        </>
+      )}
+    </Shell>
+  );
+}
+
+function Shell({ msg, who, children }: { msg?: string; who?: string; children: React.ReactNode }) {
   return (
     <main className="wrap ad">
       <header className="ad-top">
         <div>
-          <h1>Platform</h1>
-          <p>Launchworks administration, server to server. Every action is recorded by name on the platform and in the audit log here.</p>
+          <h1>Organizations</h1>
+          <p>Launchworks customers, server to server{who ? `, as ${who}` : ''}. Every action is recorded by name on the platform and in the audit log here.</p>
         </div>
       </header>
-
-      <section className="ad-card ad-wide">
-        <h3>Your access</h3>
-        <ul className="ad-checks">
-          <li className={me.ok ? 'ok' : 'todo'}>
-            <b aria-hidden="true">{me.ok ? '✓' : '!'}</b>
-            {me.ok ? (
-              <span><strong>Connected as {me.name}, an Icreon Director.</strong><small>Launchworks accepted the admin’s key and knows {s.user.email}.</small></span>
-            ) : (
-              <span>
-                <strong>{why!.title}</strong>
-                <small>{why!.fix}</small>
-                {me.code !== 'unset' && <small className="ad-dim">Platform answer: {me.code}{me.message ? `: ${me.message}` : ''}</small>}
-              </span>
-            )}
-          </li>
-        </ul>
-      </section>
-
-      <section className="ad-card ad-wide">
-        <h3>Coming here next</h3>
-        <ul className="ad-rank">
-          {SCREENS.map(([t, d]) => (
-            <li key={t}><span className="ad-rl"><b>{t}</b><br /><span className="ad-dim">{d}</span></span></li>
-          ))}
-        </ul>
-      </section>
+      <Banner msg={msg} />
+      {children}
     </main>
   );
 }
