@@ -29,7 +29,7 @@ export type PutForward = {
   wants: string;
 };
 
-type Message = {
+export type Message = {
   to: string[];
   subject: string;
   html: string;
@@ -37,7 +37,7 @@ type Message = {
   reply_to?: string;
 };
 
-async function send(m: Message, idempotencyKey: string | null): Promise<void> {
+export async function send(m: Message, idempotencyKey: string | null): Promise<void> {
   const headers: Record<string, string> = {
     Authorization: `Bearer ${apiKey}`,
     'Content-Type': 'application/json',
@@ -55,13 +55,13 @@ async function send(m: Message, idempotencyKey: string | null): Promise<void> {
   }
 }
 
-const esc = (s: string) =>
+export const esc = (s: string) =>
   s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]!);
 
 const FONT = `'Plus Jakarta Sans', 'Helvetica Neue', Arial, sans-serif`;
 
 /** A one-column, table-based layout, which is what email clients render reliably. */
-function frame(inner: string, preheader: string): string {
+export function frame(inner: string, preheader: string): string {
   return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width"><meta name="color-scheme" content="dark"><title>Cypher</title></head>
 <body style="margin:0;padding:0;background:#141433;">
 <div style="display:none;max-height:0;overflow:hidden;opacity:0;">${esc(preheader)}</div>

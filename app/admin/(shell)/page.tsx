@@ -1,8 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import AdminNav from '@/components/admin/AdminNav';
-import { Resting } from '@/components/SiteHeader';
-import { adminConfigured, isAdmin, safeNext } from '@/lib/admin';
+import { requireUser } from '@/lib/auth/session';
+import { Banner } from '@/components/admin/AdminNav';
 import { dashboard, submissions, TABS, type Count, type Dashboard, type Tab } from '@/lib/adminData';
 import { RETIRED, USE_CASES } from '@/lib/postcards';
 import type { Row } from '@/lib/store';
@@ -15,11 +14,6 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-const ERRORS: Record<string, string> = {
-  pin: 'That’s not it.',
-  locked: 'Too many wrong tries from this network. Wait fifteen minutes.',
-  unset: 'ADMIN_PIN isn’t set on the server.',
-};
 
 const fmt = (n: number) => n.toLocaleString('en-US');
 const pct = (a: number, b: number) => (!b ? '–' : !a ? '0%' : `${((a / b) * 100).toFixed(a / b < 0.1 ? 1 : 0)}%`);
@@ -32,22 +26,6 @@ const shortDay = (iso: string) =>
 const CARD_INFO = new Map(USE_CASES.flatMap((u) => u.cards.map((c, i) => [c.id, { place: 'Print run', version: `${u.n}${i + 1}`, line: c.line }] as const)));
 /** Retired cards: off the pages, but a scan of one still gets its name. */
 const RETIRED_INFO = new Map(RETIRED.flatMap((u) => u.cards.map((c) => [c.id, { place: `Retired · ${u.place}`, version: '', line: c.line }] as const)));
-
-function Login({ error, next }: { error?: string; next: string }) {
-  return (
-    <main className="ad-login">
-      <form className="ad-pin" method="post" action="/api/admin/login">
-        <Resting size={40} />
-        <h1>Admin</h1>
-        <label htmlFor="pin">PIN</label>
-        <input id="pin" name="pin" type="password" inputMode="numeric" autoComplete="current-password" required autoFocus />
-        {next !== '/admin' && <input type="hidden" name="next" value={next} />}
-        {error && ERRORS[error] && <p className="ad-err" role="alert">{ERRORS[error]}</p>}
-        <button className="btn" type="submit" disabled={!adminConfigured()}>Enter</button>
-      </form>
-    </main>
-  );
-}
 
 function Tile({ label, value, note }: { label: string; value: string; note?: string }) {
   return (
@@ -253,12 +231,12 @@ function People({ tab, q, rows, counts }: { tab: Tab; q: string; rows: Row[]; co
   );
 }
 
-type Search = { e?: string; tab?: string; q?: string; days?: string; next?: string };
+type Search = { tab?: string; q?: string; days?: string; msg?: string };
 
 /** The hidden admin: PIN first, then the form fills and the traffic. Not linked, not indexed. */
 export default async function Admin({ searchParams }: { searchParams: Promise<Search> }) {
   const sp = await searchParams;
-  if (!(await isAdmin())) return <Login error={sp.e} next={safeNext(sp.next)} />;
+  await requireUser('analytics', 'read', '/admin');
 
   const days = [7, 14, 30].includes(Number(sp.days)) ? Number(sp.days) : 14;
   const tab = (TABS.some((t) => t.key === sp.tab) ? sp.tab : 'all') as Tab;
@@ -267,10 +245,9 @@ export default async function Admin({ searchParams }: { searchParams: Promise<Se
 
   return (
     <main className="wrap ad">
-      <AdminNav on="dashboard" />
       <header className="ad-top">
         <div>
-          <h1>Admin</h1>
+          <h1>Home</h1>
           <p>Last {days} days, US Eastern time. A visit is one person on one day.</p>
         </div>
         <div className="ad-controls">
@@ -285,11 +262,9 @@ export default async function Admin({ searchParams }: { searchParams: Promise<Se
           <Link className="ad-btn" href="/postcards">Postcards</Link>
           <Link className="ad-btn" href="/postcards/trading">Trading cards</Link>
           <Link className="ad-btn" href="/postcards/social">Social ads</Link>
-          <form method="post" action="/api/admin/logout">
-            <button className="ad-btn" type="submit">Sign out</button>
-          </form>
         </div>
       </header>
+      <Banner msg={sp.msg} />
 
       {!d ? (
         <p className="ad-empty">No database is connected.</p>

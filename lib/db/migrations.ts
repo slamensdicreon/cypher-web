@@ -175,6 +175,7 @@ export const MIGRATIONS: Migration[] = [
         expires_at timestamptz not null,
         fresh_until timestamptz not null,
         revoked_at timestamptz,
+        method text not null default 'link',
         ua text not null default '',
         ip_hash text not null default ''
       );

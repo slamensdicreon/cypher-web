@@ -1,4 +1,5 @@
-import { isAdmin } from '@/lib/admin';
+import { apiUser } from '@/lib/auth/session';
+import { loadSettings } from '@/lib/settings';
 import { postalAddress, senderName, SITE } from '@/lib/drip/config';
 import { renderEmail, SAMPLE } from '@/lib/drip/render';
 
@@ -7,7 +8,8 @@ export const dynamic = 'force-dynamic';
 
 /** Live preview for the step editor: renders the copy as the real email, with sample merge data. */
 export async function POST(req: Request) {
-  if (!(await isAdmin())) return new Response('Not found', { status: 404 });
+  if (!(await apiUser('email'))) return new Response('Not found', { status: 404 });
+  await loadSettings();
   const b = (await req.json().catch(() => ({}))) as Record<string, string>;
   const str = (k: string) => (typeof b[k] === 'string' ? b[k] : '').slice(0, 20000);
   const r = renderEmail({

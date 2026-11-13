@@ -1,16 +1,13 @@
 import 'server-only';
 import { createHash, timingSafeEqual } from 'node:crypto';
-import { cookies } from 'next/headers';
-import { COOKIE, adminConfigured, validToken } from './adminToken';
+import { currentSession } from './auth/session';
 import { clientIp, keyedHash } from './keys';
-
-export { COOKIE, adminConfigured, newSession, safeNext } from './adminToken';
 import { hasStore, migrate, sql } from './store';
 
 /**
- * The admin sign-in. One PIN (ADMIN_PIN), checked on the server in constant time; a session is
- * a signed, httpOnly cookie that lasts twelve hours. Changing the PIN signs everyone out.
- * Five wrong PINs from one network within fifteen minutes lock that network out for the rest.
+ * Helpers kept from the PIN era. Sign-in is now by email link (lib/auth/session.ts); the PIN is a
+ * break-glass way in for the first Owner, with the same lockout: five wrong tries from one network
+ * within fifteen minutes lock that network out for the rest.
  */
 
 const LIMIT = 5;
@@ -18,14 +15,14 @@ const WINDOW_MIN = 15;
 
 const pin = () => (process.env.ADMIN_PIN || '').trim();
 
-/** Is this request signed in? */
+/** Is anyone signed in? Routes that need a particular role use apiUser() instead. */
 export async function isAdmin(): Promise<boolean> {
-  return validToken((await cookies()).get(COOKIE)?.value);
+  return (await currentSession()) !== null;
 }
 
 /** Constant-time PIN check (both sides hashed first, so lengths always match). */
 export function pinMatches(candidate: string): boolean {
-  if (!adminConfigured()) return false;
+  if (!pin()) return false;
   const a = createHash('sha256').update(candidate.trim()).digest();
   const b = createHash('sha256').update(pin()).digest();
   return timingSafeEqual(a, b);

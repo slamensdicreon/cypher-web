@@ -1,4 +1,5 @@
 import 'server-only';
+import { loadSettings } from '../settings';
 import { classify } from '../rules';
 import { domainOf } from '../company';
 import { canSend, dripFrom, dripReplyTo, postalAddress, resendKey, senderName, SITE } from './config';
@@ -237,6 +238,7 @@ export type RunResult = { sent: number; failed: number; exited: number; complete
  * goes out, so a run can never send the same step twice; failures are released to retry next run.
  */
 export async function runDue(limit = 1000): Promise<RunResult> {
+  await loadSettings();
   if (!canSend()) return { sent: 0, failed: 0, exited: 0, completed: 0, blocked: !resendKey() ? 'No Resend key is set.' : 'Set DRIP_POSTAL_ADDRESS first: every marketing email must show one.' };
   await dripReady();
   const s = db();
@@ -318,6 +320,7 @@ export async function runDue(limit = 1000): Promise<RunResult> {
 
 /** Sends one step to any address, marked [Test], with sample merge data. Doesn't touch enrollments. */
 export async function sendTest(stepId: number, to: string) {
+  await loadSettings();
   if (!resendKey()) throw new Error('No Resend key is set.');
   await dripReady();
   const [r] = await db()<Record<string, unknown>[]>`select * from steps where id = ${stepId}`;

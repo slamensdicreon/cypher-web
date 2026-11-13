@@ -1,9 +1,10 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { notFound, redirect } from 'next/navigation';
-import AdminNav, { Banner } from '@/components/admin/AdminNav';
+import { notFound } from 'next/navigation';
+import { Banner } from '@/components/admin/AdminNav';
 import StepEditor from '@/components/admin/StepEditor';
-import { isAdmin } from '@/lib/admin';
+import { requireUser } from '@/lib/auth/session';
+import { loadSettings } from '@/lib/settings';
 import { canSend, checks } from '@/lib/drip/config';
 import { getSteps } from '@/lib/drip/engine';
 import { sequence } from '@/lib/drip/stats';
@@ -19,7 +20,8 @@ const REASON: Record<string, string> = { put_forward: 'put their company forward
 
 export default async function SequencePage({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ msg?: string }> }) {
   const { id: raw } = await params;
-  if (!(await isAdmin())) redirect(`/admin?next=/admin/drip/${raw}`);
+  await requireUser('email', 'read', `/admin/drip/${raw}`);
+  await loadSettings();
   const id = Number(raw);
   if (!Number.isInteger(id)) notFound();
   const [q, steps] = await Promise.all([sequence(id), getSteps(id)]);
@@ -36,7 +38,6 @@ export default async function SequencePage({ params, searchParams }: { params: P
 
   return (
     <main className="wrap ad">
-      <AdminNav on="drip" />
       <p className="ad-crumb"><Link href="/admin/drip">← All sequences</Link></p>
       <header className="ad-top">
         <div>

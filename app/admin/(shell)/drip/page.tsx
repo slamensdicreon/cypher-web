@@ -1,8 +1,8 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { redirect } from 'next/navigation';
-import AdminNav, { Banner } from '@/components/admin/AdminNav';
-import { isAdmin } from '@/lib/admin';
+import { Banner } from '@/components/admin/AdminNav';
+import { requireUser } from '@/lib/auth/session';
+import { loadSettings } from '@/lib/settings';
 import { checks } from '@/lib/drip/config';
 import { TEMPLATES } from '@/lib/drip/render';
 import { sequences } from '@/lib/drip/stats';
@@ -16,13 +16,13 @@ const rate = (a: number, b: number) => (b ? `${Math.round((a / b) * 100)}%` : 'â
 const STATUS: Record<string, string> = { draft: 'Draft', active: 'Live', paused: 'Paused' };
 
 export default async function Drip({ searchParams }: { searchParams: Promise<{ msg?: string }> }) {
-  if (!(await isAdmin())) redirect('/admin?next=/admin/drip');
+  await requireUser('email', 'read', '/admin/drip');
+  await loadSettings();
   const { msg } = await searchParams;
   const list = hasStore ? await sequences() : [];
   const setup = checks();
   return (
     <main className="wrap ad">
-      <AdminNav on="drip" />
       <header className="ad-top">
         <div>
           <h1>Email sequences</h1>

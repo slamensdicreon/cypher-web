@@ -1,8 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { redirect } from 'next/navigation';
-import AdminNav, { Banner } from '@/components/admin/AdminNav';
-import { isAdmin } from '@/lib/admin';
+import { Banner } from '@/components/admin/AdminNav';
+import { requireUser } from '@/lib/auth/session';
 import { contacts } from '@/lib/drip/stats';
 import { hasStore } from '@/lib/store';
 
@@ -18,7 +17,7 @@ const STATUSES = [
 ] as const;
 
 export default async function Contacts({ searchParams }: { searchParams: Promise<{ msg?: string; q?: string; status?: string; list?: string }> }) {
-  if (!(await isAdmin())) redirect('/admin?next=/admin/drip/contacts');
+  await requireUser('email', 'read', '/admin/drip/contacts');
   const sp = await searchParams;
   const q = (sp.q ?? '').slice(0, 80);
   const status = STATUSES.some((s) => s.key === sp.status) ? sp.status ?? '' : '';
@@ -28,7 +27,6 @@ export default async function Contacts({ searchParams }: { searchParams: Promise
 
   return (
     <main className="wrap ad">
-      <AdminNav on="contacts" />
       <header className="ad-top">
         <div>
           <h1>Contacts</h1>
