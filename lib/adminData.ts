@@ -17,7 +17,6 @@ export type Dashboard = {
   daily: Day[];
   visits: number;
   views: number;
-  scans: number;
   started: number;
   flips: number;
   approves: number;
@@ -28,7 +27,6 @@ export type Dashboard = {
   countries: Count[];
   devices: Count[];
   pages: Count[];
-  cards: CardStat[];
 };
 
 const num = (v: unknown) => Number(v ?? 0);
@@ -40,7 +38,7 @@ export async function dashboard(days: number): Promise<Dashboard | null> {
   const since = db`now() - make_interval(days => ${days})`;
   const dayVisitor = db`((at at time zone ${TZ})::date || ':' || visitor)`;
 
-  const [daily, totals, subs, allTime, sources, countries, devices, pages, scans, subsByCard] = await Promise.all([
+  const [daily, totals, subs, allTime, sources, countries, devices, pages] = await Promise.all([
     db<{ day: string; visits: string; views: string }[]>`
       with d as (
         select generate_series((now() at time zone ${TZ})::date - ${days - 1}::int, (now() at time zone ${TZ})::date, interval '1 day')::date as day
@@ -55,7 +53,6 @@ export async function dashboard(days: number): Promise<Dashboard | null> {
       select
         count(distinct ${dayVisitor}) filter (where kind = 'view') as visits,
         count(*) filter (where kind = 'view') as views,
-        count(distinct ${dayVisitor}) filter (where kind = 'view' and card <> '') as scans,
         count(distinct ${dayVisitor}) filter (where kind = 'form_start') as started,
         count(*) filter (where kind = 'card_flip') as flips,
         count(*) filter (where kind = 'card_approve') as approves
@@ -79,23 +76,10 @@ export async function dashboard(days: number): Promise<Dashboard | null> {
       from events where kind = 'view' and at > ${since} group by 1 order by n desc`,
     db<{ label: string; n: string }[]>`
       select path as label, count(*) as n from events where kind = 'view' and at > ${since} group by 1 order by n desc limit 8`,
-    db<{ card: string; n: string }[]>`
-      select card, count(distinct ${dayVisitor}) as n from events where kind = 'view' and card <> '' and at > ${since} group by card`,
-    db<{ card: string; ok: string; declined: string }[]>`
-      select source as card, count(*) filter (where outcome = 'ok') as ok, count(*) filter (where outcome <> 'ok') as declined
-      from submissions where source <> '' and created_at > ${since} group by source`,
   ]);
 
   const t = totals[0] ?? {};
   const by = Object.fromEntries(subs.map((s) => [s.outcome, num(s.n)]));
-  const cardMap = new Map<string, CardStat>();
-  for (const s of scans) cardMap.set(s.card, { card: s.card, scans: num(s.n), ok: 0, declined: 0 });
-  for (const s of subsByCard) {
-    const c = cardMap.get(s.card) ?? { card: s.card, scans: 0, ok: 0, declined: 0 };
-    c.ok = num(s.ok);
-    c.declined = num(s.declined);
-    cardMap.set(s.card, c);
-  }
   const counts = (rows: { label: string; n: string }[]) => rows.map((r) => ({ label: r.label, n: num(r.n) }));
 
   return {
@@ -103,7 +87,6 @@ export async function dashboard(days: number): Promise<Dashboard | null> {
     daily: daily.map((d) => ({ day: d.day, visits: num(d.visits), views: num(d.views) })),
     visits: num(t.visits),
     views: num(t.views),
-    scans: num(t.scans),
     started: num(t.started),
     flips: num(t.flips),
     approves: num(t.approves),
@@ -114,8 +97,38 @@ export async function dashboard(days: number): Promise<Dashboard | null> {
     countries: counts(countries),
     devices: counts(devices),
     pages: counts(pages),
-    cards: [...cardMap.values()],
   };
+}
+
+/**
+ * How each printed card does: scans (visits that came in on its QR code) and the sign-ups that named it,
+ * over the last `days` days, or all time when days is 0. Shown with the print run in Campaign assets.
+ */
+export async function cardStats(days: number): Promise<{ cards: CardStat[]; scans: number; visits: number } | null> {
+  if (!hasStore || !sql) return null;
+  await migrate();
+  const db = sql;
+  const since = () => (days ? db`now() - make_interval(days => ${days})` : db`'-infinity'::timestamptz`);
+  const dayVisitor = () => db`((at at time zone ${TZ})::date || ':' || visitor)`;
+  const [scans, subs, totals] = await Promise.all([
+    db<{ card: string; n: string }[]>`
+      select card, count(distinct ${dayVisitor()}) as n from events where kind = 'view' and card <> '' and at > ${since()} group by card`,
+    db<{ card: string; ok: string; declined: string }[]>`
+      select source as card, count(*) filter (where outcome = 'ok') as ok, count(*) filter (where outcome <> 'ok') as declined
+      from submissions where source <> '' and created_at > ${since()} group by source`,
+    db<{ scans: string; visits: string }[]>`
+      select count(distinct ${dayVisitor()}) filter (where card <> '') as scans, count(distinct ${dayVisitor()}) as visits
+      from events where kind = 'view' and at > ${since()}`,
+  ]);
+  const map = new Map<string, CardStat>();
+  for (const r of scans) map.set(r.card, { card: r.card, scans: num(r.n), ok: 0, declined: 0 });
+  for (const r of subs) {
+    const c = map.get(r.card) ?? { card: r.card, scans: 0, ok: 0, declined: 0 };
+    c.ok = num(r.ok);
+    c.declined = num(r.declined);
+    map.set(r.card, c);
+  }
+  return { cards: [...map.values()], scans: num(totals[0]?.scans), visits: num(totals[0]?.visits) };
 }
 
 export type Tab = 'all' | 'ok' | 'declined' | 'vendor' | 'sitecore' | 'personal';

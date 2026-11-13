@@ -43,7 +43,8 @@ November 13, 2026. A plan to turn `/admin` into the one place Cypher's business 
 | Area | Today |
 |---|---|
 | Sign-in | One shared PIN for everyone; 12-hour signed cookie; lockout after five wrong tries |
-| Analytics | First-party and cookieless: visits, page views, sources, devices, countries, card flips and approvals; postcard scans by QR code |
+| Analytics | First-party and cookieless: visits, page views, sources, devices, countries, card flips and approvals. Home is evergreen (traffic, sign-ups, the pipeline); postcard scans by QR code live with the print run in Campaign assets |
+| Campaign assets | In the admin shell at /admin/assets (moved from /postcards on November 13): logos and brand, social profile kit, videos, social ads, postcards with each card's performance, trading cards, the pitch deck. Files sit in public/admin/assets/files, behind the admin sign-in |
 | Leads | Every form submission (accepted and declined) with site, outcomes wanted, "how badly", source; CSV export |
 | Email | Sequences with dated or delayed steps, a branded template with live preview, contact import (the 545 Symposium registrants), enrollment, daily send run, test sends, Resend webhooks for delivered, opened and clicked, one-click unsubscribe |
 | Campaign assets | The six-card print run (PDF downloads), trading-card sheet, social ads and ZIP; the pitch deck download |

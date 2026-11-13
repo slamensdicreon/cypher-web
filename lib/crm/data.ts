@@ -273,6 +273,35 @@ export async function owners(): Promise<{ id: number; name: string }[]> {
     select id::int as id, coalesce(nullif(name, ''), email) as name from users where status = 'active' order by 2`;
 }
 
+/** The pipeline at a glance, for the dashboard: what's open, what moved in the last `days` days, what's due. */
+export async function snapshot(days: number, userId: number): Promise<{
+  open: number; openValue: number; newDeals: number; won: number; wonValue: number; lost: number;
+  byStage: { id: string; label: string; n: number; value: number }[]; myDue: number; myOverdue: number;
+}> {
+  await migrate();
+  const since = () => db()`now() - make_interval(days => ${days})`;
+  const [[t], byStage, [due]] = await Promise.all([
+    db()<{ open: number; openValue: number; newDeals: number; won: number; wonValue: number; lost: number }[]>`
+      select
+        count(*) filter (where s.kind = 'open')::int as open,
+        coalesce(sum(d.value) filter (where s.kind = 'open'), 0)::float as open_value,
+        count(*) filter (where d.created_at > ${since()})::int as new_deals,
+        count(*) filter (where s.kind = 'won' and d.closed_at > ${since()})::int as won,
+        coalesce(sum(d.value) filter (where s.kind = 'won' and d.closed_at > ${since()}), 0)::float as won_value,
+        count(*) filter (where s.kind = 'lost' and d.closed_at > ${since()})::int as lost
+      from deals d join pipeline_stages s on s.id = d.stage`,
+    db()<{ id: string; label: string; n: number; value: number }[]>`
+      select s.id, s.label, count(d.id)::int as n, coalesce(sum(d.value), 0)::float as value
+      from pipeline_stages s left join deals d on d.stage = s.id
+      where s.kind = 'open' group by s.id, s.label, s.position order by s.position`,
+    db()<{ myDue: number; myOverdue: number }[]>`
+      select count(*) filter (where due_at < now() + interval '7 days')::int as my_due,
+             count(*) filter (where due_at < now())::int as my_overdue
+      from tasks where owner_id = ${userId} and done_at is null`,
+  ]);
+  return { ...t, byStage, myDue: due.myDue, myOverdue: due.myOverdue };
+}
+
 // ---------------------------------------------------------------- changing
 
 const actorOf = (s: Session | null) => (s ? s.user.name || s.user.email : 'Website');

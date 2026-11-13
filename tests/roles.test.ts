@@ -32,5 +32,6 @@ test('admin paths map to areas; unknown ones need Owner', () => {
   assert.equal(areaFor('/admin/people'), 'people');
   assert.equal(areaFor('/admin/platform/organizations'), 'platform');
   assert.equal(areaFor('/postcards/print/x.pdf'), 'assets');
+  assert.equal(areaFor('/admin/assets/files/videos/x.mp4'), 'assets');
   assert.equal(areaFor('/admin/something-new'), 'settings');
 });

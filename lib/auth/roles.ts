@@ -49,7 +49,7 @@ export function can(roles: readonly string[], area: Area, level: Level = 'read')
 
 /** The area an admin address belongs to, for the request gate. Unknown admin paths need Owner. */
 export function areaFor(path: string): Area {
-  if (path.startsWith('/postcards')) return 'assets';
+  if (path.startsWith('/postcards') || path.startsWith('/admin/assets')) return 'assets';
   if (path.startsWith('/admin/drip')) return 'email';
   if (path.startsWith('/admin/people')) return 'people';
   if (path.startsWith('/admin/settings')) return 'settings';

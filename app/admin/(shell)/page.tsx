@@ -1,9 +1,10 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { requireUser } from '@/lib/auth/request';
+import { can } from '@/lib/auth/roles';
 import { Banner } from '@/components/admin/AdminNav';
 import { dashboard, submissions, TABS, type Count, type Dashboard, type Tab } from '@/lib/adminData';
-import { RETIRED, USE_CASES } from '@/lib/postcards';
+import { snapshot } from '@/lib/crm/data';
 import type { Row } from '@/lib/store';
 
 export const dynamic = 'force-dynamic';
@@ -22,10 +23,9 @@ const when = (d: Date) =>
 const shortDay = (iso: string) =>
   new Intl.DateTimeFormat('en-US', { timeZone: 'UTC', month: 'short', day: 'numeric' }).format(new Date(`${iso}T00:00:00Z`));
 
-/** The six cards in print, by id, for the postcard table. */
-const CARD_INFO = new Map(USE_CASES.flatMap((u) => u.cards.map((c, i) => [c.id, { place: 'Print run', version: `${u.n}${i + 1}`, line: c.line }] as const)));
-/** Retired cards: off the pages, but a scan of one still gets its name. */
-const RETIRED_INFO = new Map(RETIRED.flatMap((u) => u.cards.map((c) => [c.id, { place: `Retired · ${u.place}`, version: '', line: c.line }] as const)));
+const money = (n: number) => `$${Math.round(n).toLocaleString('en-US')}`;
+/** Big amounts for a tile: $1.1M, $240K. */
+const short = (n: number) => (n >= 1e6 ? `$${(n / 1e6).toFixed(n >= 1e7 ? 0 : 1)}M` : n >= 1e4 ? `$${Math.round(n / 1e3)}K` : money(n));
 
 function Tile({ label, value, note }: { label: string; value: string; note?: string }) {
   return (
@@ -115,12 +115,12 @@ function Funnel({ d }: { d: Dashboard }) {
   const steps = [
     { label: 'Visits', n: d.visits },
     { label: 'Started the form', n: d.started },
-    { label: 'Put forward', n: d.ok },
+    { label: 'Signed up', n: d.ok },
   ];
   const max = Math.max(1, d.visits);
   return (
     <section className="ad-card">
-      <h3>From visit to put forward</h3>
+      <h3>From visit to sign-up</h3>
       <ul className="ad-rank ad-funnel">
         {steps.map((s, i) => (
           <li key={s.label}>
@@ -134,37 +134,30 @@ function Funnel({ d }: { d: Dashboard }) {
   );
 }
 
-function Cards({ d }: { d: Dashboard }) {
-  const rows = [...CARD_INFO.keys()].map((id) => d.cards.find((c) => c.card === id) ?? { card: id, scans: 0, ok: 0, declined: 0 });
-  // retired or unknown cards only appear once they have scans
-  const other = d.cards.filter((c) => !CARD_INFO.has(c.card) && (c.scans || c.ok || c.declined));
-  rows.sort((a, b) => b.scans - a.scans || b.ok - a.ok || a.card.localeCompare(b.card));
+type Snap = Awaited<ReturnType<typeof snapshot>>;
+
+/** The pipeline at a glance: open deals by stage, what closed in the range, and your tasks. */
+function Pipeline({ p, days }: { p: Snap; days: number }) {
+  const max = Math.max(1, ...p.byStage.map((s) => s.n));
   return (
-    <section className="ad-card ad-wide">
-      <h3>Postcards</h3>
-      <div className="ad-scroll">
-        <table className="ad-tbl">
-          <thead>
-            <tr><th>Card</th><th>Where</th><th>Line</th><th className="r">Scans</th><th className="r">Put forward</th><th className="r">Declined</th><th className="r">Scan → put forward</th></tr>
-          </thead>
-          <tbody>
-            {[...rows, ...other].map((c) => {
-              const info = CARD_INFO.get(c.card) ?? RETIRED_INFO.get(c.card);
-              return (
-                <tr key={c.card} className={c.scans || c.ok ? undefined : 'ad-dim'}>
-                  <td><b>{c.card}</b>{info && <span className="ad-v"> {info.version}</span>}</td>
-                  <td>{info?.place ?? 'Unknown card'}</td>
-                  <td className="ad-line">{info?.line ?? ''}</td>
-                  <td className="r">{fmt(c.scans)}</td>
-                  <td className="r">{fmt(c.ok)}</td>
-                  <td className="r">{fmt(c.declined)}</td>
-                  <td className="r">{pct(c.ok, c.scans)}</td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
+    <section className="ad-card">
+      <div className="ad-people-head">
+        <h3>Pipeline</h3>
+        <Link className="ad-btn small" href="/admin/crm">Open the pipeline</Link>
       </div>
+      <ul className="ad-rank">
+        {p.byStage.map((s) => (
+          <li key={s.id}>
+            <span className="ad-rl">{s.label}</span>
+            <span className="ad-rb"><i style={{ width: `${(s.n / max) * 100}%` }} /></span>
+            <b>{fmt(s.n)}{s.value ? <small> {money(s.value)}</small> : null}</b>
+          </li>
+        ))}
+      </ul>
+      <p className="ad-fine dash-foot">
+        Last {days} days: {fmt(p.won)} won{p.wonValue ? ` (${money(p.wonValue)})` : ''}, {fmt(p.lost)} lost.{' '}
+        <Link href="/admin/crm/tasks">{p.myOverdue ? `${fmt(p.myOverdue)} of your tasks overdue` : `${fmt(p.myDue)} of your tasks due this week`}</Link>.
+      </p>
     </section>
   );
 }
@@ -233,22 +226,23 @@ function People({ tab, q, rows, counts }: { tab: Tab; q: string; rows: Row[]; co
 
 type Search = { tab?: string; q?: string; days?: string; msg?: string };
 
-/** The hidden admin: PIN first, then the form fills and the traffic. Not linked, not indexed. */
+/** Home: the evergreen picture. Traffic and where it comes from, the sign-up funnel, and the pipeline. */
 export default async function Admin({ searchParams }: { searchParams: Promise<Search> }) {
   const sp = await searchParams;
-  await requireUser('analytics', 'read', '/admin');
+  const s = await requireUser('analytics', 'read', '/admin');
 
   const days = [7, 14, 30].includes(Number(sp.days)) ? Number(sp.days) : 14;
   const tab = (TABS.some((t) => t.key === sp.tab) ? sp.tab : 'all') as Tab;
   const q = (sp.q ?? '').slice(0, 80);
-  const [d, people] = await Promise.all([dashboard(days), submissions(tab, q)]);
+  const crm = can(s.user.roles, 'crm');
+  const [d, people, pipe] = await Promise.all([dashboard(days), submissions(tab, q), crm ? snapshot(days, s.user.id).catch(() => null) : Promise.resolve(null)]);
 
   return (
     <main className="wrap ad">
       <header className="ad-top">
         <div>
           <h1>Home</h1>
-          <p>Last {days} days, US Eastern time. A visit is one person on one day.</p>
+          <p>The site, sign-ups and the pipeline, last {days} days, US Eastern time. A visit is one person on one day.</p>
         </div>
         <div className="ad-controls">
           <nav className="ad-range" aria-label="Date range">
@@ -258,10 +252,6 @@ export default async function Admin({ searchParams }: { searchParams: Promise<Se
               </Link>
             ))}
           </nav>
-          <a className="ad-btn" href="/api/admin/deck" download>Pitch deck (.pptx)</a>
-          <Link className="ad-btn" href="/postcards">Postcards</Link>
-          <Link className="ad-btn" href="/postcards/trading">Trading cards</Link>
-          <Link className="ad-btn" href="/postcards/social">Social ads</Link>
         </div>
       </header>
       <Banner msg={sp.msg} />
@@ -273,10 +263,19 @@ export default async function Admin({ searchParams }: { searchParams: Promise<Se
           <div className="ad-tiles">
             <Tile label="Visits" value={fmt(d.visits)} note={`${fmt(d.allTime.visits)} all time`} />
             <Tile label="Page views" value={fmt(d.views)} />
-            <Tile label="Postcard scans" value={fmt(d.scans)} note={pct(d.scans, d.visits) + ' of visits'} />
-            <Tile label="Started the form" value={fmt(d.started)} />
-            <Tile label="Put forward" value={fmt(d.ok)} note={`${pct(d.ok, d.visits)} of visits · ${fmt(d.allTime.ok)} all time`} />
-            <Tile label="Declined" value={fmt(d.declined)} note={`${fmt(d.allTime.declined)} all time`} />
+            <Tile label="Started the form" value={fmt(d.started)} note={pct(d.started, d.visits) + ' of visits'} />
+            <Tile label="Sign-ups" value={fmt(d.ok)} note={`${pct(d.ok, d.visits)} of visits · ${fmt(d.declined)} declined`} />
+            {pipe ? (
+              <>
+                <Tile label="New deals" value={fmt(pipe.newDeals)} note={`${fmt(pipe.open)} open now`} />
+                <Tile label="In play" value={short(pipe.openValue)} note={`${money(pipe.openValue)} in open deals`} />
+              </>
+            ) : (
+              <>
+                <Tile label="Declined" value={fmt(d.declined)} note={`${fmt(d.allTime.declined)} all time`} />
+                <Tile label="All-time sign-ups" value={fmt(d.allTime.ok)} />
+              </>
+            )}
           </div>
 
           <section className="ad-card ad-wide">
@@ -286,6 +285,7 @@ export default async function Admin({ searchParams }: { searchParams: Promise<Se
 
           <div className="ad-grid2">
             <Funnel d={d} />
+            {pipe && <Pipeline p={pipe} days={days} />}
             <section className="ad-card">
               <h3>Decision cards</h3>
               <ul className="ad-rank">
@@ -299,7 +299,7 @@ export default async function Admin({ searchParams }: { searchParams: Promise<Se
             <Ranked title="Pages" rows={d.pages} />
           </div>
 
-          <Cards d={d} />
+          <p className="ad-fine dash-foot">Postcard scans and how each printed card does are in <Link href="/admin/assets/postcards">Campaign assets › Postcards</Link>.</p>
         </>
       )}
 

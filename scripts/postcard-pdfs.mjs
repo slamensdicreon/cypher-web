@@ -1,5 +1,5 @@
 // Renders the print run to PDFs for the admin's downloads: one per card at trim (4.25 × 5.5 in) and with
-// bleed (4.5 × 5.75 in), plus a ZIP of all of them, into assets/print/. Run it after changing a card,
+// bleed (4.5 × 5.75 in), plus a ZIP of all of them, into public/admin/assets/files/print/. Run it after changing a card,
 // against a local server and a local (or branch) database:
 //
 //   DATABASE_URL=… npx next build && DATABASE_URL=… npx next start -p 3100
@@ -31,7 +31,7 @@ const [renderer] = await sql`
 await sql`insert into sessions (user_id, token_hash, expires_at, fresh_until, method)
           values (${renderer.id}, ${createHash('sha256').update(token).digest('hex')}, now() + interval '1 hour', now(), 'script')`;
 
-const out = join(root, 'assets', 'print');
+const out = join(root, 'public', 'admin', 'assets', 'files', 'print');
 mkdirSync(out, { recursive: true });
 for (const f of readdirSync(out)) if (/\.(pdf|zip)$/.test(f)) rmSync(join(out, f));
 
@@ -41,11 +41,11 @@ await ctx.addCookies([{ name: 'cy_session', value: token, url: base }]);
 const page = await ctx.newPage();
 const files = {};
 for (const mode of ['trim', 'bleed']) {
-  await page.goto(`${base}/postcards${mode === 'bleed' ? '?bleed=1' : ''}`, { waitUntil: 'networkidle' });
+  await page.goto(`${base}/admin/assets/postcards${mode === 'bleed' ? '?bleed=1' : ''}`, { waitUntil: 'networkidle' });
   const cards = await page.$$eval('.qcw', (els) => els.map((e) => e.dataset.file));
-  if (!cards.length || cards.includes(undefined)) throw new Error('No cards on /postcards (is the server running, and signed in?)');
+  if (!cards.length || cards.includes(undefined)) throw new Error('No cards on /admin/assets/postcards (is the server running, and signed in?)');
   for (const name of cards) {
-    await page.goto(`${base}/postcards${mode === 'bleed' ? '?bleed=1' : ''}`, { waitUntil: 'networkidle' });
+    await page.goto(`${base}/admin/assets/postcards${mode === 'bleed' ? '?bleed=1' : ''}`, { waitUntil: 'networkidle' });
     await page.$$eval('.qcw', (els, keep) => els.forEach((e) => e.dataset.file !== keep && e.remove()), name);
     await page.emulateMedia({ media: 'print' });
     const pdf = await page.pdf({ preferCSSPageSize: true, printBackground: true });

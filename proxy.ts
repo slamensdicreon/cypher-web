@@ -34,7 +34,7 @@ export async function proxy(req: NextRequest) {
   if (!isAdminPath(path)) return NextResponse.next();
   if (OPEN.some((p) => path === p || path.startsWith(p + '/'))) return NextResponse.next();
   const s = await sessionFromToken(req.cookies.get(SESSION_COOKIE)?.value).catch(() => null);
-  const file = /\.(png|zip|pdf)$/i.test(path);
+  const file = /\.(png|jpe?g|svg|zip|pdf|mp4|ttf|txt)$/i.test(path);
   if (s && can(s.user.roles, areaFor(path))) {
     const res = NextResponse.next();
     res.headers.set('Cache-Control', 'private, no-store');
