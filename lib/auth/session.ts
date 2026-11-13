@@ -1,5 +1,6 @@
 import 'server-only';
 import { createHash, randomBytes } from 'node:crypto';
+import { audit } from '../audit';
 import { esc, frame, send } from '../email';
 import { clientIp, keyedHash } from '../keys';
 import { migrate, sql } from '../store';
@@ -14,8 +15,9 @@ import { isRole, type Role } from './roles';
  *   that open links on arrival can't use it up.
  * - A session lasts 7 days, ends after a day without use, and counts as "fresh" for 15 minutes after
  *   sign-in. Sensitive actions (people, platform grants) ask for a fresh sign-in.
- * - ADMIN_OWNERS (comma-separated emails) are made Owners the first time they ask for a link, so
- *   the first person can get in.
+ * - ADMIN_OWNERS (comma-separated emails) are always Owners: created the first time they ask for a
+ *   link, and given the Owner role if their account exists without it. A deactivated account stays
+ *   deactivated.
  */
 
 export const SESSION_COOKIE = 'cy_session';
@@ -64,14 +66,27 @@ export async function userByEmail(email: string): Promise<User | null> {
   return r ? rowToUser(r as never) : null;
 }
 
-/** The first Owners, from ADMIN_OWNERS, are created on demand. */
+/** People in ADMIN_OWNERS are Owners: created on demand, or given the role if they lack it. */
 async function ensureOwner(email: string): Promise<User | null> {
   if (!owners().includes(email)) return null;
+  const before = await userByEmail(email);
   const [r] = await db()`
     insert into users (email, roles) values (${email}, ${['owner']})
-    on conflict (lower(email)) do nothing
+    on conflict (lower(email)) do update
+      set roles = case when 'owner' = any(users.roles) then users.roles else array_append(users.roles, 'owner') end
     returning id, email, name, roles, status`;
-  return r ? rowToUser(r as never) : userByEmail(email);
+  const user = rowToUser(r as never);
+  if (!before || !before.roles.includes('owner')) {
+    await audit(null, {
+      action: before ? 'people.owner_from_settings' : 'people.created_from_settings',
+      entity: 'user',
+      entityId: user.id,
+      summary: before ? `${email} made an Owner (listed in ADMIN_OWNERS)` : `${email} created as an Owner (listed in ADMIN_OWNERS)`,
+      before: before ? { roles: before.roles } : undefined,
+      after: { roles: user.roles },
+    });
+  }
+  return user;
 }
 
 type LinkPurpose = 'sign_in' | 'invite' | 'confirm';
@@ -127,7 +142,7 @@ export async function requestLink(emailRaw: string, next: string, h: Headers, pu
   const [{ n: perIp }] = await db()<{ n: string }[]>`
     select count(*) as n from login_links where ip_hash = ${ipHash} and created_at > now() - interval '15 minutes'`;
   if (Number(perIp) >= 10) return 'limited';
-  const user = (await userByEmail(email)) ?? (await ensureOwner(email));
+  const user = owners().includes(email) ? await ensureOwner(email) : await userByEmail(email);
   if (!user || user.status !== 'active') return 'sent';
   const [{ n: perUser }] = await db()<{ n: string }[]>`
     select count(*) as n from login_links where user_id = ${user.id} and created_at > now() - interval '15 minutes'`;

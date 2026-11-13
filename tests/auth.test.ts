@@ -8,7 +8,7 @@ import { after, before, test } from 'node:test';
 const url = process.env.TEST_DATABASE_URL || '';
 const skip = !url && 'set TEST_DATABASE_URL to run the database tests';
 process.env.DATABASE_URL = url;
-process.env.ADMIN_OWNERS = 'first@example.com';
+process.env.ADMIN_OWNERS = 'first@example.com, second@example.com';
 process.env.ADMIN_PIN = '9999';
 process.env.ADMIN_URL = 'http://admin.test';
 process.env.RESEND_KEY = 're_test';
@@ -58,6 +58,16 @@ test('the first Owner is created from ADMIN_OWNERS and gets a link', { skip }, a
   assert.match(mail[0].html, /http:\/\/admin\.test\/admin\/auth\/verify\?t=/);
   const u = await auth.userByEmail('first@example.com');
   assert.deepEqual(u?.roles, ['owner']);
+});
+
+test('someone listed in ADMIN_OWNERS who already has an account is made an Owner', { skip }, async () => {
+  await store.sql!`insert into users (email, roles) values ('second@example.com', ${['platform']})`;
+  const sent = mail.length;
+  await auth.requestLink('second@example.com', '/admin', h);
+  assert.equal(mail.length, sent + 1);
+  assert.deepEqual((await auth.userByEmail('second@example.com'))?.roles, ['platform', 'owner']);
+  const [a] = await store.sql!`select action from audit_log where action = 'people.owner_from_settings'`;
+  assert.ok(a, 'the upgrade is in the audit log');
 });
 
 test('a link can be looked at, used once, and never again', { skip }, async () => {
