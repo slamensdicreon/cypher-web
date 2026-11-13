@@ -12,3 +12,5 @@ next-env.d.ts
 /video/out/
 /video/eye.js
 /video/.cache/
+/brand/out/
+/brand/eye.js
