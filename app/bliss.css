@@ -333,3 +333,21 @@ html:has(.bl),body:has(.bl){background:var(--bliss);color:var(--ink)}
   .bl .demo-start-form input{flex:none}
 }
 @media (prefers-reduced-motion:reduce){.bl-menu{animation:none}.bl-burger-icon i,.bl-menu-arrow,.bl-btn,.bl-burger{transition:none}}
+
+/* Home: This is Cypher, with the video (16:9 on wide screens, square on phones) */
+.bl-tic{display:grid;grid-template-columns:minmax(0,1fr);gap:32px;align-items:center}
+.bl-tic-copy{display:flex;flex-direction:column;gap:16px}
+.bl-tic-points{list-style:none;margin:8px 0 0;padding:0;display:grid;grid-template-columns:minmax(0,1fr);gap:16px 24px}
+.bl-tic-points li{display:flex;gap:12px;align-items:flex-start}
+.bl-tic-points li > span{display:flex;flex-direction:column;gap:2px}
+.bl-tic-points b{font-size:16px}
+.bl-tic-points li > span span{font-size:14.5px;line-height:1.45;color:var(--text-2)}
+.bl-tic-points .bl-check{margin-top:2px}
+@media (min-width:560px){.bl-tic-points{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (min-width:1000px){.bl-tic{grid-template-columns:repeat(2,minmax(0,1fr));gap:56px}}
+.bl-video{position:relative;margin:0;border-radius:24px;overflow:hidden;aspect-ratio:16/9;background:var(--ink) url(/video/under-the-hood.jpg) center/cover no-repeat;box-shadow:var(--shadow-decision)}
+.bl-video video{display:block;width:100%;height:100%;object-fit:cover}
+@media (max-width:699px){.bl-video{aspect-ratio:1/1;background-image:url(/video/under-the-hood-square.jpg)}}
+.bl-video-toggle{position:absolute;right:14px;bottom:14px;display:inline-flex;align-items:center;gap:8px;min-height:40px;padding:0 14px;font-family:inherit;font-size:13.5px;font-weight:700;color:#fff;background:rgba(20,20,51,.72);border:1px solid rgba(255,255,255,.18);border-radius:999px;cursor:pointer;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+.bl-video-toggle:hover{background:rgba(20,20,51,.9)}
+.bl-video-toggle:focus-visible{outline:3px solid rgba(127,159,255,.8);outline-offset:2px}

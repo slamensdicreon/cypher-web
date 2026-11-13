@@ -5,9 +5,17 @@ import SiteHeader from '@/components/SiteHeader';
 import Track from '@/components/Track';
 import CtaLink from '@/components/site/CtaLink';
 import DemoStart from '@/components/site/DemoStart';
+import HomeVideo from '@/components/site/HomeVideo';
 import { Check, EyeMark } from '@/components/site/Marks';
 
 export const viewport: Viewport = { themeColor: '#f6f5fc', colorScheme: 'light' };
+
+const POINTS = [
+  ['Any enterprise platform', 'Sitecore, Optimizely, Contentful and the rest'],
+  ['You stay in charge', 'Nothing launches without your sign-off'],
+  ['Your team edits on day one', 'Built in your platform, the way you work'],
+  ['Every change on the record', 'Show anyone exactly what happened'],
+] as const;
 
 const HANDLED = [
   ['The spring landing page, live and editable in your CMS.', '10:02'],
@@ -44,6 +52,21 @@ export default function Page() {
           <div className="bl-ctas">
             <CtaLink href="/demo" label="home-hero" className="bl-btn bl-btn-ink">Book a demo</CtaLink>
             <CtaLink href="/how-it-works" label="home-how" className="bl-btn bl-btn-ghost">See how it works</CtaLink>
+          </div>
+        </section>
+
+        <section className="bl-w bl-after">
+          <div className="bl-tic">
+            <div className="bl-tic-copy">
+              <h2 className="bl-h2">This is Cypher.</h2>
+              <p className="bl-lead">Twenty-one specialists, one floor, and the mind that runs them. Forty-two seconds under the hood.</p>
+              <ul className="bl-tic-points">
+                {POINTS.map(([t, b]) => (
+                  <li key={t}><Check /><span><b>{t}</b><span>{b}</span></span></li>
+                ))}
+              </ul>
+            </div>
+            <HomeVideo />
           </div>
         </section>
 
