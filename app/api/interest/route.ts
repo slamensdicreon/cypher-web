@@ -1,7 +1,7 @@
 import { after, NextResponse } from 'next/server';
 import { classify } from '@/lib/rules';
 import { companyOf, domainOf } from '@/lib/company';
-import { isClosed, LEVELS } from '@/lib/config';
+import { LEVELS, OUTCOMES } from '@/lib/config';
 import { notify } from '@/lib/email';
 import { clientIp, keyedHash } from '@/lib/keys';
 import { companiesSoFar, confirmedRecently, markEmails, save, underLimit } from '@/lib/store';
@@ -9,7 +9,21 @@ import { companiesSoFar, confirmedRecently, markEmails, save, underLimit } from 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
-type Body = { email?: unknown; level?: unknown; source?: unknown; website?: unknown };
+type Body = { email?: unknown; level?: unknown; source?: unknown; website?: unknown; site?: unknown; wants?: unknown };
+
+/** A site address as typed (acme.com, www.acme.com/en, https://acme.com): kept short and plain. */
+function cleanSite(v: unknown): string {
+  if (typeof v !== 'string') return '';
+  const t = v.trim().replace(/\s+/g, '').slice(0, 200);
+  if (!t) return '';
+  try {
+    const u = new URL(/^https?:\/\//i.test(t) ? t : `https://${t}`);
+    if (!/^[a-z0-9.-]+\.[a-z]{2,}$/i.test(u.hostname)) return '';
+    return (u.hostname + (u.pathname === '/' ? '' : u.pathname)).toLowerCase().slice(0, 200);
+  } catch {
+    return '';
+  }
+}
 
 export async function POST(req: Request) {
   let body: Body;
@@ -24,8 +38,6 @@ export async function POST(req: Request) {
     return NextResponse.json({ status: 'ok', company: 'Your company' });
   }
 
-  if (isClosed()) return NextResponse.json({ status: 'closed' });
-
   const email = typeof body.email === 'string' ? body.email.trim().slice(0, 254) : '';
   const domain = domainOf(email);
   const kind = classify(domain);
@@ -38,9 +50,11 @@ export async function POST(req: Request) {
   const raw = Number(body.level);
   const level = Number.isInteger(raw) && raw >= 0 && raw <= 3 ? raw : 1;
   const source =
-    typeof body.source === 'string' ? body.source.replace(/[^a-z0-9-]/gi, '').slice(0, 12) : '';
+    typeof body.source === 'string' ? body.source.replace(/[^a-z0-9.-]/gi, '').slice(0, 24) : '';
   const company = companyOf(domain);
   const ok = kind === 'ok';
+  const site = cleanSite(body.site);
+  const wants = Array.isArray(body.wants) ? OUTCOMES.filter((o) => (body.wants as unknown[]).includes(o)).join(', ') : '';
 
   // Every real attempt is kept, declined ones included, so the team can see who tried.
   let id: number | null;
@@ -53,6 +67,8 @@ export async function POST(req: Request) {
       level: ok ? level : null,
       interest: ok ? LEVELS[level] : null,
       source,
+      site,
+      wants,
       ua: (req.headers.get('user-agent') || '').slice(0, 200),
       ipHash,
     });
@@ -68,7 +84,7 @@ export async function POST(req: Request) {
     try {
       const [recent, soFar] = await Promise.all([confirmedRecently(email), companiesSoFar()]);
       const result = await notify(
-        { id, email, domain, company, level, interest: LEVELS[level], source },
+        { id, email, domain, company, level, interest: LEVELS[level], source, site, wants },
         { confirm: !recent, soFar },
       );
       if (id !== null) await markEmails(id, result);

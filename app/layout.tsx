@@ -17,7 +17,7 @@ const jakarta = Plus_Jakarta_Sans({
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.ignoranceisbliss.ai';
 const title = 'Ignorance is bliss.';
 const description =
-  'Cypher builds on SitecoreAI for a rounding error of what you pay now. We’re not selling it. We’re choosing twenty-five companies. Closes Nov 13.';
+  'Twenty-one specialists and the mind that runs them. Cypher builds, migrates, personalizes and optimizes on any enterprise platform, for a rounding error of what you pay now. See it on your site.';
 
 // The share image comes from app/opengraph-image.tsx and app/twitter-image.tsx; Next.js adds
 // og:image, its size, type and alt, and twitter:image, as absolute URLs on metadataBase.

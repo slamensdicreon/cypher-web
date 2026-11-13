@@ -229,7 +229,7 @@ function People({ tab, q, rows, counts }: { tab: Tab; q: string; rows: Row[]; co
         <div className="ad-scroll">
           <table className="ad-tbl">
             <thead>
-              <tr><th>When (ET)</th><th>Company</th><th>Email</th><th>Result</th><th>How badly</th><th>Card</th><th>Emails</th></tr>
+              <tr><th>When (ET)</th><th>Company</th><th>Email</th><th>Result</th><th>Site</th><th>Wants</th><th>How badly</th><th>Source</th><th>Emails</th></tr>
             </thead>
             <tbody>
               {rows.map((r) => (
@@ -238,6 +238,8 @@ function People({ tab, q, rows, counts }: { tab: Tab; q: string; rows: Row[]; co
                   <td><b>{r.company}</b></td>
                   <td><a href={`mailto:${r.email}`}>{r.email}</a></td>
                   <td><span className={`ad-pill ${r.outcome === 'ok' ? 'ok' : 'no'}`}>{OUTCOME[r.outcome] ?? r.outcome}</span></td>
+                  <td>{r.site ? <a href={/^https?:\/\//.test(r.site) ? r.site : `https://${r.site}`} target="_blank" rel="noreferrer noopener">{r.site.replace(/^https?:\/\//, '').replace(/\/$/, '')}</a> : <span className="ad-dim">–</span>}</td>
+                  <td>{r.wants || <span className="ad-dim">–</span>}</td>
                   <td>{r.interest ?? <span className="ad-dim">–</span>}</td>
                   <td>{r.source || <span className="ad-dim">direct</span>}</td>
                   <td className="nw"><Emails r={r} /></td>

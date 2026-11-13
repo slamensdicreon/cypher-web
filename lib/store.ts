@@ -12,6 +12,9 @@ export type Submission = {
   level: number | null;
   interest: string | null;
   source: string;
+  /** The site they want Cypher to look at, and what they want done (build, migrate, personalize, optimize). */
+  site: string;
+  wants: string;
   ua: string;
   ipHash: string;
 };
@@ -26,6 +29,8 @@ export type Row = {
   level: number | null;
   interest: string | null;
   source: string;
+  site: string;
+  wants: string;
   internalSentAt: Date | null;
   confirmationSentAt: Date | null;
   emailError: string | null;
@@ -67,6 +72,8 @@ export function migrate() {
           confirmation_sent_at timestamptz,
           email_error text
         )`;
+      await tx`alter table submissions add column if not exists site text not null default ''`;
+      await tx`alter table submissions add column if not exists wants text not null default ''`;
       await tx`create index if not exists submissions_ip_recent on submissions (ip_hash, created_at)`;
       await tx`create index if not exists submissions_email on submissions (lower(email), created_at)`;
       // First-party analytics: no cookies, no IP addresses; `visitor` is a keyed hash that changes daily.
@@ -109,9 +116,9 @@ export async function save(s: Submission): Promise<number | null> {
   }
   await migrate();
   const [row] = await sql<{ id: string }[]>`
-    insert into submissions (email, domain, company, outcome, level, interest, source, ua, ip_hash)
+    insert into submissions (email, domain, company, outcome, level, interest, source, site, wants, ua, ip_hash)
     values (${s.email}, ${s.domain}, ${s.company}, ${s.outcome}, ${s.level}, ${s.interest},
-            ${s.source}, ${s.ua}, ${s.ipHash})
+            ${s.source}, ${s.site}, ${s.wants}, ${s.ua}, ${s.ipHash})
     returning id`;
   return Number(row.id);
 }
@@ -170,7 +177,7 @@ export async function all(opts: { outcome?: Outcome } = {}): Promise<Row[]> {
   if (!sql) return [];
   await migrate();
   return sql<Row[]>`
-    select id::int as id, created_at, email, domain, company, outcome, level, interest, source,
+    select id::int as id, created_at, email, domain, company, outcome, level, interest, source, site, wants,
            internal_sent_at, confirmation_sent_at, email_error
     from submissions
     ${opts.outcome ? sql`where outcome = ${opts.outcome}` : sql``}

@@ -85,6 +85,13 @@ section.band.dark{--band:var(--ink-2);color:var(--on-ink)}
 .beat p{margin:0;font-size:17px;line-height:1.5;color:var(--text-2);max-width:520px}
 .beat.big h2{margin:0;font-size:clamp(34px,10vw,44px);font-weight:800;line-height:1.02;letter-spacing:-.045em}
 .beat.big h2 em{font-style:normal;color:var(--coral)}
+.outcomes{display:grid;grid-template-columns:minmax(0,1fr);gap:26px;margin-top:40px}
+@media (min-width:640px){.outcomes{grid-template-columns:repeat(2,minmax(0,1fr));gap:32px 36px}}
+@media (min-width:1000px){.outcomes{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.outcome{display:flex;flex-direction:column;gap:10px;padding-top:18px;border-top:2px solid var(--ink);min-width:0}
+.outcome b{font-size:28px;font-weight:800;line-height:1;letter-spacing:-.04em;color:var(--ink)}
+.outcome:nth-child(2) b,.outcome:nth-child(4) b{color:var(--coral-text,#c8402b)}
+.outcome p{margin:0;font-size:16px;line-height:1.5;color:var(--text-2)}
 /* credentials, on pastel */
 .creds{display:grid;grid-template-columns:minmax(0,1fr);gap:20px}
 .cred{display:grid;grid-template-columns:120px minmax(0,1fr);align-items:center;gap:16px;min-width:0}
@@ -131,6 +138,13 @@ label.f{display:flex;flex-direction:column;gap:8px;font-size:13px;font-weight:70
 label.f input{font-size:17px;font-weight:500;letter-spacing:0;text-transform:none;padding:15px 16px;border:1px solid var(--mist);border-radius:14px;background:var(--bliss);color:var(--ink);width:100%;min-width:0;transition:background .3s,border-color .3s,box-shadow .4s cubic-bezier(.2,.9,.3,1)}
 label.f input:focus{background:#fff;border-color:var(--ink-3);box-shadow:0 6px 22px -10px rgba(20,20,51,.35)}
 label.f input:focus{outline:3px solid rgba(47,94,230,.4);outline-offset:2px}
+.wants{border:0;margin:0;padding:0;min-width:0;display:flex;flex-direction:column;gap:10px}
+.wants legend{padding:0;margin-bottom:10px;font-size:13px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--text-3)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{font:inherit;font-size:15px;font-weight:700;letter-spacing:-.01em;padding:10px 16px;border-radius:999px;border:1px solid var(--mist);background:var(--bliss);color:var(--ink);cursor:pointer;transition:background .2s,color .2s,border-color .2s,transform .2s cubic-bezier(.2,.9,.3,1)}
+.chip:hover{border-color:var(--ink-3)}
+.chip.on{background:var(--ink);border-color:var(--ink);color:#fff;transform:scale(1.03)}
+.chip:focus-visible{outline:3px solid rgba(47,94,230,.4);outline-offset:2px}
 .co{min-height:20px;font-size:14px;font-weight:700;letter-spacing:0;text-transform:none;color:var(--ink);opacity:0;transform:translateY(-5px);transition:opacity .3s,transform .5s cubic-bezier(.2,.9,.3,1.25)}
 .co.on{opacity:1;transform:none}
 .co span{color:var(--text-3);font-weight:500}

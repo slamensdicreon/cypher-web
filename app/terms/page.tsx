@@ -4,7 +4,7 @@ import SiteHeader, { Resting } from '@/components/SiteHeader';
 import Track from '@/components/Track';
 
 const description =
-  'The Terms of Use of the Transfer of Unreasonable Advantage. A sales pitch in a suit: what the twenty-five selected companies get, in the deepest legalese.';
+  'The Terms of Use of the Transfer of Unreasonable Advantage. A sales pitch in a suit: what a company gets when it points Cypher at its site, in the deepest legalese.';
 
 export const metadata: Metadata = {
   title: 'Terms of Use | Cypher',
@@ -22,14 +22,14 @@ export default function Terms() {
       <main className="wrap legal">
         <div className="legal-head">
           <h1>Terms of Use</h1>
-          <p>Of the Transfer of Unreasonable Advantage. Effective upon selection. Read slowly; it gets better.</p>
+          <p>Of the Transfer of Unreasonable Advantage. Effective upon your first look. Read slowly; it gets better.</p>
         </div>
 
         <article className="paper">
           <p className="pre">
             THIS AGREEMENT (the “<b>Agreement</b>”) is entered into by and between Cypher (hereinafter “<b>Cypher</b>,” “<b>the Mind</b>,” or
-            “<b>We, Regrettably for Your Competitors</b>”) and the company that has been selected (hereinafter “<b>You</b>,” “<b>the Selected</b>,” or
-            “<b>One of the Twenty-Five</b>”), each a “<b>Party</b>” and together the “<b>Parties</b>” to something that changes what a build costs.
+            “<b>We, Regrettably for Your Competitors</b>”) and the company that has pointed Cypher at its site (hereinafter “<b>You</b>,” “<b>the Fortunate</b>,” or
+            “<b>The One With the Unfair Advantage</b>”), each a “<b>Party</b>” and together the “<b>Parties</b>” to something that changes what a build costs.
             Permanently.
           </p>
 
@@ -37,12 +37,12 @@ export default function Terms() {
             <p><b>WHEREAS,</b> You have, until the Effective Date, accepted the customary arrangement wherein a website takes months, a portal takes quarters, and an invoice takes Your breath away;</p>
             <p><b>WHEREAS,</b> Cypher comprises twenty-one specialists and the mind that runs them, none of whom has ever requested a change order, a status meeting, or a weekend;</p>
             <p><b>WHEREAS,</b> the Parties acknowledge that ignorance is bliss, and that knowledge of what follows will render all prior arrangements permanently unsatisfactory;</p>
-            <p><b>NOW, THEREFORE,</b> in consideration of the mutual covenants herein, and of the fact that twenty-five is not twenty-six, the Parties agree as follows:</p>
+            <p><b>NOW, THEREFORE,</b> in consideration of the mutual covenants herein, and of the fact that ignorance is bliss, the Parties agree as follows:</p>
           </div>
 
           <section>
             <h2><span>Article 1.</span> Definitions</h2>
-            <p><b>1.1</b> “<b>Build</b>” means the website, the customer portal, the thirty brand sites, the acquisition, or the idea nobody would fund, delivered pixel for pixel on SitecoreAI, in whatever order You find most satisfying.</p>
+            <p><b>1.1</b> “<b>Build</b>” means the website, the customer portal, the thirty brand sites, the acquisition, or the idea nobody would fund, delivered pixel for pixel on any enterprise platform, in whatever order You find most satisfying.</p>
             <p><b>1.2</b> “<b>Roadmap</b>” means Your annual plan, hereinafter and for all purposes referred to as “<b>next week</b>.”</p>
             <p><b>1.3</b> “<b>Decision</b>” means one of approximately three (3) occasions per Build on which Your input is required. A Decision may be made from a desk, a hallway, or a beach. Cypher expresses no preference.</p>
             <p><b>1.4</b> “<b>Agency</b>” means any provider of services whose invoice You would recognize.</p>
@@ -51,7 +51,7 @@ export default function Terms() {
 
           <section>
             <h2><span>Article 2.</span> Grant of Power</h2>
-            <p><b>2.1</b> Upon selection, Cypher hereby grants, conveys, and irrevocably releases into Your hands a non-exclusive, non-transferable, and entirely unfair advantage (the “<b>Advantage</b>”) for the purpose of building on SitecoreAI at a pace Your board will initially assume is a typographical error.</p>
+            <p><b>2.1</b> Upon Your first look, Cypher hereby grants, conveys, and irrevocably releases into Your hands a non-exclusive, non-transferable, and entirely unfair advantage (the “<b>Advantage</b>”) for the purpose of building, migrating, personalizing and optimizing on any enterprise platform at a pace Your board will initially assume is a typographical error.</p>
             <p><b>2.2</b> The Advantage is non-transferable for the avoidance of doubt, and for the avoidance of Your competitors.</p>
             <p><b>2.3</b> You shall not be required to understand how the Advantage works. See Article 7 (Bliss).</p>
           </section>
@@ -69,8 +69,8 @@ export default function Terms() {
           </section>
 
           <section>
-            <h2><span>Article 4.</span> Covenants of the Selected</h2>
-            <p>The Selected covenants and agrees that it shall:</p>
+            <h2><span>Article 4.</span> Covenants of the Fortunate</h2>
+            <p>The Fortunate covenants and agrees that it shall:</p>
             <ol>
               <li>make the Decisions;</li>
               <li>accept full credit for the outcome in all internal meetings, quarterly reviews, and award submissions; and</li>
@@ -81,7 +81,7 @@ export default function Terms() {
           <section>
             <h2><span>Article 5.</span> Fees and Consideration</h2>
             <p><b>5.1</b> The cost of each Build shall be metered to the cent and shall bear no resemblance to any figure previously presented to You on a slide.</p>
-            <p><b>5.2</b> By way of illustration and not limitation: a Build quoted elsewhere at $400,000+ was run for five hundred and twelve dollars ($512). Receipts exist. The foregoing is the cost of the run and not the price of Cypher, which shall be discussed upon selection, quietly.</p>
+            <p><b>5.2</b> By way of illustration and not limitation: a Build quoted elsewhere at $400,000+ was run for five hundred and twelve dollars ($512). Receipts exist. The foregoing is the cost of the run and not the price of Cypher, which shall be discussed quietly, and only with You.</p>
           </section>
 
           <section>
@@ -94,7 +94,7 @@ export default function Terms() {
           <section>
             <h2><span>Article 7.</span> Bliss</h2>
             <p><b>7.1</b> Ignorance is bliss. You are under no obligation to know how any of this is done, and Cypher covenants not to burden You with the information.</p>
-            <p><b>7.2</b> Cypher shall say nothing unless You are selected. Silence after Friday, November 13 shall constitute notice of non-selection and shall be received in the spirit intended.</p>
+            <p><b>7.2</b> Cypher shall say nothing it need not say. Where a Decision is Yours and You say nothing, Cypher shall proceed with its recommendation at the stated time, Your silence being received in the spirit intended.</p>
           </section>
 
           <section className="caps">
@@ -108,14 +108,14 @@ export default function Terms() {
           </section>
 
           <section>
-            <h2><span>Article 9.</span> Limitation of Availability</h2>
-            <p><b>9.1</b> This Agreement is offered to twenty-five (25) companies. Not twenty-six (26). Requests for a twenty-sixth shall be noted and admired.</p>
-            <p><b>9.2</b> Selection closes Friday, November 13. Time is of the essence, and so is everything else.</p>
+            <h2><span>Article 9.</span> Platform Neutrality</h2>
+            <p><b>9.1</b> This Agreement applies on any enterprise platform. Cypher regards the choice of platform as Yours and the outcome as its own, and shall treat every platform equally, which is to say as a detail.</p>
+            <p><b>9.2</b> Time is of the essence, and so is everything else.</p>
           </section>
 
           <section>
             <h2><span>Article 10.</span> Term and Survival</h2>
-            <p>The Advantage commences upon selection and continues for so long as Your competitors remain unaware of it. Articles 6 and 7 shall survive any expiration or termination, as shall the memory of what a build used to cost.</p>
+            <p>The Advantage commences upon Your first look and continues for so long as Your competitors remain unaware of it. Articles 6 and 7 shall survive any expiration or termination, as shall the memory of what a build used to cost.</p>
           </section>
 
           <section>
@@ -125,7 +125,7 @@ export default function Terms() {
 
           <section>
             <h2><span>Article 12.</span> Entire Agreement; Acceptance</h2>
-            <p>This Agreement constitutes the entire understanding of the Parties, there being nothing else You need to know. Acceptance shall be signified by putting Your company forward, and shall be reciprocated, if at all, by Cypher, in its sole and considerable discretion.</p>
+            <p>This Agreement constitutes the entire understanding of the Parties, there being nothing else You need to know. Acceptance shall be signified by pointing Cypher at Your site, and shall be reciprocated by Cypher showing You what it would do, in its sole and considerable discretion.</p>
           </section>
 
           <section>
@@ -140,14 +140,14 @@ export default function Terms() {
               <span className="by">By: the mind that runs them</span>
             </div>
             <div>
-              <span className="who">The Selected</span>
+              <span className="who">The Fortunate</span>
               <span className="line" />
               <span className="by">By: to be determined, quietly</span>
             </div>
           </div>
 
           <div className="accept">
-            <Link className="btn" href="/#join">Put your company forward</Link>
+            <Link className="btn" href="/#join">See it on your site</Link>
           </div>
         </article>
 

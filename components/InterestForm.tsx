@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState, type CSSProperties, type KeyboardEvent } from 'react';
 import { companyOf, domainOf } from '@/lib/company';
-import { isClosed, NOTED } from '@/lib/config';
+import { NOTED, OUTCOMES } from '@/lib/config';
 import { eye, eyeLook, eyeMood } from './eyeBus';
 import { track } from '@/lib/track';
 import LivingEye from './LivingEye';
@@ -17,9 +17,9 @@ const LEVELS = [
 
 type ReplyKind = 'sitecore' | 'vendor' | 'personal' | 'bad' | 'slow' | 'error';
 const REPLY: Record<ReplyKind, { bg: string; fg: string; accent: string; t: string; h: string; p: string; a: string }> = {
-  sitecore: { bg: '#e8553d', fg: '#ffffff', accent: '#ffffff', t: 'An @sitecore.com address', h: 'Sitecore. Hi. We know it’s you.', p: 'We love you, and you know we love you. But you can’t put yourself forward for your own platform’s future with a card you found at your own conference. Come find us in the hallway. No form.', a: 'No hard feelings.' },
-  vendor: { bg: '#1d1d45', fg: '#ffffff', accent: '#b7a6ff', t: 'A vendor address', h: 'We’d love to. You’d only use it to compete with us.', p: 'That’s your job, and we respect it. The twenty-five are the companies that sign invoices, not the ones that send them. Enjoy the conference.', a: 'Declined, with feeling.' },
-  personal: { bg: '#f6f5fc', fg: '#141433', accent: '#6a6889', t: 'A personal address', h: 'A personal address is a lovely way to stay anonymous.', p: 'It’s also a lovely way to not be selected. Use the one your company pays for. We’ll wait.', a: 'Try again with the work one.' },
+  sitecore: { bg: '#e8553d', fg: '#ffffff', accent: '#ffffff', t: 'An @sitecore.com address', h: 'Sitecore. Hi. We know it’s you.', p: 'We love you, and you know we love you. But this form is for the companies that run on platforms, not the ones that make them. Write to cy@ignoranceisbliss.ai. No form.', a: 'No hard feelings.' },
+  vendor: { bg: '#1d1d45', fg: '#ffffff', accent: '#b7a6ff', t: 'A vendor address', h: 'We’d love to. You’d only use it to compete with us.', p: 'That’s your job, and we respect it. This is for the companies that sign invoices, not the ones that send them.', a: 'Declined, with feeling.' },
+  personal: { bg: '#f6f5fc', fg: '#141433', accent: '#6a6889', t: 'A personal address', h: 'A personal address is a lovely way to stay anonymous.', p: 'It’s also a lovely way to never hear back. Use the one your company pays for. We’ll wait.', a: 'Try again with the work one.' },
   bad: { bg: '#f6f5fc', fg: '#141433', accent: '#6a6889', t: 'That isn’t an email address', h: 'Cypher reads a lot of things. Not that.', p: 'Try the one your company pays for.', a: 'Try again.' },
   slow: { bg: '#f6f5fc', fg: '#141433', accent: '#6a6889', t: 'Too many tries', h: 'Easy. We heard you.', p: 'Too many submissions from this network in the last hour. Try again later.', a: 'Try again later.' },
   error: { bg: '#f6f5fc', fg: '#141433', accent: '#6a6889', t: 'That didn’t go through', h: 'Cypher blinked.', p: 'Your submission didn’t reach us. Check your connection and send it again.', a: 'Send it again.' },
@@ -28,16 +28,17 @@ const REPLY: Record<ReplyKind, { bg: string; fg: string; accent: string; t: stri
 type Phase =
   | { kind: 'form' }
   | { kind: 'reply'; reply: ReplyKind }
-  | { kind: 'noted'; company: string; level: number }
-  | { kind: 'closed' };
+  | { kind: 'noted'; company: string; level: number; site: string };
 
-const STORE_KEY = 'iib-sent';
+const STORE_KEY = 'iib-seen';
 const reducedMotion = () =>
   typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 export default function InterestForm() {
   const [phase, setPhase] = useState<Phase>({ kind: 'form' });
   const [email, setEmail] = useState('');
+  const [site, setSite] = useState('');
+  const [wants, setWants] = useState<string[]>([]);
   // The dial moves continuously under the finger and settles on a level when let go.
   const [raw, setRaw] = useState(1);
   const rawRef = useRef(1);
@@ -56,10 +57,9 @@ export default function InterestForm() {
   const L = LEVELS[level];
 
   useEffect(() => {
-    if (isClosed()) { setPhase({ kind: 'closed' }); return; }
     try {
       const prev = JSON.parse(localStorage.getItem(STORE_KEY) || 'null');
-      if (prev && prev.company) setPhase({ kind: 'noted', company: prev.company, level: prev.level ?? 1 });
+      if (prev && prev.company) setPhase({ kind: 'noted', company: prev.company, level: prev.level ?? 1, site: prev.site ?? '' });
     } catch { /* first visit */ }
   }, []);
 
@@ -138,24 +138,24 @@ export default function InterestForm() {
 
   async function submit() {
     if (sending) return;
-    if (isClosed()) { setPhase({ kind: 'closed' }); return; }
     setSending(true);
     eye('scan', 1600);
-    const source = new URLSearchParams(window.location.search).get('c') || '';
+    // A postcard's code wins; otherwise the campaign that brought them (utm_source), so social shows up by name.
+    const q = new URLSearchParams(window.location.search);
+    const source = q.get('c') || q.get('utm_source') || '';
     try {
       const res = await fetch('/api/interest', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, level, source, website: website.current?.value || '' }),
+        body: JSON.stringify({ email, site, wants, level, source, website: website.current?.value || '' }),
       });
       const data = (await res.json().catch(() => ({ status: 'error' }))) as { status: string; company?: string };
       if (data.status === 'ok') {
         const c = data.company || company || 'your company';
-        try { localStorage.setItem(STORE_KEY, JSON.stringify({ company: c, level })); } catch { /* private mode */ }
+        const where = site.trim().replace(/^https?:\/\//i, '').replace(/\/$/, '');
+        try { localStorage.setItem(STORE_KEY, JSON.stringify({ company: c, level, site: where })); } catch { /* private mode */ }
         eye('calm'); eye('delight');
-        setPhase({ kind: 'noted', company: c, level });
-      } else if (data.status === 'closed') {
-        setPhase({ kind: 'closed' });
+        setPhase({ kind: 'noted', company: c, level, site: where });
       } else {
         const k = (['sitecore', 'vendor', 'personal', 'bad', 'slow'].includes(data.status) ? data.status : 'error') as ReplyKind;
         eye('calm'); eye('shake'); eye('squint', 900);
@@ -172,22 +172,14 @@ export default function InterestForm() {
     try { localStorage.removeItem(STORE_KEY); } catch { /* ignore */ }
     eye('wake');
     setEmail('');
+    setSite('');
+    setWants([]);
     setPhase({ kind: 'form' });
   }
 
   let content: React.ReactNode;
 
-  if (phase.kind === 'closed') {
-    content = (
-      <div className="card">
-        <div className="reply" style={{ background: '#f6f5fc', color: '#141433' }}>
-          <span className="t" style={{ color: '#6a6889' }}>November 13 has passed</span>
-          <h3>Selection is closed.</h3>
-          <p>Twenty-five companies are being built. If you’re one of them, you already know.</p>
-        </div>
-      </div>
-    );
-  } else if (phase.kind === 'reply') {
+  if (phase.kind === 'reply') {
     const r = REPLY[phase.reply];
     content = (
       <div className="card">
@@ -206,21 +198,21 @@ export default function InterestForm() {
         <div className="reply" style={{ background: '#141433', color: '#ffffff' }}>
           <span className="t" style={{ color: '#b7a6ff' }}>
             <LivingEye variant="dial" level={phase.level} className="mini" />
-            Put forward
+            See it on your site
           </span>
           <h3>Noted, {phase.company}.</h3>
           <p>{NOTED[phase.level]}</p>
           <p style={{ color: '#d6d0f5' }}>
-            If {phase.company} is one of the twenty-five, you’ll hear from Cypher before November 13. If not, you won’t. Ignorance is bliss.
+            Cypher is taking a look at {phase.site || `${phase.company}’s site`}. If it’s a fit, the next thing you see is your site, rebuilt. Ignorance is bliss.
           </p>
         </div>
-        <button className="btn light" type="button" onClick={reset}>Put forward a different address</button>
+        <button className="btn light" type="button" onClick={reset}>Another site</button>
       </div>
     );
   } else {
     content = (
       <form className="card" onSubmit={(e) => { e.preventDefault(); submit(); }} noValidate>
-        <h2>Put your company forward.</h2>
+        <h2>See it on your site.</h2>
         <label className="f" htmlFor="email">
           Work email
           <input
@@ -238,9 +230,44 @@ export default function InterestForm() {
             onBlur={() => eye('unfocus')}
           />
           <span className={company ? 'co on' : 'co'} aria-live="polite" aria-hidden={company ? undefined : true}>
-            <span>Putting forward:</span> {company || lastCompany.current}
+            <span>For:</span> {company || lastCompany.current}
           </span>
         </label>
+        <label className="f" htmlFor="site">
+          Your site
+          <input
+            id="site"
+            type="text"
+            inputMode="url"
+            autoComplete="url"
+            autoCapitalize="none"
+            spellCheck={false}
+            placeholder="yourcompany.com"
+            value={site}
+            onChange={(e) => setSite(e.target.value)}
+            onFocus={() => eye('focus')}
+            onBlur={() => eye('unfocus')}
+          />
+        </label>
+        <fieldset className="wants">
+          <legend>What should it do?</legend>
+          <div className="chips">
+            {OUTCOMES.map((o) => {
+              const on = wants.includes(o);
+              return (
+                <button
+                  key={o}
+                  type="button"
+                  className={on ? 'chip on' : 'chip'}
+                  aria-pressed={on}
+                  onClick={() => { setWants((w) => (on ? w.filter((x) => x !== o) : [...w, o])); eye(on ? 'blink' : 'widen', 500); }}
+                >
+                  {o}
+                </button>
+              );
+            })}
+          </div>
+        </fieldset>
         <div className="hp" aria-hidden="true">
           <label htmlFor="website">Website</label>
           <input id="website" name="website" type="text" tabIndex={-1} autoComplete="off" ref={website} />
@@ -274,9 +301,9 @@ export default function InterestForm() {
           </div>
         </div>
         <button className={sending ? 'btn busy' : 'btn'} type="submit" disabled={sending}>
-          <span>{sending ? 'Cypher is reading…' : 'Get considered'}</span>
+          <span>{sending ? 'Cypher is reading…' : 'Show me'}</span>
         </button>
-        <p className="small">If your company is selected, you’ll hear from Cypher. If not, you won’t.</p>
+        <p className="small">Any enterprise platform. Your work email, so we know it’s really yours.</p>
       </form>
     );
   }

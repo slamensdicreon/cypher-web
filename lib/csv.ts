@@ -8,11 +8,11 @@ const cell = (v: unknown) => {
 
 /** Submissions as CSV: one row each, with whether the emails went out. */
 export function toCsv(rows: Row[]): string {
-  const head = ['company', 'domain', 'email', 'outcome', 'interest', 'level', 'card', 'at', 'team_emailed', 'confirmation_sent', 'email_error'];
+  const head = ['company', 'domain', 'email', 'outcome', 'site', 'wants', 'interest', 'level', 'card', 'at', 'team_emailed', 'confirmation_sent', 'email_error'];
   return [
     head.join(','),
     ...rows.map((r) =>
-      [r.company, r.domain, r.email, r.outcome, r.interest, r.level, r.source, r.createdAt, r.internalSentAt, r.confirmationSentAt, r.emailError]
+      [r.company, r.domain, r.email, r.outcome, r.site, r.wants, r.interest, r.level, r.source, r.createdAt, r.internalSentAt, r.confirmationSentAt, r.emailError]
         .map(cell)
         .join(','),
     ),

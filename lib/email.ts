@@ -2,8 +2,8 @@ import 'server-only';
 import { NOTED } from './config';
 
 /**
- * Email through Resend's HTTP API: an internal notice to the team for every company put forward,
- * and a confirmation to the person who put it forward. No SDK, no extra dependency.
+ * Email through Resend's HTTP API: an internal notice to the team for every company that asks to see
+ * Cypher on its site, and a confirmation to the person who asked. No SDK, no extra dependency.
  */
 
 const apiKey = (process.env.RESEND_API_KEY || process.env.RESEND_KEY || process.env.RESEND || '').trim();
@@ -25,6 +25,8 @@ export type PutForward = {
   level: number;
   interest: string;
   source: string;
+  site: string;
+  wants: string;
 };
 
 type Message = {
@@ -71,27 +73,29 @@ ${inner}
 </table></td></tr></table></body></html>`;
 }
 
-/** The confirmation to the person who put their company forward. */
+/** The confirmation to the person who asked to see Cypher on their site. */
 export function confirmation(p: PutForward): Message {
   const noted = NOTED[p.level] ?? NOTED[1];
   const company = esc(p.company);
+  const where = p.site ? esc(p.site) : `${company}’s site`;
+  const next = `Cypher is taking a look at ${p.site || `${p.company}’s site`}. If it’s a fit, the next thing you see is your site, rebuilt. Ignorance is bliss.`;
   const html = frame(
-    `<tr><td style="padding:0 0 8px;font-size:13px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#b7a6ff;">Put forward</td></tr>
+    `<tr><td style="padding:0 0 8px;font-size:13px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#b7a6ff;">See it on your site</td></tr>
 <tr><td style="padding:0 0 16px;font-size:34px;line-height:1.15;font-weight:800;letter-spacing:-0.02em;">Noted, ${company}.</td></tr>
 <tr><td style="padding:0 0 16px;font-size:17px;line-height:1.55;">${esc(noted)}</td></tr>
-<tr><td style="padding:0 0 32px;font-size:17px;line-height:1.55;color:#d6d0f5;">If ${company} is one of the twenty-five, you’ll hear from Cypher again. If not, you won’t. Ignorance is bliss.</td></tr>
-<tr><td style="padding:24px 0 0;border-top:1px solid #2c2c5a;font-size:13px;line-height:1.6;color:#8f8cb3;">You’re getting this because ${esc(p.email)} was put forward for Cypher at <a href="${esc(siteUrl)}" style="color:#b7a6ff;">${esc(siteUrl.replace(/^https?:\/\//, ''))}</a>. If that wasn’t you, ignore this. Nothing else will arrive.</td></tr>`,
-    `If ${p.company} is one of the twenty-five, you’ll hear from Cypher again.`,
+<tr><td style="padding:0 0 32px;font-size:17px;line-height:1.55;color:#d6d0f5;">Cypher is taking a look at ${where}. If it’s a fit, the next thing you see is your site, rebuilt. Ignorance is bliss.</td></tr>
+<tr><td style="padding:24px 0 0;border-top:1px solid #2c2c5a;font-size:13px;line-height:1.6;color:#8f8cb3;">You’re getting this because ${esc(p.email)} asked to see Cypher at <a href="${esc(siteUrl)}" style="color:#b7a6ff;">${esc(siteUrl.replace(/^https?:\/\//, ''))}</a>. If that wasn’t you, ignore this. Nothing else will arrive.</td></tr>`,
+    `Cypher is taking a look at ${p.site || `${p.company}’s site`}.`,
   );
   const text = [
     `Noted, ${p.company}.`,
     '',
     noted,
     '',
-    `If ${p.company} is one of the twenty-five, you’ll hear from Cypher again. If not, you won’t. Ignorance is bliss.`,
+    next,
     '',
     '--',
-    `You’re getting this because ${p.email} was put forward for Cypher at ${siteUrl}. If that wasn’t you, ignore this. Nothing else will arrive.`,
+    `You’re getting this because ${p.email} asked to see Cypher at ${siteUrl}. If that wasn’t you, ignore this. Nothing else will arrive.`,
   ].join('\n');
   const m: Message = { to: [p.email], subject: `Noted, ${p.company}.`, html, text };
   if (replyTo) m.reply_to = replyTo;
@@ -109,13 +113,15 @@ export function internalNotice(p: PutForward, soFar: number | null): Message {
     ['Company', p.company],
     ['Domain', p.domain],
     ['Email', p.email],
+    ['Site', p.site || 'Not given'],
+    ['Wants', p.wants || 'Not said'],
     ['How badly', `${p.interest} (${p.level + 1} of 4)`],
-    ['Postcard', p.source || 'None (direct visit)'],
+    ['Source', p.source || 'Direct visit'],
     ['When', `${at} ET`],
   ];
   if (soFar !== null) rows.push(['Companies so far', String(soFar)]);
   const html = frame(
-    `<tr><td style="padding:0 0 8px;font-size:13px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#b7a6ff;">New company put forward</td></tr>
+    `<tr><td style="padding:0 0 8px;font-size:13px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#b7a6ff;">New request: see it on our site</td></tr>
 <tr><td style="padding:0 0 24px;font-size:30px;line-height:1.2;font-weight:800;letter-spacing:-0.02em;">${esc(p.company)} · ${esc(p.interest)}</td></tr>
 <tr><td><table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="font-size:15px;line-height:1.5;">
 ${rows
@@ -131,7 +137,7 @@ ${rows
   const text = rows.map(([k, v]) => `${k}: ${v}`).join('\n');
   return {
     to: internalTo,
-    subject: `Put forward: ${p.company} · ${p.interest}`,
+    subject: `See it on our site: ${p.company}${p.site ? ` · ${p.site}` : ""} · ${p.interest}`,
     html,
     text,
     reply_to: p.email,

@@ -16,7 +16,7 @@ export default function Page() {
           <Eye />
           <div>
             <h1 className="line">Ignorance is bliss.</h1>
-            <p>Cypher is twenty-one specialists and the mind that runs them. Point it at anything on SitecoreAI and it ships, pixel perfect, for a rounding error of what you pay now. It doesn’t replace you. It promotes you.</p>
+            <p>Cypher is twenty-one specialists and the mind that runs them. Point it at any enterprise platform and it builds, migrates, personalizes and optimizes, pixel perfect, for a rounding error of what you pay now. It doesn’t replace you. It promotes you.</p>
           </div>
         </div>
 
@@ -26,7 +26,13 @@ export default function Page() {
 
         <section className="s band white">
           <div className="beats">
-            <div className="beat big"><h2>We’re not selling it. We’re <em>choosing</em> who gets it.</h2><p>Twenty-five companies. <span className="mbr">Selected, not sold to.</span></p></div>
+            <div className="beat big"><h2>Your platform. <em>Our</em> problem.</h2><p>Any enterprise platform. It doesn’t stop at the build. <span className="mbr">That’s where most agencies stop.</span></p></div>
+          </div>
+          <div className="outcomes">
+            <div className="outcome"><b>Build.</b><p>Websites, customer and member portals, storefronts, intranets. Pixel for pixel, and your marketers edit it on day one.</p></div>
+            <div className="outcome"><b>Migrate.</b><p>Old platform to new, with nothing left behind. Content parity checked, every redirect kept, every page diffed against the original.</p></div>
+            <div className="outcome"><b>Personalize.</b><p>The personalization you paid for and never switched on. Audiences, variants and A/B tests, set up and checked before you see them.</p></div>
+            <div className="outcome"><b>Optimize.</b><p>Faster, accessible, findable. Lighthouse and axe on every representative page, SEO and redirects done, with the reports as evidence.</p></div>
           </div>
         </section>
 
@@ -34,7 +40,7 @@ export default function Page() {
           <div className="proofs">
             <div className="proof">
               <div className="num">$<i>512</i></div>
-              <p>What it cost to run a SitecoreAI build an agency quoted at <b>$400,000+</b>. We have the receipts.</p>
+              <p>What it cost to run a build an agency quoted at <b>$400,000+</b>. We have the receipts.</p>
               <p className="fine">The cost of the run, not the price of Cypher.</p>
             </div>
             <div className="pillars">
@@ -47,7 +53,7 @@ export default function Page() {
 
         <section className="s band white">
           <div className="proofclose">
-            <p>We don’t need you to believe us. <span className="nw">Twenty-five</span> companies are about to watch.</p>
+            <p>We don’t need you to believe us. Point it at your site and watch.</p>
             <p>We’ve watched it conduct over <b>225,000</b> events. We don’t need you to tell us it works.</p>
           </div>
         </section>
@@ -55,36 +61,36 @@ export default function Page() {
         <section className="s band lav">
           <div className="creds">
             <div className="cred"><b>25</b><span>years of engineering, written down so it never has to be relearned.</span></div>
-            <div className="cred"><b>10</b><span>years of Sitecore. Every pitfall, every workaround, every 2 AM fix.</span></div>
-            <div className="cred"><b>MVPs</b><span>Sitecore MVPs built this. Yes, really.</span></div>
+            <div className="cred"><b>10</b><span>years of enterprise platforms. Every pitfall, every workaround, every 2 AM fix.</span></div>
+            <div className="cred"><b>MVPs</b><span>Platform MVPs built this. Yes, really.</span></div>
           </div>
         </section>
 
         <section className="s">
-          <div className="plhead"><h2>Your annual roadmap. In a week.</h2><p>Playbooks, not projects. Same crew every day, on SitecoreAI, and not one change order.</p></div>
+          <div className="plhead"><h2>Your annual roadmap. In a week.</h2><p>Playbooks, not projects. Same crew every day, on any platform, and not one change order.</p></div>
           <div className="week">
             <div className="day"><span className="dn">Mon</span><b>The website.</b><span className="dl">Pixel for pixel. Marketers edit it on day one.</span></div>
             <div className="day"><span className="dn">Tue</span><b>The customer portal.</b><span className="dl">Log in, self-serve, done.</span></div>
-            <div className="day"><span className="dn">Wed</span><b>Thirty brand sites.</b><span className="dl">One design system. One afternoon each.</span></div>
-            <div className="day"><span className="dn">Thu</span><b>The acquisition.</b><span className="dl">Six sites into one. Every redirect kept.</span></div>
+            <div className="day"><span className="dn">Wed</span><b>The migration.</b><span className="dl">Six sites into one. Every redirect kept.</span></div>
+            <div className="day"><span className="dn">Thu</span><b>Personalization.</b><span className="dl">Switched on. Finally.</span></div>
             <div className="day yours"><span className="dn">Fri</span><b>Yours.</b><span className="dl">The idea nobody would fund. <span className="mbr">Bring it.</span></span></div>
           </div>
-          <p className="weeknote">Also on the menu: storefronts, intranets, member portals, design systems, personalization, accessibility. Weekends are for the one that starts with O. Ask us in the hallway.</p>
+          <p className="weeknote">Also on the menu: thirty brand sites on one design system, storefronts, intranets, member portals, A/B tests, accessibility, performance, SEO. Weekends are for whatever your agency said would take a quarter.</p>
         </section>
 
         <section className="s">
           <div className="join" id="join">
             <div className="copy">
-              <h2>Twenty-five companies. Not twenty-six.</h2>
-              <p>After Symposium, Cypher sits down with twenty-five companies. You bring the website, the portal, the idea you couldn’t fund. You leave with it built, on SitecoreAI. Guaranteed, which is exactly why we can’t do it for everyone.</p>
-              <p className="close">Selection closes Friday, November 13.</p>
+              <h2>See it on your site.</h2>
+              <p>Tell Cypher where you live online and what you want done: the build, the migration, the personalization you never switched on, the speed you keep being promised. It looks at what you run today, on whatever platform you run it, and shows you what it would do.</p>
+              <p className="close">Today. Literally.</p>
             </div>
             <InterestForm />
           </div>
         </section>
 
         <div className="end">
-          <p className="q">Not affiliated with the conference. Obviously.</p>
+          <p className="q">Not affiliated with your agency. Obviously.</p>
           <Link className="terms" href="/terms">Terms of Use</Link>
         </div>
       </main>
