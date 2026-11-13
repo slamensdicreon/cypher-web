@@ -27,12 +27,11 @@ export default function Page() {
               </div>
             </div>
           </div>
-          <HeroVideo />
         </div>
 
         <section className="s home-product">
-          <SectionHead center eyebrow="The product" title="This is Cypher." intro="Mission control for every build: the phases and gates, the team at work, the budget, and the few things that need you. Real screens, real build." />
-          <ProductShot shot="everything" priority className="pf-hero" caption="A marketing site mid-build: blueprint approved, components underway, $1 of a $20 budget spent." />
+          <SectionHead center eyebrow="The product" title="This is Cypher." intro="Twenty-one specialists, one floor, every move on the record. Forty-two seconds under the hood." />
+          <HeroVideo />
           <ul className="trust-strip">
             <li><b>Any enterprise platform</b><span>Sitecore, Optimizely, Contentful and the rest</span></li>
             <li><b>You hold the gates</b><span>Nothing ships past a gate without your approval</span></li>

@@ -1084,3 +1084,4 @@ section.band.white .phases-strip li.gate{background:#fff1ee;border-color:var(--c
 .hero-v{padding-top:0;gap:8px}
 .hero-v .hero{padding:48px 0 32px}
 @media (min-width:900px){.hero-v .hero{padding:64px 0 48px}}
+@media (min-width:1100px){.home-product .trust-strip{margin-left:-80px;margin-right:-80px}}
