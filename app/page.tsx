@@ -7,7 +7,8 @@ import SiteHeader from '@/components/SiteHeader';
 import CtaLink from '@/components/site/CtaLink';
 import DemoStart from '@/components/site/DemoStart';
 import HeroVideo from '@/components/site/HeroVideo';
-import { ProductShot, SectionHead } from '@/components/site/Product';
+import EyeTile from '@/components/site/EyeTile';
+import { SectionHead } from '@/components/site/Product';
 
 export default function Page() {
   return (
@@ -30,14 +31,20 @@ export default function Page() {
         </div>
 
         <section className="s home-product">
-          <SectionHead center eyebrow="The product" title="This is Cypher." intro="Twenty-one specialists, one floor, every move on the record. Forty-two seconds under the hood." />
-          <HeroVideo />
-          <ul className="trust-strip">
-            <li><b>Any enterprise platform</b><span>Sitecore, Optimizely, Contentful and the rest</span></li>
-            <li><b>You hold the gates</b><span>Nothing ships past a gate without your approval</span></li>
-            <li><b>Every action on the record</b><span>One gateway, an append-only log, any build replayed</span></li>
-            <li><b>Yours when it’s done</b><span>Your code, your hosting, your keys</span></li>
-          </ul>
+          <div className="tic">
+            <div className="tic-copy">
+              <span className="sh-eyebrow">The product</span>
+              <h2>This is Cypher.</h2>
+              <p>Twenty-one specialists, one floor, every move on the record. Forty-two seconds under the hood.</p>
+              <ul className="tic-points">
+                <li><b>Any enterprise platform</b><span>Sitecore, Optimizely, Contentful and the rest</span></li>
+                <li><b>You hold the gates</b><span>Nothing ships past a gate without your approval</span></li>
+                <li><b>Every action on the record</b><span>One gateway, an append-only log, any build replayed</span></li>
+                <li><b>Yours when it’s done</b><span>Your code, your hosting, your keys</span></li>
+              </ul>
+            </div>
+            <HeroVideo />
+          </div>
         </section>
 
         <section className="s band lav">
@@ -59,24 +66,9 @@ export default function Page() {
         <section className="s">
           <SectionHead eyebrow="How it works" title="Point it at your site. Watch it work." intro="It plans, the team builds and checks, and you make about three decisions. That’s the job now." />
           <div className="hiw-cards">
-            <article>
-              <ProductShot shot="workbench" sizes="(min-width: 1000px) 340px, 100vw" />
-              <span className="hiw-n">01</span>
-              <h3>It writes the plan.</h3>
-              <p>Discovery ends in a Blueprint: every component, template and page, and how. You approve it once.</p>
-            </article>
-            <article>
-              <ProductShot shot="bliss" sizes="(min-width: 1000px) 340px, 100vw" />
-              <span className="hiw-n">02</span>
-              <h3>You make three decisions.</h3>
-              <p>Each with Cypher’s pick and a deadline. Say nothing and it goes ahead. Everything else is on pace.</p>
-            </article>
-            <article>
-              <ProductShot shot="activity" sizes="(min-width: 1000px) 340px, 100vw" />
-              <span className="hiw-n">03</span>
-              <h3>Every move is on the record.</h3>
-              <p>Checked before it moves on, logged as it happens, replayable after. No status meetings.</p>
-            </article>
+            <EyeTile id="plan" theme="coral" eye="think" n="01" title="It writes the plan." payoff="You approve it once." body="Discovery ends in a Blueprint: every component, template and page, and how. After that, nothing changes without you knowing." />
+            <EyeTile id="decide" theme="lavender" eye="stare" n="02" title="You make three decisions." payoff="Not three hundred." body="Each arrives with Cypher’s pick and a deadline. Say nothing and it goes ahead. Everything else is on pace." />
+            <EyeTile id="record" theme="iris" eye="side" n="03" title="Every move is on the record." payoff="No status meetings." body="Checked before it moves on, logged as it happens, replayable after. Export it any time." />
           </div>
           <p className="sec-more"><CtaLink href="/how-it-works" label="home-how" className="more-link">See how it works</CtaLink></p>
         </section>
@@ -117,7 +109,7 @@ export default function Page() {
             <div className="day"><span className="dn">Mon</span><b>The website.</b><span className="dl">Pixel for pixel. Marketers edit it on day one.</span></div>
             <div className="day"><span className="dn">Tue</span><b>The customer portal.</b><span className="dl">Log in, self-serve, done.</span></div>
             <div className="day"><span className="dn">Wed</span><b>The migration.</b><span className="dl">Six sites into one. Every redirect kept.</span></div>
-            <div className="day"><span className="dn">Thu</span><b>Personalization.</b><span className="dl">Switched on. Finally.</span></div>
+            <div className="day"><span className="dn">Thu</span><b>Personal­ization.</b><span className="dl">Switched on. Finally.</span></div>
             <div className="day yours"><span className="dn">Fri</span><b>Yours.</b><span className="dl">The idea nobody would fund. <span className="mbr">Bring it.</span></span></div>
           </div>
           <p className="weeknote">Also on the menu: thirty brand sites on one design system, storefronts, intranets, member portals, A/B tests, accessibility, performance, SEO. Weekends are for whatever your agency said would take a quarter.</p>
