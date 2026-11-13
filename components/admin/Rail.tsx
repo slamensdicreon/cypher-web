@@ -10,6 +10,8 @@ const P = { fill: 'none', stroke: 'currentColor', strokeWidth: 1.8, strokeLineca
 const ICONS = {
   home: <path {...P} d="M4 10.5 12 4l8 6.5V20a1 1 0 0 1-1 1h-5v-6h-4v6H5a1 1 0 0 1-1-1z" />,
   crm: <g {...P}><path d="M3 6h18M3 12h18M3 18h12" /></g>,
+  company: <g {...P}><path d="M4 21V5a1 1 0 0 1 1-1h9a1 1 0 0 1 1 1v16M15 9h4a1 1 0 0 1 1 1v11M3 21h18M8 8h3M8 12h3M8 16h3" /></g>,
+  tasks: <g {...P}><rect x="3.5" y="3.5" width="17" height="17" rx="2.5" /><path d="m8 12 3 3 5-6" /></g>,
   email: <g {...P}><rect x="3" y="5" width="18" height="14" rx="2" /><path d="m4 7 8 6 8-6" /></g>,
   contacts: <g {...P}><circle cx="9" cy="9" r="3.2" /><path d="M3.5 19a5.5 5.5 0 0 1 11 0M16 7.5a3 3 0 0 1 0 5.8M17.5 19a5 5 0 0 0-2-4" /></g>,
   assets: <g {...P}><rect x="3" y="4" width="18" height="16" rx="2" /><circle cx="9" cy="10" r="2" /><path d="m21 16-5-5-9 9" /></g>,

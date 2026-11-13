@@ -312,7 +312,9 @@ Sizes: **S** about a day, **M** two or three days, **L** about a week. Weeks are
 
 **Done when:** each person signs in with their own account, the PIN is retired, and every change is in the audit log.
 
-### Phase 1: CRM core (about 3 weeks)
+### Phase 1: CRM core (about 3 weeks) — built November 13, on the preview branch
+
+Built: C1–C5 and C7 in full; C6 as a Settings rule (nobody, one person, or take turns) with the existing team email on every sign-up; C8's export. Still to do: C6's email to the assigned owner and Slack; C8's CSV import with column mapping (contacts still come in through Email › Lists, and join their company by domain when added in the CRM) and bulk actions.
 
 | # | Task | Size | Depends on |
 |---|---|---|---|

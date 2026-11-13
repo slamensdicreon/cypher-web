@@ -216,4 +216,173 @@ export const MIGRATIONS: Migration[] = [
       alter table login_links add column if not exists email_error text;
     `,
   },
+  {
+    id: '0004_crm',
+    sql: `
+      -- Companies: one per business domain.
+      create table if not exists companies (
+        id bigserial primary key,
+        name text not null,
+        domain text not null default '',
+        website text not null default '',
+        size text not null default '',
+        industry text not null default '',
+        platform text not null default '',
+        notes text not null default '',
+        owner_id bigint references users(id) on delete set null,
+        source text not null default '',
+        created_at timestamptz not null default now(),
+        updated_at timestamptz not null default now()
+      );
+      create unique index if not exists companies_domain on companies (lower(domain)) where domain <> '';
+      create index if not exists companies_name on companies (lower(name));
+
+      -- Contacts are shared with email marketing; the CRM adds these.
+      alter table contacts add column if not exists company_id bigint references companies(id) on delete set null;
+      alter table contacts add column if not exists phone text not null default '';
+      alter table contacts add column if not exists linkedin text not null default '';
+      alter table contacts add column if not exists owner_id bigint references users(id) on delete set null;
+      alter table contacts add column if not exists source text not null default '';
+      alter table contacts add column if not exists updated_at timestamptz not null default now();
+      create index if not exists contacts_company on contacts (company_id);
+
+      -- The pipeline. Kind says what a stage means: still open, won, lost, or parked for later.
+      create table if not exists pipeline_stages (
+        id text primary key,
+        label text not null,
+        position int not null,
+        kind text not null default 'open'
+      );
+      insert into pipeline_stages (id, label, position, kind) values
+        ('new', 'New lead', 1, 'open'),
+        ('qualified', 'Qualified', 2, 'open'),
+        ('demo_booked', 'Demo booked', 3, 'open'),
+        ('demo_shown', 'Demo shown', 4, 'open'),
+        ('proposal_sent', 'Proposal sent', 5, 'open'),
+        ('negotiating', 'Negotiating', 6, 'open'),
+        ('won', 'Won', 7, 'won'),
+        ('lost', 'Lost', 8, 'lost'),
+        ('nurture', 'Nurture', 9, 'nurture')
+      on conflict (id) do nothing;
+
+      create table if not exists deals (
+        id bigserial primary key,
+        title text not null,
+        company_id bigint references companies(id) on delete set null,
+        primary_contact_id bigint references contacts(id) on delete set null,
+        stage text not null default 'new' references pipeline_stages(id),
+        value numeric(12, 2),
+        expected_close date,
+        owner_id bigint references users(id) on delete set null,
+        outcomes text[] not null default '{}',
+        level smallint,
+        source text not null default '',
+        next_step text not null default '',
+        next_step_at date,
+        lost_reason text not null default '',
+        submission_id bigint,
+        score int not null default 0,
+        score_reasons jsonb not null default '[]',
+        scored_at timestamptz,
+        created_at timestamptz not null default now(),
+        updated_at timestamptz not null default now(),
+        stage_changed_at timestamptz not null default now(),
+        closed_at timestamptz
+      );
+      create index if not exists deals_stage on deals (stage, updated_at desc);
+      create index if not exists deals_company on deals (company_id);
+      create index if not exists deals_owner on deals (owner_id);
+
+      create table if not exists deal_contacts (
+        deal_id bigint not null references deals(id) on delete cascade,
+        contact_id bigint not null references contacts(id) on delete cascade,
+        role text not null default '',
+        primary key (deal_id, contact_id)
+      );
+
+      -- The timeline: notes, calls, meetings, emails, stage changes, form submissions.
+      create table if not exists activities (
+        id bigserial primary key,
+        at timestamptz not null default now(),
+        kind text not null,
+        user_id bigint references users(id) on delete set null,
+        actor text not null default '',
+        company_id bigint references companies(id) on delete cascade,
+        contact_id bigint references contacts(id) on delete cascade,
+        deal_id bigint references deals(id) on delete cascade,
+        subject text not null default '',
+        body text not null default '',
+        meta jsonb not null default '{}'
+      );
+      create index if not exists activities_deal on activities (deal_id, at desc);
+      create index if not exists activities_company on activities (company_id, at desc);
+      create index if not exists activities_contact on activities (contact_id, at desc);
+
+      create table if not exists tasks (
+        id bigserial primary key,
+        title text not null,
+        notes text not null default '',
+        due_at timestamptz,
+        done_at timestamptz,
+        owner_id bigint references users(id) on delete set null,
+        created_by bigint references users(id) on delete set null,
+        company_id bigint references companies(id) on delete cascade,
+        contact_id bigint references contacts(id) on delete cascade,
+        deal_id bigint references deals(id) on delete cascade,
+        created_at timestamptz not null default now()
+      );
+      create index if not exists tasks_owner on tasks (owner_id, done_at, due_at);
+      create index if not exists tasks_deal on tasks (deal_id);
+
+      -- Backfill, once: companies, contacts and deals from the accepted sign-ups so far.
+      insert into companies (domain, name, source, created_at)
+      select lower(domain),
+             coalesce((array_agg(nullif(company, '') order by created_at desc) filter (where company <> ''))[1], lower(domain)),
+             coalesce((array_agg(source order by created_at) filter (where source <> ''))[1], ''),
+             min(created_at)
+      from submissions where outcome = 'ok' and domain <> '' group by lower(domain)
+      on conflict do nothing;
+
+      -- ...and a company for every business domain already in the email contacts.
+      insert into companies (domain, name, created_at)
+      select d,
+             coalesce((array_agg(company order by created_at desc) filter (where company <> ''))[1], initcap(split_part(d, '.', 1))),
+             min(created_at)
+      from (select lower(split_part(email, '@', 2)) as d, company, created_at from contacts where position('@' in email) > 1) c
+      group by d
+      on conflict do nothing;
+
+      insert into contacts (email, company, source, created_at)
+      select distinct on (lower(email)) lower(email), company, source, created_at
+      from submissions where outcome = 'ok' order by lower(email), created_at
+      on conflict do nothing;
+
+      update contacts c set company_id = co.id
+      from companies co
+      where c.company_id is null and co.domain <> '' and co.domain = lower(split_part(c.email, '@', 2));
+
+      insert into deals (title, company_id, primary_contact_id, stage, outcomes, level, source, submission_id, created_at, updated_at, stage_changed_at)
+      select co.name || ' · ' || coalesce(nullif(l.wants, ''), 'See it on your site'),
+             co.id, ct.id, 'new',
+             case when l.wants = '' then '{}'::text[] else string_to_array(l.wants, ', ') end,
+             l.level, l.source, l.id, f.created_at, l.created_at, f.created_at
+      from (select lower(domain) as d, min(created_at) as created_at from submissions where outcome = 'ok' group by lower(domain)) f
+      join lateral (select * from submissions s where s.outcome = 'ok' and lower(s.domain) = f.d order by s.created_at desc limit 1) l on true
+      join companies co on co.domain = f.d
+      left join contacts ct on lower(ct.email) = lower(l.email)
+      where not exists (select 1 from deals x where x.company_id = co.id);
+
+      insert into activities (at, kind, actor, company_id, contact_id, deal_id, subject, body, meta)
+      select s.created_at, 'form', 'Website', co.id, ct.id, d.id,
+             'Asked to see it on their site',
+             concat_ws(' · ', nullif(s.site, ''), nullif(s.wants, ''), nullif(s.interest, '')),
+             jsonb_build_object('submission_id', s.id, 'source', s.source, 'site', s.site, 'wants', s.wants, 'level', s.level)
+      from submissions s
+      join companies co on co.domain = lower(s.domain)
+      left join contacts ct on lower(ct.email) = lower(s.email)
+      left join deals d on d.company_id = co.id
+      where s.outcome = 'ok'
+        and not exists (select 1 from activities a where a.kind = 'form' and (a.meta->>'submission_id')::bigint = s.id);
+    `,
+  },
 ];

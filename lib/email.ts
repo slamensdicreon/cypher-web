@@ -30,6 +30,8 @@ export type PutForward = {
 };
 
 export type Message = {
+  /** Overrides EMAIL_FROM for this email (same domain only). */
+  from?: string;
   to: string[];
   subject: string;
   html: string;

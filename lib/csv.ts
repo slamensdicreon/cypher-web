@@ -27,3 +27,10 @@ export const csvResponse = (csv: string, name: string) =>
       'Cache-Control': 'no-store',
     },
   });
+
+/** Any list of flat records as CSV, headed by the first record's keys. */
+export function recordsCsv(rows: Record<string, unknown>[]): string {
+  if (!rows.length) return '';
+  const head = Object.keys(rows[0]);
+  return [head.join(','), ...rows.map((r) => head.map((k) => cell(r[k])).join(','))].join('\n');
+}

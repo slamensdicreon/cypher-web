@@ -9,6 +9,7 @@ export const SETTINGS = {
   sender_name: { label: 'Sender name', env: 'DRIP_SENDER_NAME', note: 'Shown in the footer of every marketing email.' },
   postal_address: { label: 'Postal address', env: 'DRIP_POSTAL_ADDRESS', note: 'Required by law in every marketing email. Nothing sends until it’s set.' },
   reply_to: { label: 'Reply-to address', env: 'DRIP_REPLY_TO', note: 'Where replies to marketing emails go.' },
+  lead_owner: { label: 'New website leads go to', env: 'CRM_LEAD_OWNER', note: 'Who owns a deal the website form opens. Taking turns rotates through everyone who can edit the CRM.' },
 } as const;
 export type SettingKey = keyof typeof SETTINGS;
 

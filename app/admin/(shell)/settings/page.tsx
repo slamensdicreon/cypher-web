@@ -2,6 +2,7 @@ import { Banner } from '@/components/admin/AdminNav';
 import { pinAllowed } from '@/lib/auth/session';
 import { requireUser } from '@/lib/auth/request';
 import { resendKey } from '@/lib/drip/config';
+import { owners } from '@/lib/crm/data';
 import { SETTINGS, loadSettings, savedSetting, setting, type SettingKey } from '@/lib/settings';
 import { hasStore } from '@/lib/store';
 import { platformConfigured } from '@/lib/platform';
@@ -16,6 +17,8 @@ export default async function Settings({ searchParams }: { searchParams: Promise
   const canEdit = s.user.roles.includes('owner');
   const pin = await pinAllowed();
   const env = (k: string) => Boolean((process.env[k] || '').trim());
+  const people = hasStore ? await owners() : [];
+  const EMAIL_KEYS: SettingKey[] = ['sender_name', 'postal_address', 'reply_to'];
 
   const checks: Check[] = [
     { label: 'Database', ok: hasStore, detail: hasStore ? 'Connected (Neon Postgres).' : 'Set DATABASE_URL in Vercel.' },
@@ -42,7 +45,7 @@ export default async function Settings({ searchParams }: { searchParams: Promise
       <section className="ad-card ad-wide">
         <h3>Email sender</h3>
         <form method="post" action="/api/admin/settings" className="ad-form">
-          {(Object.keys(SETTINGS) as SettingKey[]).map((k) => {
+          {EMAIL_KEYS.map((k) => {
             const def = SETTINGS[k];
             const saved = savedSetting(k);
             const fromEnv = !saved && setting(k);
@@ -57,6 +60,21 @@ export default async function Settings({ searchParams }: { searchParams: Promise
               </label>
             );
           })}
+          {canEdit && <div className="ad-actions"><button className="ad-btn primary" type="submit">Save</button></div>}
+        </form>
+      </section>
+
+      <section className="ad-card ad-wide">
+        <h3>Sales</h3>
+        <form method="post" action="/api/admin/settings" className="ad-form">
+          <label className="ad-field">
+            <span>{SETTINGS.lead_owner.label} <small>{SETTINGS.lead_owner.note}</small></span>
+            <select className="ad-input" name="lead_owner" defaultValue={setting('lead_owner')} disabled={!canEdit}>
+              <option value="">Nobody: leave them unassigned</option>
+              <option value="rotate">Take turns</option>
+              {people.map((u) => <option key={u.id} value={String(u.id)}>{u.name}</option>)}
+            </select>
+          </label>
           {canEdit && <div className="ad-actions"><button className="ad-btn primary" type="submit">Save</button></div>}
         </form>
       </section>

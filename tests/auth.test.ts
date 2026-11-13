@@ -40,10 +40,13 @@ after(async () => {
 });
 
 test('migrations apply once and are idempotent', { skip }, async () => {
+  // Test files run in parallel, so another file may have applied them first: check the end state.
   const { applyMigrations } = await import('../lib/db/schema');
-  const first = await applyMigrations(store.sql!);
+  const { MIGRATIONS } = await import('../lib/db/migrations');
+  await applyMigrations(store.sql!);
   const second = await applyMigrations(store.sql!);
-  assert.ok(first.length >= 2);
+  const ids = (await store.sql!<{ id: string }[]>`select id from schema_migrations order by id`).map((r) => r.id);
+  assert.deepEqual(ids, MIGRATIONS.map((m) => m.id).sort());
   assert.deepEqual(second, []);
 });
 

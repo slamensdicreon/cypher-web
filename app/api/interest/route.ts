@@ -3,6 +3,7 @@ import { classify } from '@/lib/rules';
 import { companyOf, domainOf } from '@/lib/company';
 import { LEVELS, OUTCOMES } from '@/lib/config';
 import { notify } from '@/lib/email';
+import { recordLead } from '@/lib/crm/data';
 import { clientIp, keyedHash } from '@/lib/keys';
 import { companiesSoFar, confirmedRecently, markEmails, save, underLimit } from '@/lib/store';
 
@@ -79,7 +80,14 @@ export async function POST(req: Request) {
 
   if (!ok) return NextResponse.json({ status: kind });
 
-  // Emails go out after the response, so the visitor never waits on them.
+  // The CRM and the emails happen after the response, so the visitor never waits on them.
+  after(async () => {
+    try {
+      await recordLead({ email, domain, company, site, wants, level, source, submissionId: id });
+    } catch (err) {
+      console.error('[interest] CRM lead failed', err);
+    }
+  });
   after(async () => {
     try {
       const [recent, soFar] = await Promise.all([confirmedRecently(email), companiesSoFar()]);

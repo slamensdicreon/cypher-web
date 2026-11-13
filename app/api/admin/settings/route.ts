@@ -19,6 +19,7 @@ export async function POST(req: Request) {
       if (typeof raw !== 'string') continue;
       const value = raw.trim().slice(0, key === 'postal_address' ? 300 : 200);
       if (key === 'reply_to' && value && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(value)) throw new Error('the reply-to isn’t an email address');
+      if (key === 'lead_owner' && value && value !== 'rotate' && !/^\d+$/.test(value)) throw new Error('choose who new leads go to');
       const before = savedSetting(key) ?? '';
       if (value === before) continue;
       await saveSetting(key, value, s.user.id);
