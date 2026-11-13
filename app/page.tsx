@@ -6,22 +6,9 @@ import Track from '@/components/Track';
 import CtaLink from '@/components/site/CtaLink';
 import DemoStart from '@/components/site/DemoStart';
 import HomeVideo from '@/components/site/HomeVideo';
-import { Check, EyeMark } from '@/components/site/Marks';
+import { EyeMark } from '@/components/site/Marks';
 
 export const viewport: Viewport = { themeColor: '#f6f5fc', colorScheme: 'light' };
-
-const POINTS = [
-  ['Any enterprise platform', 'Sitecore, Optimizely, Contentful and the rest'],
-  ['You stay in charge', 'Nothing launches without your sign-off'],
-  ['Your team edits on day one', 'Built in your platform, the way you work'],
-  ['Every change on the record', 'Show anyone exactly what happened'],
-] as const;
-
-const HANDLED = [
-  ['The spring landing page, live and editable in your CMS.', '10:02'],
-  ['Returning visitors now see their own hero.', '9:48'],
-  ['Every old campaign URL redirected. Nothing lost.', '9:31'],
-] as const;
 
 const FOUR = [
   ['Launch.', 'New sites, campaign pages, portals and storefronts, pixel for pixel. Your team edits them on day one.'],
@@ -56,52 +43,7 @@ export default function Page() {
         </section>
 
         <section className="bl-w bl-after">
-          <div className="bl-tic">
-            <div className="bl-tic-copy">
-              <h2 className="bl-h2">This is Cypher.</h2>
-              <p className="bl-lead">Twenty-one specialists, one floor, and the mind that runs them. Forty-two seconds under the hood.</p>
-              <ul className="bl-tic-points">
-                {POINTS.map(([t, b]) => (
-                  <li key={t}><Check /><span><b>{t}</b><span>{b}</span></span></li>
-                ))}
-              </ul>
-            </div>
-            <HomeVideo />
-          </div>
-        </section>
-
-        <section className="bl-w bl-after">
-          <figure className="bl-mock" aria-label="Cypher in Bliss mode, on a spring launch">
-            <div className="bl-mock-top" aria-hidden="true">
-              <span className="bl-project"><span className="bl-initials bg-blue">NW</span>Spring launch · Northwind</span>
-              <span className="bl-dial"><span className="on">Bliss</span><span>Everything</span></span>
-            </div>
-            <p className="bl-voice">The spring pages are built. <b>One thing is yours,</b> before 2:24. Everything else is on pace.</p>
-            <div className="bl-mock-grid">
-              <div className="bl-yours">
-                <span className="bl-yours-label"><EyeMark state="needs" size={20} />Yours<span className="bl-push">2:24</span></span>
-                <h2 className="bl-card-title">Which hero leads the spring campaign?</h2>
-                <p>Both versions are built and on brand. Maria is ready to publish.</p>
-                <span className="bl-pick"><EyeMark state="watching" size={22} /><span><b>I’d test both.</b> Half your visitors see each, and I keep the winner.</span></span>
-                <span className="bl-chips" aria-hidden="true"><span className="bl-chip">Test both</span><span className="bl-chip alt">Pick one</span></span>
-                <span className="bl-meta">If you say nothing: I test both, at 2:24.</span>
-              </div>
-              <div className="bl-handled">
-                <h3>Handled without you.</h3>
-                <ul className="bl-list">
-                  {HANDLED.map(([t, at]) => (
-                    <li key={t}><Check /><span className="bl-grow">{t}</span><span className="bl-meta">{at}</span></li>
-                  ))}
-                </ul>
-                <div className="bl-team-line">
-                  <span className="bl-faces" aria-hidden="true">
-                    <span className="bg-iris">AJ</span><span className="bg-blue">EC</span><span className="bg-teal">MG</span><span className="bg-gold">RP</span>
-                  </span>
-                  <span>Maria is waiting on you. <b>Everyone else is fine.</b></span>
-                </div>
-              </div>
-            </div>
-          </figure>
+          <HomeVideo />
         </section>
 
         <section className="bl-w bl-after bl-stack">

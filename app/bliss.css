@@ -125,15 +125,6 @@ html:has(.bl),body:has(.bl){background:var(--bliss);color:var(--ink)}
 .bl-ctas.left{justify-content:flex-start}
 @media (min-width:820px){.bl-hero .eyewrap{width:220px;height:220px}.bl-hero .eye-well{inset:28px}.bl-hero svg.eye{width:140px;height:140px}}
 
-/* Home: Cypher, in Bliss mode */
-.bl-mock{margin:0;background:#fff;border-radius:28px;box-shadow:var(--shadow-decision);padding:clamp(20px,3vw,40px);display:flex;flex-direction:column;gap:28px}
-.bl-mock-top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
-.bl-project{display:inline-flex;align-items:center;gap:10px;min-height:40px;padding:0 14px 0 6px;border-radius:999px;background:var(--bliss);font-size:14px;font-weight:600}
-.bl-initials{width:28px;height:28px;border-radius:10px;color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:700}
-.bl-dial{display:inline-flex;padding:4px;border-radius:999px;background:var(--bliss);border:1px solid var(--mist)}
-.bl-dial span{display:inline-flex;align-items:center;min-height:36px;padding:0 16px;border-radius:999px;font-size:14px;font-weight:600;color:var(--text-2)}
-.bl-dial span.on{background:var(--ink);color:#fff;font-weight:700}
-.bl-mock-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(300px,100%),1fr));gap:24px;align-items:start}
 .bl-yours{background:#fff;border:1px solid var(--mist);border-radius:24px;padding:24px;display:flex;flex-direction:column;gap:12px;min-width:0}
 .bl-yours.raised{border:0;box-shadow:var(--shadow-card);border-radius:26px}
 .bl-yours p{margin:0;font-size:15px;line-height:1.5;color:var(--text-2)}
@@ -144,17 +135,10 @@ html:has(.bl),body:has(.bl){background:var(--bliss);color:var(--ink)}
 .bl-chips{display:flex;gap:8px;flex-wrap:wrap}
 .bl-chip{display:inline-flex;align-items:center;min-height:44px;padding:0 18px;border-radius:999px;background:var(--ink);color:#fff;font-size:15px;font-weight:700}
 .bl-chip.alt{background:#fff;color:var(--ink);border:1px solid var(--mist);font-weight:500}
-.bl-handled{display:flex;flex-direction:column;gap:16px;padding:4px 4px 0;min-width:0}
-.bl-handled h3{margin:0;font-size:24px;line-height:1.2;font-weight:700;letter-spacing:-.025em}
 .bl-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
 .bl-list li{display:flex;align-items:center;gap:12px;min-height:56px;padding:8px 0;border-bottom:1px solid var(--mist-2);font-size:15px;line-height:1.4}
 .bl-list li:last-child{border-bottom:0}
 .bl-check{flex:none}
-.bl-team-line{display:flex;align-items:center;gap:12px;font-size:15px;color:var(--text-2)}
-.bl-team-line b{color:var(--ink)}
-.bl-faces{display:inline-flex;flex:none}
-.bl-faces span{width:32px;height:32px;border-radius:999px;color:#fff;font-size:12px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;border:2px solid #fff}
-.bl-faces span+span{margin-left:-8px}
 
 /* Home: four things */
 .bl-four{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(230px,100%),1fr));gap:32px}
@@ -334,18 +318,8 @@ html:has(.bl),body:has(.bl){background:var(--bliss);color:var(--ink)}
 }
 @media (prefers-reduced-motion:reduce){.bl-menu{animation:none}.bl-burger-icon i,.bl-menu-arrow,.bl-btn,.bl-burger{transition:none}}
 
-/* Home: This is Cypher, with the video (16:9 on wide screens, square on phones) */
-.bl-tic{display:grid;grid-template-columns:minmax(0,1fr);gap:32px;align-items:center}
-.bl-tic-copy{display:flex;flex-direction:column;gap:16px}
-.bl-tic-points{list-style:none;margin:8px 0 0;padding:0;display:grid;grid-template-columns:minmax(0,1fr);gap:16px 24px}
-.bl-tic-points li{display:flex;gap:12px;align-items:flex-start}
-.bl-tic-points li > span{display:flex;flex-direction:column;gap:2px}
-.bl-tic-points b{font-size:16px}
-.bl-tic-points li > span span{font-size:14.5px;line-height:1.45;color:var(--text-2)}
-.bl-tic-points .bl-check{margin-top:2px}
-@media (min-width:560px){.bl-tic-points{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media (min-width:1000px){.bl-tic{grid-template-columns:repeat(2,minmax(0,1fr));gap:56px}}
-.bl-video{position:relative;margin:0;border-radius:24px;overflow:hidden;aspect-ratio:16/9;background:var(--ink) url(/video/under-the-hood.jpg) center/cover no-repeat;box-shadow:var(--shadow-decision)}
+/* Home: the video, after the hero (16:9 on wide screens, square on phones) */
+.bl-video{position:relative;margin:0;border-radius:28px;overflow:hidden;aspect-ratio:16/9;background:var(--ink) url(/video/under-the-hood.jpg) center/cover no-repeat;box-shadow:var(--shadow-decision)}
 .bl-video video{display:block;width:100%;height:100%;object-fit:cover}
 @media (max-width:699px){.bl-video{aspect-ratio:1/1;background-image:url(/video/under-the-hood-square.jpg)}}
 .bl-video-toggle{position:absolute;right:14px;bottom:14px;display:inline-flex;align-items:center;gap:8px;min-height:40px;padding:0 14px;font-family:inherit;font-size:13.5px;font-weight:700;color:#fff;background:rgba(20,20,51,.72);border:1px solid rgba(255,255,255,.18);border-radius:999px;cursor:pointer;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
