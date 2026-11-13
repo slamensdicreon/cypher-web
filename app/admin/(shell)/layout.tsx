@@ -13,6 +13,7 @@ const ITEMS: (RailItem & { area: Area })[] = [
   { href: '/admin/drip', label: 'Email', icon: 'email', group: 'Marketing', area: 'email' },
   { href: '/admin/drip/contacts', label: 'Contacts', icon: 'contacts', group: 'Marketing', area: 'email' },
   { href: '/postcards', label: 'Campaign assets', icon: 'assets', group: 'Marketing', area: 'assets' },
+  { href: '/admin/platform', label: 'Platform', icon: 'platform', group: 'Launchworks', area: 'platform' },
   { href: '/admin/people', label: 'People', icon: 'people', group: 'Admin', area: 'people' },
   { href: '/admin/audit', label: 'Audit log', icon: 'audit', group: 'Admin', area: 'audit' },
   { href: '/admin/settings', label: 'Settings', icon: 'settings', group: 'Admin', area: 'settings' },
