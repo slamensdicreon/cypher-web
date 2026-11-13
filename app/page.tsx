@@ -16,7 +16,6 @@ export default function Page() {
 
       <main className="wrap">
         <div className="hero-v">
-          <HeroVideo />
           <div className="hero">
             <Eye />
             <div>
@@ -28,6 +27,7 @@ export default function Page() {
               </div>
             </div>
           </div>
+          <HeroVideo />
         </div>
 
         <section className="s home-product">

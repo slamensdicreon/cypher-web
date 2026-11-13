@@ -1079,3 +1079,8 @@ section.band.white .phases-strip li.gate{background:#fff1ee;border-color:var(--c
 /* the eye and the line, right under the video */
 .hero-v .hero{padding:24px 0 0}
 @media (min-width:900px){.hero-v .hero{padding-top:40px}}
+
+/* the eye and the line first, the video under them */
+.hero-v{padding-top:0;gap:8px}
+.hero-v .hero{padding:48px 0 32px}
+@media (min-width:900px){.hero-v .hero{padding:64px 0 48px}}
