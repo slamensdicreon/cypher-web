@@ -499,9 +499,6 @@ form.ad-wide{margin-top:16px}
   .pillar{padding-top:22px}.pillar b{font-size:34px}.pillar p{font-size:18px}
   .proofclose{font-size:52px;line-height:1.04;letter-spacing:-.04em}.proofclose p+p{margin-top:24px;font-size:26px;line-height:1.3}
   .plhead h2{font-size:56px}.plhead p{font-size:19px}
-  .week{grid-template-columns:repeat(5,minmax(0,1fr));gap:12px}
-  .day{display:flex;flex-direction:column;gap:10px;padding:22px 20px 26px;min-height:220px}
-  .day .dn{font-size:13px}.day b{font-size:24px}.day .dl{font-size:15px}
   .weeknote{font-size:16px}
   .join{grid-template-columns:minmax(0,1fr) 460px;align-items:start}
   .join .copy h2{font-size:56px}
@@ -897,7 +894,6 @@ header.top{max-width:1120px}
 @media (min-width:900px){.sf-top{grid-template-columns:minmax(0,1fr) minmax(0,1.6fr)}.sf-cols{grid-template-columns:repeat(4,minmax(0,1fr))}}
 /* page pieces */
 .ph{display:flex;flex-direction:column;gap:16px}
-.ph-eyebrow{font-size:13px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--coral)}
 .ph h1{margin:0;font-size:46px;font-weight:800;letter-spacing:-.05em;line-height:1}
 .ph-lead{margin:0;font-size:19px;line-height:1.5;color:var(--on-ink-soft);max-width:560px}
 .ph-actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:6px}
@@ -968,16 +964,12 @@ label.f .opt,.wants legend .opt{font-weight:600;text-transform:none;letter-spaci
 .pf-hero{margin-top:8px}
 .sh{display:flex;flex-direction:column;gap:12px;margin-bottom:32px;max-width:760px}
 .sh.center{align-items:center;text-align:center;margin-left:auto;margin-right:auto}
-.sh-eyebrow{font-size:13px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--coral)}
 .sh h2{margin:0;font-size:36px;font-weight:800;letter-spacing:-.045em;line-height:1.02}
 .sh p{margin:0;font-size:18px;line-height:1.5;color:var(--on-ink-soft)}
 section.band.white .sh p,section.band.lav .sh p{color:var(--text-2)}
 @media (min-width:900px){.sh h2{font-size:48px}}
 .fr{display:grid;grid-template-columns:minmax(0,1fr);gap:28px;align-items:center;padding:28px 0}
-.fr + .fr{border-top:1px solid var(--ink-3)}
-.fr-eyebrow{display:flex;align-items:center;gap:10px;font-size:13px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--coral)}
-.fr-eyebrow b{font-variant-numeric:tabular-nums;color:var(--on-ink-quiet);letter-spacing:.02em}
-.fr-copy h3{margin:10px 0 0;font-size:30px;font-weight:800;letter-spacing:-.04em;line-height:1.05}
+.fr-copy h3{margin:0;font-size:30px;font-weight:800;letter-spacing:-.04em;line-height:1.05}
 .fr-copy p{margin:14px 0 0;font-size:17px;line-height:1.55;color:var(--on-ink-soft)}
 .fr-copy ul{margin:16px 0 0;padding:0;list-style:none;display:flex;flex-direction:column;gap:8px}
 .fr-copy li{position:relative;padding-left:22px;font-size:15px;line-height:1.45;color:var(--on-ink-soft)}
@@ -993,7 +985,7 @@ section.band.white .fr-copy p,section.band.white .fr-copy li{color:var(--text-2)
 .ps-gate{font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--coral)}
 section.band.white .phases-strip li{background:var(--bliss);border-color:var(--mist);color:var(--ink)}
 section.band.white .phases-strip li.gate{background:#fff1ee;border-color:var(--coral)}
-@media (min-width:640px){.phases-strip{grid-template-columns:repeat(5,minmax(0,1fr))}}
+@media (min-width:720px){.phases-strip{grid-template-columns:repeat(5,minmax(0,1fr))}}
 @media (min-width:1100px){.phases-strip{grid-template-columns:repeat(10,minmax(0,1fr))}}
 .be{display:flex;flex-direction:column;align-items:center;gap:14px}
 .be-switch{display:inline-flex;padding:4px;border-radius:999px;background:var(--ink)}
@@ -1076,9 +1068,8 @@ section.band.white .phases-strip li.gate{background:#fff1ee;border-color:var(--c
 .hero-v .hero{padding:48px 0 8px}
 @media (min-width:900px){.hero-v .hero{padding:64px 0 16px}}
 .hero-v{padding-bottom:0}
-.home-product{padding-top:32px}
 .tic{display:grid;grid-template-columns:minmax(0,1fr);gap:32px;align-items:center}
-.tic-copy h2{margin:12px 0 0;font-size:40px;font-weight:800;letter-spacing:-.045em;line-height:1}
+.tic-copy h2{margin:0;font-size:40px;font-weight:800;letter-spacing:-.045em;line-height:1}
 .tic-copy > p{margin:14px 0 0;font-size:18px;line-height:1.5;color:var(--on-ink-soft);max-width:460px}
 .tic-points{list-style:none;margin:24px 0 0;padding:0;display:grid;grid-template-columns:minmax(0,1fr);gap:14px}
 .tic-points li{display:flex;flex-direction:column;gap:3px;padding-left:16px;border-left:2px solid var(--coral)}
@@ -1100,11 +1091,49 @@ section.band.white .phases-strip li.gate{background:#fff1ee;border-color:var(--c
 @media (min-width:1100px){.eye-tile h3{font-size:32px}}
 /* the week: wide enough that every day fits; a long word breaks politely if it must */
 .day b{overflow-wrap:break-word;hyphens:manual}
-@media (min-width:900px) and (max-width:1099px){.day{padding:18px 14px 20px}.day b{font-size:20px}}
-@media (min-width:1100px){.week{margin-left:-80px;margin-right:-80px}}
+/* five across only where every day fits whole; narrower, one day per row */
+@media (min-width:820px){.day{grid-template-columns:72px minmax(0,1fr);padding:22px 24px 24px}.day b{font-size:24px}}
+@media (min-width:1100px){
+  .week{grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;margin-left:-80px;margin-right:-80px}
+  .day{display:flex;flex-direction:column;gap:10px;padding:22px 20px 26px;min-height:220px}
+  .day .dn{font-size:13px}.day b{font-size:24px}.day .dl{font-size:15px}
+}
 /* the credentials' big words scale with the screen, so "MVPs" never leaves its column */
 @media (min-width:820px){.cred b{font-size:clamp(60px,8.6vw,96px)}}
 /* the phases strip: names fit their boxes at five and ten across */
-.phases-strip b{overflow-wrap:anywhere}
 @media (min-width:640px){.phases-strip li{padding:12px 10px}.phases-strip b{font-size:14px}}
-@media (min-width:1280px){.phases-strip b{font-size:15px}}
+@media (min-width:1100px){.phases-strip li{padding:12px 8px}.phases-strip b{font-size:13px}}
+
+/* Breadcrumbs: where the eyebrows were, on every page but home */
+.crumbs ol{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;align-items:center;gap:4px 10px;font-size:14px;line-height:20px;font-weight:600}
+.crumbs li{display:inline-flex;align-items:center;gap:10px;min-width:0}
+.crumbs li + li::before{content:'/';color:var(--on-ink-quiet);opacity:.6}
+.crumbs a{color:var(--on-ink-quiet);text-decoration:none;border-radius:4px}
+.crumbs a:hover{color:var(--on-ink);text-decoration:underline;text-underline-offset:3px}
+.crumbs a:focus-visible{outline:3px solid rgba(183,166,255,.6);outline-offset:2px}
+.crumbs [aria-current]{color:var(--on-ink-soft)}
+.legal-head .crumbs{margin-bottom:16px}
+
+/* The home page's spacing on every page: the headline sits as far under the header as home's
+   does, the content column is home's, and wide pictures reach out the way home's video does */
+.hero-v .hero{padding-bottom:0}
+.page-top,.demo-top,.legal{padding-top:24px}
+@media (min-width:900px){.page-top,.demo-top,.legal{padding-top:28px}}
+/* two sections in the same tone share one gap, not two */
+main > section.s:not(.band) + section.s:not(.band),
+main > .page-top + section.s:not(.band),
+main > .demo-top + section.s:not(.band){padding-top:0}
+/* feature rows: the section sets the space around them; rows sit one gap apart, no rules between */
+.fr:first-child{padding-top:0}
+.fr:last-child{padding-bottom:0}
+@media (min-width:1100px){
+  .fr{margin-right:-80px}
+  .fr.flip{margin-right:0;margin-left:-80px}
+  .page-top > .pf:not(.pf-narrow),.phases-strip,.be{margin-left:-80px;margin-right:-80px}
+  .be .pf{max-width:none}
+}
+/* legal pages: the heading on the same edge as every page, the paper the full column,
+   the words at a reading width inside it */
+@media (min-width:820px){.legal-head,.paper{max-width:none;margin-left:0;margin-right:0}}
+@media (min-width:1000px){.paper{padding-left:max(72px,calc((100% - 760px) / 2));padding-right:max(72px,calc((100% - 760px) / 2))}}
+@media (min-width:900px){.legal-head h1{font-size:64px}}

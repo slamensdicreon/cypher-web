@@ -33,7 +33,6 @@ export default function Page() {
         <section className="s home-product">
           <div className="tic">
             <div className="tic-copy">
-              <span className="sh-eyebrow">The product</span>
               <h2>This is Cypher.</h2>
               <p>Twenty-one specialists, one floor, every move on the record. Forty-two seconds under the hood.</p>
               <ul className="tic-points">
@@ -64,7 +63,7 @@ export default function Page() {
         </section>
 
         <section className="s">
-          <SectionHead eyebrow="How it works" title="Point it at your site. Watch it work." intro="It plans, the team builds and checks, and you make about three decisions. That’s the job now." />
+          <SectionHead title="Point it at your site. Watch it work." intro="It plans, the team builds and checks, and you make about three decisions. That’s the job now." />
           <div className="hiw-cards">
             <EyeTile id="plan" theme="coral" eye="think" n="01" title="It writes the plan." payoff="You approve it once." body="Discovery ends in a Blueprint: every component, template and page, and how. After that, nothing changes without you knowing." />
             <EyeTile id="decide" theme="lavender" eye="stare" n="02" title="You make three decisions." payoff="Not three hundred." body="Each arrives with Cypher’s pick and a deadline. Say nothing and it goes ahead. Everything else is on pace." />
@@ -117,7 +116,7 @@ export default function Page() {
         </section>
 
         <section className="s band white">
-          <SectionHead eyebrow="Built for the enterprise" title="Built for people who get audited." intro="Cypher moves fast. It doesn’t move loose." />
+          <SectionHead title="Built for people who get audited." intro="Cypher moves fast. It doesn’t move loose." />
           <div className="ent-grid">
             <div><b>Governed</b><p>Playbooks with phases and gates. Roles that can’t mark their own work. You approve the Blueprint and sign off UAT.</p></div>
             <div><b>On the record</b><p>Every action through one gateway into an append-only log: who, which tool, what happened, what it cost. Export it any time.</p></div>

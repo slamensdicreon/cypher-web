@@ -1,14 +1,39 @@
+import Link from 'next/link';
 import CtaLink from '@/components/site/CtaLink';
+import { SITE_URL } from '@/lib/site';
 
 /**
  * The building blocks of the site's internal pages. Every page uses the same few pieces, so the site
- * reads as one thing: a page hero, numbered steps, questions and answers, and the demo band.
+ * reads as one thing: breadcrumbs and a page hero, numbered steps, questions and answers, and the
+ * demo band.
  */
 
-export function PageHero({ eyebrow, title, lead, children }: { eyebrow?: string; title: string; lead?: string; children?: React.ReactNode }) {
+export type Crumb = { name: string; href: string };
+
+/** Where you are: Home, then each page down to this one. Also written out for search engines. */
+export function Breadcrumbs({ trail }: { trail: Crumb[] }) {
+  const all = [{ name: 'Home', href: '/' }, ...trail];
+  const ld = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: all.map((c, i) => ({ '@type': 'ListItem', position: i + 1, name: c.name, item: SITE_URL + c.href })),
+  };
+  return (
+    <nav className="crumbs" aria-label="Breadcrumb">
+      <ol>
+        {all.map((c, i) => (
+          <li key={c.href}>{i < all.length - 1 ? <Link href={c.href}>{c.name}</Link> : <span aria-current="page">{c.name}</span>}</li>
+        ))}
+      </ol>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(ld) }} />
+    </nav>
+  );
+}
+
+export function PageHero({ trail, title, lead, children }: { trail: Crumb[]; title: string; lead?: string; children?: React.ReactNode }) {
   return (
     <div className="ph">
-      {eyebrow && <span className="ph-eyebrow">{eyebrow}</span>}
+      <Breadcrumbs trail={trail} />
       <h1>{title}</h1>
       {lead && <p className="ph-lead">{lead}</p>}
       {children && <div className="ph-actions">{children}</div>}

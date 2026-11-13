@@ -23,13 +23,10 @@ export function ProductShot({ shot, caption, priority = false, sizes = '(min-wid
 }
 
 /** Words on one side, the screen on the other; `flip` swaps the sides on wide screens. */
-export function FeatureRow({ n, eyebrow, title, body, points, shot, flip = false, children }: { n?: number; eyebrow?: string; title: string; body: string; points?: string[]; shot?: ShotKey; flip?: boolean; children?: React.ReactNode }) {
+export function FeatureRow({ title, body, points, shot, flip = false, children }: { title: string; body: string; points?: string[]; shot?: ShotKey; flip?: boolean; children?: React.ReactNode }) {
   return (
     <div className={`fr${flip ? ' flip' : ''}`}>
       <div className="fr-copy">
-        {(n !== undefined || eyebrow) && (
-          <span className="fr-eyebrow">{n !== undefined && <b>{String(n).padStart(2, '0')}</b>}{eyebrow}</span>
-        )}
         <h3>{title}</h3>
         <p>{body}</p>
         {points && (
@@ -58,11 +55,10 @@ export function PhaseStrip() {
   );
 }
 
-/** A section's eyebrow, heading and intro. */
-export function SectionHead({ eyebrow, title, intro, center = false }: { eyebrow?: string; title: string; intro?: string; center?: boolean }) {
+/** A section's heading and intro. */
+export function SectionHead({ title, intro, center = false }: { title: string; intro?: string; center?: boolean }) {
   return (
     <div className={`sh${center ? ' center' : ''}`}>
-      {eyebrow && <span className="sh-eyebrow">{eyebrow}</span>}
       <h2>{title}</h2>
       {intro && <p>{intro}</p>}
     </div>

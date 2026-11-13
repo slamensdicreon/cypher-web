@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import SiteFooter from '@/components/SiteFooter';
 import SiteHeader from '@/components/SiteHeader';
 import Track from '@/components/Track';
+import { Breadcrumbs } from '@/components/site/parts';
 
 const description = 'What Cypher collects on ignoranceisbliss.ai, why, who processes it, how long it’s kept, and how to have it deleted.';
 
@@ -21,6 +22,7 @@ export default function Privacy() {
       <SiteHeader />
       <main className="wrap legal">
         <div className="legal-head">
+          <Breadcrumbs trail={[{ name: 'Privacy', href: '/privacy' }]} />
           <h1>Privacy</h1>
           <p>What we collect, why, and how to make us forget it. Unlike our Terms of Use, this page means exactly what it says.</p>
         </div>

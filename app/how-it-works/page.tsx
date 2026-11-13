@@ -40,10 +40,10 @@ export default function HowItWorks() {
   return (
     <>
       <SiteHeader />
-      <main className="wrap wide">
+      <main className="wrap">
         <div className="page-top">
           <PageHero
-            eyebrow="How it works"
+            trail={[{ name: 'How it works', href: '/how-it-works' }]}
             title="Point it at your site. Watch it work."
             lead="Cypher runs a project the way your best team would, if your best team never slept, never forgot and wrote everything down. Here’s the whole thing, start to finish, on the real screens."
           >
@@ -52,32 +52,26 @@ export default function HowItWorks() {
           <ProductShot shot="everything" priority caption="Mission control: the phases and gates, what’s registered, cost against budget, what needs you, and the team at work." />
         </div>
 
-        <section className="s">
-          <SectionHead eyebrow="The shape of every build" title="Ten phases. Two gates. You hold both." intro="Every project runs the same phases, in order, from a playbook. Nothing moves past a gate without your approval." />
+        <section className="s band white">
+          <SectionHead title="Ten phases. Two gates. You hold both." intro="Every project runs the same phases, in order, from a playbook. Nothing moves past a gate without your approval." />
           <PhaseStrip />
         </section>
 
         <section className="s steps-run">
           <FeatureRow
-            n={1}
-            eyebrow="Day zero"
             title="Tell it what you run."
             body="Your site, your platform, what you want done. It verifies access, records what it finds and writes down the facts it will build on. No kickoff. No workshop. No discovery invoice."
             points={['Verifies credentials and records the platform’s facts', 'Crawls the live site and inventories every page', 'Lists components, routes and assets before anyone builds']}
             shot="plan"
           />
           <FeatureRow
-            n={2}
             flip
-            eyebrow="The plan of record"
             title="It writes the Blueprint. You approve it once."
             body="Discovery ends in an Implementation Blueprint: every component, template, page and media item the team will build, and how. You approve it at the first gate. After that, nothing changes without you knowing."
             points={['Component inventory, page inventory, platform notes', 'Versioned, with who wrote it and when you approved it']}
             shot="workbench"
           />
           <FeatureRow
-            n={3}
-            eyebrow="The team"
             title="Twenty-one specialists. One mind running them."
             body="Discovery, engineering, content, quality and release, each with a lead. They pick up work in order, hand it on and check each other’s. The same crew every day, on any platform."
             points={['Solution architect, content analyst, component engineer, migrators', 'Parity auditor, performance and accessibility QA, deployment engineer', 'Cypher as chief of staff, so you talk to one voice']}
@@ -85,26 +79,20 @@ export default function HowItWorks() {
             <FloorLoop caption="The Floor: who’s working, on what, and what they handed on." />
           </FeatureRow>
           <FeatureRow
-            n={4}
             flip
-            eyebrow="Your three decisions"
             title="It asks you three things. Not three hundred."
             body="When something is genuinely yours (a source of truth, a trade-off, a risk), it arrives as a card: the question, Cypher’s pick and why, and a deadline. Say nothing and it goes ahead with its pick. Everything else is on pace."
             points={['Every card says what happens if you don’t answer', 'Defer it, or ask the specialist who raised it']}
             shot="bliss"
           />
           <FeatureRow
-            n={5}
-            eyebrow="On the record"
             title="Every move checked. Every move logged."
             body="Every action passes one gateway and lands in an append-only log: who, which tool, what happened, how long it took and what it cost. Validators review each component before it moves on. Any build can be replayed, step by step."
             points={['Export the log any time', 'Warnings and failures surface on their own']}
             shot="activity"
           />
           <FeatureRow
-            n={6}
             flip
-            eyebrow="Where it stands"
             title="You always know. Without a status meeting."
             body="Phases, gates, what’s running and what’s queued, decisions settled without you, recommendations taken, and spend by phase. Or just ask Cypher, in a sentence."
             points={['A scorecard for every project', 'Cost of the run against its budget, as it happens']}
@@ -113,12 +101,12 @@ export default function HowItWorks() {
         </section>
 
         <section className="s band white">
-          <SectionHead eyebrow="Bliss or Everything" title="One sentence, or the whole console. Your choice, per screen." intro="Most days you want to know two things: is it on pace, and what’s mine. On the days you want the rest, it’s all there." />
+          <SectionHead title="One sentence, or the whole console. Your choice, per screen." intro="Most days you want to know two things: is it on pace, and what’s mine. On the days you want the rest, it’s all there." />
           <BlissEverything />
         </section>
 
         <section className="s">
-          <SectionHead eyebrow="Handover" title="When it’s done, it’s yours." intro="No retainer to keep the lights on. No knowledge that leaves when a team rolls off." />
+          <SectionHead title="When it’s done, it’s yours." intro="No retainer to keep the lights on. No knowledge that leaves when a team rolls off." />
           <div className="handover">
             {HANDOVER.map(([t, b]) => (
               <div key={t}><b>{t}</b><p>{b}</p></div>

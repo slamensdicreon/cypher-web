@@ -3,6 +3,7 @@ import Link from 'next/link';
 import SiteFooter from '@/components/SiteFooter';
 import SiteHeader, { Resting } from '@/components/SiteHeader';
 import Track from '@/components/Track';
+import { Breadcrumbs } from '@/components/site/parts';
 
 const description =
   'The Terms of Use of the Transfer of Unreasonable Advantage. A sales pitch in a suit: what a company gets when it points Cypher at its site, in the deepest legalese.';
@@ -22,6 +23,7 @@ export default function Terms() {
       <SiteHeader />
       <main className="wrap legal">
         <div className="legal-head">
+          <Breadcrumbs trail={[{ name: 'Terms of Use', href: '/terms' }]} />
           <h1>Terms of Use</h1>
           <p>Of the Transfer of Unreasonable Advantage. Effective upon your first look. Read slowly; it gets better.</p>
         </div>

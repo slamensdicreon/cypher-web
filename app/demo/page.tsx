@@ -40,7 +40,7 @@ export default function Demo() {
         <div className="demo-top">
           <div className="demo-copy">
             <PageHero
-              eyebrow="Book a demo"
+              trail={[{ name: 'Book a demo', href: '/demo' }]}
               title="See it on your site."
               lead="Tell us where you live online and what you want done. We point Cypher at it, on your platform, and you watch it work. Today, literally, or whenever suits you."
             />

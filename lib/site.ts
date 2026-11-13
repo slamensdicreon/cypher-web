@@ -3,6 +3,9 @@
  * the platforms Cypher names, and the demo time slots. Used by the client and the server.
  */
 
+/** Where the site lives; links in structured data are absolute. */
+export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.ignoranceisbliss.ai';
+
 export type NavItem = { href: string; label: string; note: string; group: 'Product' | 'Outcomes' | 'Platforms' | 'Company'; live: boolean; top?: boolean };
 
 /** Pages join the navigation and footer as they ship: flip `live` when a page is built. */

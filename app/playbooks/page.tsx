@@ -42,10 +42,10 @@ export default function Playbooks() {
   return (
     <>
       <SiteHeader />
-      <main className="wrap wide">
+      <main className="wrap">
         <div className="page-top">
           <PageHero
-            eyebrow="Playbooks"
+            trail={[{ name: 'Playbooks', href: '/playbooks' }]}
             title="Playbooks, not projects."
             lead="Every agency starts from a blank page and bills you for the learning curve. Cypher starts from a playbook: the method, the team, the checks and every lesson from the last build, written down and run the same way every time. Same crew every day, on any platform, and not one change order."
           >
@@ -55,7 +55,7 @@ export default function Playbooks() {
         </div>
 
         <section className="s">
-          <SectionHead eyebrow="What’s in a playbook" title="Everything your best project ever learned. Written down." intro="A playbook isn’t a template. It’s how the work is done, who does it, how it’s checked, and what to watch out for on your platform." />
+          <SectionHead title="Everything your best project ever learned. Written down." intro="A playbook isn’t a template. It’s how the work is done, who does it, how it’s checked, and what to watch out for on your platform." />
           <div className="anatomy">
             {ANATOMY.map(([t, b], i) => (
               <div key={t}>
@@ -68,12 +68,12 @@ export default function Playbooks() {
         </section>
 
         <section className="s band white">
-          <SectionHead eyebrow="The phases" title="Same order, every time. Two gates that are yours." intro="Discovery ends in a Blueprint you approve. The build ends in UAT you sign off. Everything between runs on its own, on the record." />
+          <SectionHead title="Same order, every time. Two gates that are yours." intro="Discovery ends in a Blueprint you approve. The build ends in UAT you sign off. Everything between runs on its own, on the record." />
           <PhaseStrip />
         </section>
 
         <section className="s">
-          <SectionHead eyebrow="The playbooks" title="Pick an outcome. There’s a playbook for it." intro="On Sitecore, Optimizely, Contentful or whatever you run. Several at once, if you like: a migration on Monday, personalization on Thursday." />
+          <SectionHead title="Pick an outcome. There’s a playbook for it." intro="On Sitecore, Optimizely, Contentful or whatever you run. Several at once, if you like: a migration on Monday, personalization on Thursday." />
           <div className="pb-grid">
             {PLAYBOOKS.map((p) => (
               <article key={p.name} className="pb-card">
@@ -88,7 +88,6 @@ export default function Playbooks() {
 
         <section className="s">
           <FeatureRow
-            eyebrow="Self-enhancing"
             title="Every build rewrites its own playbook."
             body="Every answer you give becomes a rule. Every lesson goes into the next version of the playbook. Projects stay pinned to the version they started on, so nothing moves under you, and the next one starts smarter. Name one vendor who can say that."
             points={['Rules applied without asking you again', 'Lessons and known pitfalls per platform', 'Versioned: improvements land in the next project, not yours mid-flight']}
