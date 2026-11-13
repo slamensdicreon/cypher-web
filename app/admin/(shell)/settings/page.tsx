@@ -4,6 +4,7 @@ import { requireUser } from '@/lib/auth/request';
 import { resendKey } from '@/lib/drip/config';
 import { SETTINGS, loadSettings, savedSetting, setting, type SettingKey } from '@/lib/settings';
 import { hasStore } from '@/lib/store';
+import { platformConfigured } from '@/lib/platform';
 
 type Check = { label: string; ok: boolean; detail: string };
 
@@ -24,6 +25,7 @@ export default async function Settings({ searchParams }: { searchParams: Promise
     { label: 'Scheduled jobs', ok: env('CRON_SECRET'), detail: env('CRON_SECRET') ? 'Cron secret set; the daily send runs.' : 'Set CRON_SECRET in Vercel.' },
     { label: 'First Owners', ok: env('ADMIN_OWNERS'), detail: env('ADMIN_OWNERS') ? 'ADMIN_OWNERS is set, so its people can always get a link.' : 'Set ADMIN_OWNERS (comma-separated emails) in Vercel as a way back in.' },
     { label: 'Admin address for links', ok: env('ADMIN_URL') || env('NEXT_PUBLIC_SITE_URL'), detail: `Sign-in links point to ${(process.env.ADMIN_URL || process.env.NEXT_PUBLIC_SITE_URL || 'the site')}.` },
+    { label: 'Launchworks platform', ok: platformConfigured(), detail: platformConfigured() ? 'Key and address set; the platform screens can reach Launchworks (production only).' : 'Not connected here. LAUNCHWORKS_ADMIN_KEY and LAUNCHWORKS_API_URL are set for production only.' },
     { label: 'Break-glass PIN', ok: !pin, detail: pin ? 'Still works, until an Owner signs in with an email link (or while ADMIN_PIN_FALLBACK=on).' : 'Retired. Everyone signs in with an email link.' },
   ];
 

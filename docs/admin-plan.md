@@ -7,7 +7,7 @@ November 13, 2026. A plan to turn `/admin` into the one place Cypher's business 
 - **CRM first** after the foundations.
 - **Our own one-time email-link sign-in** for named people, for all of `/admin` (platform screens included). No WorkOS.
 - **Build our own tools.** No bought CRM, CMS, scheduler, booking or signature product; Resend stays as the email pipe.
-- **All management and administration of the Launchworks app moves into this `/admin`** and out of the app (section 9a). **This plan builds the `/admin/platform` screens**, with a knowledge transfer from the platform conversation; that conversation keeps the platform-side API work.
+- **All management and administration of the Launchworks app moves into this `/admin`** and out of the app (section 9a). **This plan builds the `/admin/platform` screens** from the platform conversation's handover (received November 13); that conversation keeps the platform-side API work.
 - **Social publishing and the running budget wait** until the foundations are done.
 
 ## 1. Summary
@@ -240,36 +240,63 @@ The current drip engine becomes the sending engine underneath; the module grows 
 
 ## 9a. Platform administration (Launchworks)
 
-*Planned with the platform conversation ("Multi-tenant architecture and role hierarchy"), which builds the platform-side API; the screens are built here. This section is updated as its handover arrives.*
+*Handed over by the platform conversation on November 13. The full contract is in icreon-claude at `docs/architecture/admin-console-api.md` (pull request #40). That conversation builds the platform side; the screens are built here.*
 
-**What moves out of the app and into `/admin`**
+**What moves out of the app and into `/admin/platform`**
 
-- **Customers:** organizations, each organization's people and projects, creating an organization and inviting its first Director.
-- **Licenses:** the license editor and its history.
-- **Usage:** Claude spend and tokens, sandbox minutes, agent tool minutes, Vercel deployments and build minutes, in total and per project (built and live in the app today).
-- **Support access:** granting a named Icreon person time-limited access to a customer's projects.
-- **The product's own management:** Settings, In force, Rules, Knowledge and Diagnostics (and the related review screens), which today are Icreon-only pages inside the app.
-
-**How it connects (security)**
-
-- The platform's admin API stops accepting browser sign-ins and accepts only a **service key** that the admin keeps on its server and never sends to a browser.
-- Every call names the Icreon person acting, so the platform's history keeps names, not "admin".
-- Only people with the **Platform** role see these screens; sensitive actions ask for a fresh sign-in.
-- The admin's own audit log records the same actions on this side.
-
-**Who builds what**
-
-| Side | Work | Built by |
+| Screen | What it does | Platform routes |
 |---|---|---|
-| Launchworks (icreon-claude) | Service-key access to the admin API; acting-person on every call; remove the Icreon-only screens from the app; organization creation takes the first Director explicitly | The platform conversation |
-| cypher-web `/admin` | Sign-in, roles, audit log and shell (Foundations, one system for all of `/admin`) | This plan, Phase 0 |
-| cypher-web `/admin/platform` | The organization, license, usage, support access and product management screens, on the shared shell | This plan (Phase 1P), from the platform conversation's handover |
+| **Organizations** | Every customer: Directors, Watchers, open invitations, live and running projects, Claude spend, sandbox time, license standing | `GET /admin/organizations` |
+| **New organization** | Name, optional address slug, optional first Director's email | `POST /admin/organizations` |
+| **License** | Platforms, playbooks, projects included, start and end, with history (granted, changed, paused, resumed) | `GET` and `PUT /admin/organizations/:id/license`, `GET /playbooks` |
+| **Usage** | Claude spend and tokens, sandbox and tool minutes, Vercel deployments and build minutes, in total and per project | `GET /admin/organizations/:id/usage` |
+| **Support access** | Give yourself 1 to 72 hours in a customer's organization as Watcher or Director | `POST /admin/organizations/:id/support` |
+| **In force** | What a new project on a playbook starts with (read only) | `GET /playbooks/:id/in-force` |
+| **Rules** | Proposed, active and retired rules, their history, edits; harvest from a project | `/rules…` |
+| **Knowledge** | Lessons, procedures and gaps; approve, activate, reject, retire; proposals sorted by Cypher and applied together; export | `/knowledge…`, `/proposals…` |
+| **Diagnostics** | Services and each project's orchestrator; the watchdog; a test email | `/portfolio/diagnostics`, `/portfolio/watchdog`, `/projects/:id/operator/test-email` |
+
+The GitHub App setup stays in the app: it's a one-time browser flow, already done.
+
+**How it connects**
+
+- Server to server only. `lib/platform.ts` calls `LAUNCHWORKS_API_URL` with `Authorization: Bearer LAUNCHWORKS_ADMIN_KEY`, `x-lw-organization: org-icreon`, and the acting person as `x-lw-actor-email` (and `x-lw-actor-name`). Both settings are already in cypher-web's Vercel project, production only; previews have no key.
+- **Two checks, both required:** our **Platform** role to see the screens, and the platform's own check that the person is an **Icreon Director in Launchworks under the same email** (`GET /admin/me`; re-checked on every call). Removing someone from Icreon in Launchworks removes their access at once.
+- Errors come back as `{ error: { code, message } }` with messages written for people; the screens show them as is.
+- The platform records every action by name; our audit log records the same actions here.
+
+**Rules the screens must follow**
+
+- Icreon's own organization has no Manage: it needs no license, and support access to it is refused.
+- Creating an organization makes the person acting its kickoff Director, whom the customer can't remove for three months. The first Director's invitation stays open seven days even if its email didn't send.
+- **Saving a license changes live behavior:** removing a platform or ending the term pauses that organization's running projects at once; renewing resumes exactly those. Show which projects were paused or resumed. New licenses default to today through a year from today; playbooks only count on licensed platforms.
+- Usage: Vercel figures are cached 15 minutes; show the reason instead of zeros when a project has none; tool minutes count from November 13, 2026.
+- Support access is used in the Launchworks app (account menu → organization); the admin only grants it.
+
+**Dangerous actions** (each behind a confirmation, a fresh sign-in, and the audit log; never run on page load)
+
+- Activating, editing an active, or retiring a **rule** changes how every customer's running projects answer cards.
+- Approving or applying **knowledge** and proposals shapes every future build; sorting proposals calls Claude and costs money.
+- The **test email** sends a real email; the **watchdog** runs when called.
+- The **license check** (`GET /portfolio/licenses`) pauses, resumes and purges. The admin doesn't call it at all; it belongs to the platform's scheduled job.
+
+**Known gaps (platform side)**
+
+- Project routes answer only for Icreon's own projects through the console, so a customer's project (harvest, test email, its diagnostics) answers 404. If the admin needs those, the platform adds a console-wide read; ask when Phase 1P reaches Diagnostics.
+- Row-level security in Postgres is deferred; isolation is enforced in the API.
+- Moving a customer's repository and Vercel project to their own accounts is still manual.
+
+**Sequence**
+
+1. The platform's pull request #40 merges and deploys (needs Steve's approval). Until then every call answers 401.
+2. The screens here are built and go live (Phase 1P).
+3. Then the platform removes these pages from the app and stops accepting browser sessions on its admin routes (its Phase 3), so there's never a moment without an admin.
 
 ## 10. The roadmap
 
 Sizes: **S** about a day, **M** two or three days, **L** about a week. Weeks are build weeks; phases 3 to 6 can overlap if two people work in parallel.
 
-### Phase 0: Foundations (about 2 weeks)
+### Phase 0: Foundations (about 2 weeks) — built November 13, on the preview branch
 
 | # | Task | Size | Depends on |
 |---|---|---|---|
@@ -300,17 +327,21 @@ Sizes: **S** about a day, **M** two or three days, **L** about a week. Weeks are
 
 **Done when:** a form submission appears as a new deal within seconds, the owner is notified, and it can be moved through every stage to Won or Lost with notes and tasks.
 
-### Phase 1P: Platform administration (alongside Phase 1, provisional)
+### Phase 1P: Platform administration (alongside Phase 1)
 
 | # | Task | Size | Depends on |
 |---|---|---|---|
-| L1 | Platform side: service-key admin API, acting person on every call, Icreon-only screens removed from the app | L | Platform conversation |
-| L2 | Server-side platform client in the admin; the key held only on the server | S | F2, L1 |
-| L3 | Organizations: list, record, people and projects, create and invite the first Director | M | L2, F5 |
-| L4 | Licenses: editor and history | M | L3 |
-| L5 | Usage: totals and per project | S | L3 |
-| L6 | Support access: grant and revoke, time-limited, with a fresh sign-in | M | L3 |
-| L7 | Product management: Settings, In force, Rules, Knowledge, Diagnostics | L | L2 |
+| L1 | Platform side: console key, acting person by email, the contract (done in pull request #40; merging needs approval) | — | Platform conversation |
+| L2 | Server-side platform client (`lib/platform.ts`, done) and an access check that explains a missing Icreon Director membership | S | F2, L1 |
+| L3 | Organizations list and New organization (kickoff Director, first-Director invitation) | M | L2, F5 |
+| L4 | License editor with the catalog by platform, history, and the paused/resumed result | M | L3 |
+| L5 | Usage: totals and per project, with Vercel notes | S | L3 |
+| L6 | Support access: 1–72 hours, Watcher or Director, fresh sign-in, link to the app | S | L3 |
+| L7 | In force (read only) | S | L2 |
+| L8 | Rules: lists by status, create, edit, activate, retire, history; confirmations on live changes | M | L2 |
+| L9 | Knowledge and proposals: lists, edit, approve, activate, reject, retire, sort, apply, export | L | L2 |
+| L10 | Diagnostics: services and orchestrators; the watchdog and test email behind buttons | S | L2 |
+| L11 | Tell the platform the screens are live, so it removes its pages and stops browser sessions | S | L3–L10 |
 
 **Done when:** every Icreon-only screen is gone from the app, and each action taken in `/admin/platform` shows the person's name in both the platform's history and the admin's audit log.
 
