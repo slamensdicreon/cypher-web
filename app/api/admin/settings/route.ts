@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { audit } from '@/lib/audit';
-import { apiUser } from '@/lib/auth/session';
+import { apiUser } from '@/lib/auth/request';
 import { SETTINGS, loadSettings, saveSetting, savedSetting, type SettingKey } from '@/lib/settings';
 
 export const runtime = 'nodejs';

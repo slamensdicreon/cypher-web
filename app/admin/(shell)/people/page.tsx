@@ -1,6 +1,6 @@
 import { Banner } from '@/components/admin/AdminNav';
 import { ROLES, ROLE_LABEL, ROLE_NOTE } from '@/lib/auth/roles';
-import { requireUser } from '@/lib/auth/session';
+import { requireUser } from '@/lib/auth/request';
 import { people } from '@/lib/people';
 
 const when = (d: Date | null) =>

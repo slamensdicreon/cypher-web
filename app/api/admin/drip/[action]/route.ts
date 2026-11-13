@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { apiUser } from '@/lib/auth/session';
+import { apiUser } from '@/lib/auth/request';
 import { audit } from '@/lib/audit';
 import { parseCsv, toContacts } from '@/lib/drip/csv';
 import { addStep, createSequence, deleteSequence, deleteStep, enroll, importContacts, runDue, saveStep, sendTest, setContactStatus, setSequence } from '@/lib/drip/engine';

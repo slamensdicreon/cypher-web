@@ -1,4 +1,4 @@
-import { apiUser } from '@/lib/auth/session';
+import { apiUser } from '@/lib/auth/request';
 import { loadSettings } from '@/lib/settings';
 import { postalAddress, senderName, SITE } from '@/lib/drip/config';
 import { renderEmail, SAMPLE } from '@/lib/drip/render';

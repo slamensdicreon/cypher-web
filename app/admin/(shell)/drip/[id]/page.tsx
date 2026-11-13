@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { Banner } from '@/components/admin/AdminNav';
 import StepEditor from '@/components/admin/StepEditor';
-import { requireUser } from '@/lib/auth/session';
+import { requireUser } from '@/lib/auth/request';
 import { loadSettings } from '@/lib/settings';
 import { canSend, checks } from '@/lib/drip/config';
 import { getSteps } from '@/lib/drip/engine';

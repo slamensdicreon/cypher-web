@@ -1,6 +1,6 @@
 import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
-import { apiUser } from '@/lib/auth/session';
+import { apiUser } from '@/lib/auth/request';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';

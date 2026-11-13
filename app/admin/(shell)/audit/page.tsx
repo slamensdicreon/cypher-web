@@ -1,5 +1,5 @@
 import { auditLog } from '@/lib/audit';
-import { requireUser } from '@/lib/auth/session';
+import { requireUser } from '@/lib/auth/request';
 
 const when = (d: Date) =>
   new Intl.DateTimeFormat('en-US', { timeZone: 'America/New_York', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', second: '2-digit' }).format(d);

@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { Banner } from '@/components/admin/AdminNav';
-import { requireUser } from '@/lib/auth/session';
+import { requireUser } from '@/lib/auth/request';
 import { loadSettings } from '@/lib/settings';
 import { checks } from '@/lib/drip/config';
 import { TEMPLATES } from '@/lib/drip/render';

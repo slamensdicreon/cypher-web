@@ -1,5 +1,6 @@
 import { Banner } from '@/components/admin/AdminNav';
-import { pinAllowed, requireUser } from '@/lib/auth/session';
+import { pinAllowed } from '@/lib/auth/session';
+import { requireUser } from '@/lib/auth/request';
 import { resendKey } from '@/lib/drip/config';
 import { SETTINGS, loadSettings, savedSetting, setting, type SettingKey } from '@/lib/settings';
 import { hasStore } from '@/lib/store';

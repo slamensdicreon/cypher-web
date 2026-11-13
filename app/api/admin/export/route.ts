@@ -1,4 +1,4 @@
-import { apiUser } from '@/lib/auth/session';
+import { apiUser } from '@/lib/auth/request';
 import { audit } from '@/lib/audit';
 import { csvResponse, toCsv } from '@/lib/csv';
 import { all, hasStore, type Outcome } from '@/lib/store';

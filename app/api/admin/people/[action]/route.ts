@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server';
 import { audit } from '@/lib/audit';
 import { isRole, type Role } from '@/lib/auth/roles';
-import { apiUser, revokeAll, sendInvite } from '@/lib/auth/session';
+import { revokeAll, sendInvite } from '@/lib/auth/session';
+import { apiUser } from '@/lib/auth/request';
 import { invite, ownersAfter, person, update } from '@/lib/people';
 
 export const runtime = 'nodejs';

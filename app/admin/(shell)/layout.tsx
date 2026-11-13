@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 import Rail, { type RailItem } from '@/components/admin/Rail';
-import { currentSession } from '@/lib/auth/session';
+import { currentSession } from '@/lib/auth/request';
 import { ROLE_LABEL, can, type Area } from '@/lib/auth/roles';
 
 export const metadata: Metadata = { title: 'Admin | Cypher', robots: { index: false, follow: false } };

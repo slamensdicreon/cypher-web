@@ -9,9 +9,29 @@ import { SESSION_COOKIE, sessionFromToken } from '@/lib/auth/session';
  * The sign-in pages are open.
  */
 const OPEN = ['/admin/sign-in', '/admin/auth/verify'];
+const isAdminPath = (p: string) => p === '/admin' || p.startsWith('/admin/') || p === '/postcards' || p.startsWith('/postcards/');
+
+/**
+ * The admin's own address. When ADMIN_HOST is set (admin.ignoranceisbliss.ai), the admin answers
+ * only there, with its own cookies: admin paths on the public site move to it, and its home page goes
+ * to /admin. (Other public pages aren't gated here, to keep the gate off public traffic; nothing links
+ * them on the admin address.) Preview and local addresses are left alone.
+ */
+function hostRedirect(req: NextRequest): NextResponse | null {
+  const adminHost = (process.env.ADMIN_HOST || '').toLowerCase().trim();
+  if (!adminHost) return null;
+  const host = (req.headers.get('host') || '').toLowerCase();
+  const path = req.nextUrl.pathname;
+  if (host === adminHost && path === '/') return NextResponse.redirect(new URL('/admin', req.url), 308);
+  if (host !== adminHost && host.endsWith('ignoranceisbliss.ai') && isAdminPath(path)) return NextResponse.redirect(`https://${adminHost}${path}${req.nextUrl.search}`, 308);
+  return null;
+}
 
 export async function proxy(req: NextRequest) {
+  const moved = hostRedirect(req);
+  if (moved) return moved;
   const path = req.nextUrl.pathname;
+  if (!isAdminPath(path)) return NextResponse.next();
   if (OPEN.some((p) => path === p || path.startsWith(p + '/'))) return NextResponse.next();
   const s = await sessionFromToken(req.cookies.get(SESSION_COOKIE)?.value).catch(() => null);
   const file = /\.(png|zip|pdf)$/i.test(path);
@@ -29,4 +49,4 @@ export async function proxy(req: NextRequest) {
   return NextResponse.redirect(url, 307);
 }
 
-export const config = { matcher: ['/admin', '/admin/:path+', '/postcards', '/postcards/:path*'] };
+export const config = { matcher: ['/', '/admin', '/admin/:path+', '/postcards', '/postcards/:path*'] };

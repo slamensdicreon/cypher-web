@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Resting } from '@/components/SiteHeader';
-import { currentSession, pinAllowed, safeNext } from '@/lib/auth/session';
+import { pinAllowed, safeNext } from '@/lib/auth/session';
+import { currentSession } from '@/lib/auth/request';
 import { hasStore } from '@/lib/store';
 
 export const metadata: Metadata = { title: 'Sign in | Cypher admin', robots: { index: false, follow: false } };

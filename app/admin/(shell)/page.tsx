@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { requireUser } from '@/lib/auth/session';
+import { requireUser } from '@/lib/auth/request';
 import { Banner } from '@/components/admin/AdminNav';
 import { dashboard, submissions, TABS, type Count, type Dashboard, type Tab } from '@/lib/adminData';
 import { RETIRED, USE_CASES } from '@/lib/postcards';

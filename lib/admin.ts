@@ -1,6 +1,6 @@
 import 'server-only';
 import { createHash, timingSafeEqual } from 'node:crypto';
-import { currentSession } from './auth/session';
+import { currentSession } from './auth/request';
 import { clientIp, keyedHash } from './keys';
 import { hasStore, migrate, sql } from './store';
 
