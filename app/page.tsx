@@ -1,14 +1,15 @@
 import type { Metadata, Viewport } from 'next';
+import Link from 'next/link';
 import Eye from '@/components/Eye';
 import SiteFooter from '@/components/SiteFooter';
 import SiteHeader from '@/components/SiteHeader';
 import Track from '@/components/Track';
-import JsonLd from '@/components/site/JsonLd';
-import { graph, homeVideo, organization, software, website } from '@/lib/schema';
 import CtaLink from '@/components/site/CtaLink';
 import DemoStart from '@/components/site/DemoStart';
 import HomeVideo from '@/components/site/HomeVideo';
-import { EyeMark } from '@/components/site/Marks';
+import JsonLd from '@/components/site/JsonLd';
+import { Arrow, Check, EyeMark } from '@/components/site/Marks';
+import { graph, homeVideo, organization, software, website } from '@/lib/schema';
 
 const description =
   'Your marketing roadmap, live in a week. Cypher’s AI specialists build, migrate and personalize on Sitecore, Optimizely or Contentful. You make three decisions.';
@@ -23,22 +24,58 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = { themeColor: '#f6f5fc', colorScheme: 'light' };
 
-const FOUR = [
-  ['Launch.', 'New sites, campaign pages, portals and storefronts, pixel for pixel. Your team edits them on day one.'],
-  ['Migrate.', 'Move platforms without losing a page or a URL. Every page checked against the original.'],
-  ['Personalize.', 'The personalization you paid for and never switched on. Audiences, variants and tests, checked first.'],
-  ['Optimize.', 'Faster, accessible and easier to find, with the reports to prove it.'],
+/** What a marketer is up against today. */
+const PAINS = [
+  ['The ticket queue.', 'Every headline change waits behind someone else’s sprint.'],
+  ['The change order.', 'Every agency scope grows the moment you ask for something new.'],
+  ['The license nobody switched on.', 'You paid for personalization. It’s still off.'],
 ] as const;
 
+/** The whole job, in three moves. */
+const MOVES = [
+  ['You bring the goal.', 'The new site, the campaign, the migration, the personalization. On the platform you already run.'],
+  ['Cypher plans it, builds it and checks it.', 'Twenty-one AI specialists, one written plan, and every page checked before you see it.'],
+  ['You make three decisions.', 'Approve the plan, answer the calls only a marketer can make, and say when it goes live.'],
+] as const;
+
+/** A roadmap's worth of work, a day each, each day a playbook. */
 const WEEK = [
-  ['Mon', 'The new site.', 'Pixel for pixel. Your team edits it on day one.'],
-  ['Tue', 'The campaign pages.', 'Built, tested and live.'],
-  ['Wed', 'The migration.', 'Six sites into one. Every URL kept.'],
-  ['Thu', 'Personalization.', 'Switched on. Finally.'],
-  ['Fri', 'Yours.', 'The idea nobody would fund. Bring it.'],
+  ['Mon', 'The new site.', 'Pixel for pixel. Your team edits it on day one.', '/playbooks/website-build'],
+  ['Tue', 'The customer portal.', 'Log in, self-serve, done.', '/playbooks/portals'],
+  ['Wed', 'The migration.', 'Six sites into one. Every URL kept.', '/playbooks/migration'],
+  ['Thu', 'Personalization.', 'Switched on. Finally.', '/playbooks/personalization'],
+  ['Fri', 'Yours.', 'The idea nobody would fund. Bring it.', '/playbooks'],
 ] as const;
 
-/** Home: Cypher, speaking to the marketer who wants to grow a brand on their platform. */
+/** Why it's safe to say yes, for the marketer and for everyone who signs it off. */
+const SAFE = [
+  ['You hold both gates.', 'Nothing launches without your sign-off, on the plan and on the finished site.'],
+  ['On brand, pixel for pixel.', 'Built in your platform, with your components. Your team edits it on day one.'],
+  ['Every change on the record.', 'Who did what, when and why, ready to export for IT, legal or your CMO.'],
+  ['Contained by design.', 'Each client in its own space. Cypher asks only for the access a job needs.'],
+  ['Yours at the end.', 'Your code, your hosting, your keys. No lock-in, no retainer.'],
+  ['Experts behind every build.', 'People who know the platforms stand behind every project.'],
+] as const;
+
+const CREDS = [
+  ['25 years', 'of engineering, written down so it’s never relearned.'],
+  ['10 years', 'of enterprise platforms, every pitfall and workaround.'],
+  ['MVPs', 'Platform MVPs built it. Yes, really.'],
+] as const;
+
+/**
+ * The customer quote. Until a real customer has said it and agreed to it, it's a draft: drafts show
+ * on preview deployments to judge the layout, and never in production. Set `real` once it's real.
+ */
+const QUOTE = {
+  text: 'We had a quarter of site work stuck in the backlog. Cypher cleared it before our next planning meeting, and my team edits every page themselves.',
+  who: 'Director of digital marketing',
+  where: 'Enterprise manufacturer',
+  real: false,
+};
+const showQuote = QUOTE.real || process.env.VERCEL_ENV === 'preview';
+
+/** Home: the problem, the promise, how it works, what you can hand it, why it's safe, and the proof. */
 export default function Page() {
   return (
     <div className="bl">
@@ -57,46 +94,67 @@ export default function Page() {
 
         <section className="bl-w bl-after">
           <HomeVideo />
+          <p className="bl-video-cap">Forty-two seconds inside Cypher: twenty-one AI specialists, one plan, <b>your three decisions.</b></p>
         </section>
 
         <section className="bl-w bl-after bl-stack">
-          <h2 className="bl-h2 bl-measure">Four things marketers wait months for. Done in days.</h2>
-          <div className="bl-four">
-            {FOUR.map(([t, b]) => (
+          <h2 className="bl-h2v">Your roadmap isn’t the problem. <b>The queue is.</b></h2>
+          <div className="bl-four three">
+            {PAINS.map(([t, b]) => (
               <div key={t}><h3>{t}</h3><p>{b}</p></div>
             ))}
           </div>
         </section>
 
         <section className="bl-band">
+          <div className="bl-w bl-sec bl-moves">
+            <div className="bl-stack-sm">
+              <h2 className="bl-h2v">You bring the goal. <b>Cypher does the rest.</b></h2>
+              <ol className="bl-art-steps">
+                {MOVES.map(([t, b], i) => (
+                  <li key={t}><span className="bl-step-n" aria-hidden="true">{i + 1}</span><span><b>{t}</b><span>{b}</span></span></li>
+                ))}
+              </ol>
+              <CtaLink href="/how-it-works" label="home-how" className="bl-more">See how it works</CtaLink>
+            </div>
+            <article className="bl-dec coral bl-moves-card" aria-label="One of your three decisions">
+              <span className="bl-yours-label"><EyeMark state="needs" size={20} />Yours<span className="bl-push">4:00</span></span>
+              <h3 className="bl-card-title">Who sees the spring offer first?</h3>
+              <p>Two audiences qualify. The offer can only lead for one.</p>
+              <span className="bl-pick"><EyeMark state="watching" size={22} /><span><b>I’d start with returning visitors.</b> They already know the brand.</span></span>
+              <span className="bl-chips" aria-hidden="true"><span className="bl-chip">Returning visitors</span><span className="bl-chip alt">New visitors</span></span>
+              <span className="bl-meta">If you say nothing: returning visitors, at 4:00.</span>
+            </article>
+          </div>
+        </section>
+
+        <section className="bl-w bl-sec bl-stack">
+          <div className="bl-head">
+            <h2 className="bl-h2v">Your annual roadmap. <b>In a week.</b></h2>
+            <p className="bl-lead">No dev queue. No change orders. No waiting for next quarter. Each day is a playbook, run the same way every time.</p>
+          </div>
+          <div className="bl-week">
+            {WEEK.map(([d, t, l, href]) => (
+              <Link key={d} href={href} className="bl-day">
+                <span className="bl-dn">{d}</span><b>{t}</b><span className="bl-dl">{l}</span>
+                <span className="bl-day-arrow" aria-hidden="true"><Arrow /></span>
+              </Link>
+            ))}
+          </div>
+          <CtaLink href="/playbooks" label="home-playbooks" className="bl-more">Explore the playbooks</CtaLink>
+        </section>
+
+        <section className="bl-band">
           <div className="bl-w bl-sec bl-stack">
             <div className="bl-head">
-              <h2 className="bl-h2">Three decisions. Not three hundred.</h2>
-              <p className="bl-lead">The calls only a marketer can make, each with my pick and a deadline. Everything technical, I handle.</p>
+              <h2 className="bl-h2v">It doesn’t replace your team. <b>It promotes it.</b></h2>
+              <p className="bl-lead">And it’s built for everyone who has to sign it off: you, IT, legal and your CMO.</p>
             </div>
-            <div className="bl-cards3">
-              <article className="bl-dec">
-                <span className="bl-dec-label c-iris">Gate 1 · The plan</span>
-                <h3 className="bl-card-title">Approve the plan?</h3>
-                <p>Every page, component and audience I’ll build, and how they look in your brand.</p>
-                <span className="bl-pick"><span><b>I’d approve.</b> After this, nothing changes without you knowing.</span></span>
-                <span className="bl-meta">If you say nothing: I wait. It’s your call.</span>
-              </article>
-              <article className="bl-dec coral">
-                <span className="bl-dec-label c-coral">A question only you can answer</span>
-                <h3 className="bl-card-title">Who sees the spring offer first?</h3>
-                <p>Two audiences qualify. The offer can only lead for one.</p>
-                <span className="bl-pick"><span><b>I’d start with returning visitors.</b> They already know the brand.</span></span>
-                <span className="bl-meta">If you say nothing: returning visitors, at 4:00.</span>
-              </article>
-              <article className="bl-dec">
-                <span className="bl-dec-label c-gold">Gate 2 · Launch</span>
-                <h3 className="bl-card-title">Ready to go live?</h3>
-                <p>Every page checked on phone, tablet and desktop, for speed and accessibility.</p>
-                <span className="bl-pick"><span><b>It’s ready.</b> Anything not done is in writing.</span></span>
-                <span className="bl-meta">If you say nothing: I wait. It’s your launch.</span>
-              </article>
-            </div>
+            <ul className="bl-hand">
+              {SAFE.map(([t, b]) => (
+                <li key={t}><Check size={22} /><span><b>{t}</b><span>{b}</span></span></li>
+              ))}
+            </ul>
           </div>
         </section>
 
@@ -104,31 +162,26 @@ export default function Page() {
           <div className="bl-w bl-proof">
             <div className="bl-proof-num">
               <span className="bl-num">$512</span>
-              <p>What it cost to run a build an agency quoted at <b>$400,000+</b>. Think about what the rest of your budget could do.</p>
+              <p>What it cost to run a build an agency quoted at <b>$400,000+</b>.</p>
               <p className="bl-fine">The cost of the run, not the price of Cypher.</p>
             </div>
-            <div>
-              <div className="bl-pillars">
-                <div><h3>Self-learning.</h3><p>Answer once and it’s a rule. I never ask twice.</p></div>
-                <div><h3>Self-healing.</h3><p>Things break. I fix them before anyone files a ticket.</p></div>
-                <div><h3>Self-enhancing.</h3><p>Every launch makes the next one better.</p></div>
-              </div>
-              <p className="bl-proof-more"><b>225,000</b> events conducted. Twenty-five years of engineering, written down.</p>
+            <ul className="bl-creds">
+              {CREDS.map(([n, l]) => (
+                <li key={n}><b>{n}</b><span>{l}</span></li>
+              ))}
+            </ul>
+            {showQuote && (
+              <figure className="bl-quote">
+                {!QUOTE.real && <span className="bl-draft">Draft quote · preview only · replace with a real customer</span>}
+                <blockquote>“{QUOTE.text}”</blockquote>
+                <figcaption>{QUOTE.who}, {QUOTE.where}</figcaption>
+              </figure>
+            )}
+            <div className="bl-proof-cta">
+              <p className="bl-h2v small">Don’t take our word for it. <b>Bring your homepage.</b></p>
+              <CtaLink href="/demo" label="home-proof" className="bl-btn bl-btn-white">Book a demo</CtaLink>
             </div>
           </div>
-        </section>
-
-        <section className="bl-w bl-sec bl-stack">
-          <div className="bl-head">
-            <h2 className="bl-h2">Your annual roadmap. In a week.</h2>
-            <p className="bl-lead">No dev queue. No change orders. No waiting for next quarter. Playbooks, not projects.</p>
-          </div>
-          <div className="bl-week">
-            {WEEK.map(([d, t, l]) => (
-              <div key={d} className="bl-day"><span className="bl-dn">{d}</span><b>{t}</b><span className="bl-dl">{l}</span></div>
-            ))}
-          </div>
-          <CtaLink href="/playbooks" label="home-playbooks" className="bl-more">Explore the playbooks</CtaLink>
         </section>
 
         <section className="bl-w bl-closing" id="join">
