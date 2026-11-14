@@ -386,3 +386,7 @@ html:has(.bl),body:has(.bl){background:var(--bliss);color:var(--ink)}
   .bl{background:#fff}
   .bl-check-group{border:0;padding:0}
 }
+
+/* Home hero: one action, and the line that answers "is this a sales call?" */
+.bl-ctas-note{flex-direction:column;align-items:center;gap:12px}
+.bl-cta-note{font-size:14px;font-weight:600;color:var(--text-3)}
