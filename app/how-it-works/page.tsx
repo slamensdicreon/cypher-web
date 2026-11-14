@@ -48,6 +48,8 @@ const QA = [
   { q: 'How much of my time does it take?', a: 'About three decisions a build, each with my pick and a deadline. The rest is on me.' },
   { q: 'Do I need a developer?', a: 'No. You bring the goals and the calls. My specialists build, and people who know the platforms stand behind every project.' },
   { q: 'Will my team be able to edit it?', a: 'On day one. Everything is built in your platform, with an editor guide written for marketers.' },
+  { q: 'What if it gets something wrong?', a: 'Every page and component is checked before it moves on, and nothing launches until you sign it off. Anything not done is listed, with the reason, in a known-gaps report.' },
+  { q: 'Will our IT and security teams approve it?', a: 'Each client works in its own space, I ask only for the access a job needs, and every action is logged and exportable. At the end, the code, hosting and keys are yours.' },
   { q: 'Which platforms?', a: 'Any enterprise platform. Sitecore, Optimizely and Contentful are home turf.' },
 ];
 
@@ -70,19 +72,10 @@ export default function HowItWorks() {
           </div>
         </section>
 
-        <section className="bl-w bl-after">
-          <div className="bl-panel bl-phases">
-            <div className="bl-phases-head">
-              <h2 className="bl-h3">Ten steps from brief to launch. Two of them are yours.</h2>
-              <span className="bl-legend">
-                <span><i className="bg-iris" />Discovery</span><span><i className="bg-blue" />Engineering</span><span><i className="bg-teal" />Content</span><span><i className="bg-gold" />Quality</span>
-              </span>
-            </div>
-            <ol className="bl-phase-list">
-              {PHASES.map(([name, team, gate]) => (
-                <li key={name}><span className={`bl-seg bg-${team}`} aria-hidden="true" /><b>{name}</b>{gate && <span className="bl-gate">Your gate</span>}</li>
-              ))}
-            </ol>
+        <section className="bl-w bl-stack bl-steps-head">
+          <div className="bl-head">
+            <h2 className="bl-h2v">Six steps from brief to launch. <b>Four of them are yours.</b></h2>
+            <p className="bl-lead">You bring the goal, approve the plan, answer about three questions and say when it goes live. Everything in between is on me.</p>
           </div>
         </section>
 
@@ -119,8 +112,8 @@ export default function HowItWorks() {
           <div className="bl-step">
             <div className="bl-step-copy">
               <span className="bl-step-n" aria-hidden="true">3</span>
-              <h3>Twenty-one specialists. One voice.</h3>
-              <p>Content, engineering and quality, each with a lead, checking each other’s work. You never chase a developer or wait in a queue. You talk to me.</p>
+              <h3>My team builds it, and checks every page.</h3>
+              <p>Twenty-one specialists in content, engineering and quality, each with a lead, checking each other’s work before anything moves on. You never chase a developer or wait in a queue. You talk to me.</p>
             </div>
             <ul className="bl-team">
               {TEAM.map(([ini, name, role, team]) => (
@@ -149,8 +142,26 @@ export default function HowItWorks() {
           <div className="bl-step">
             <div className="bl-step-copy">
               <span className="bl-step-n" aria-hidden="true">5</span>
-              <h3>You edit everything on day one.</h3>
-              <p>Every page is built in your platform, the way your team already works. Change a headline, swap an image, launch a variant: no ticket, no developer.</p>
+              <h3>You say when it goes live.</h3>
+              <p>Before launch you get the evidence, page by page: parity with the old site, speed and accessibility, and anything not done, in writing. Nothing goes live until you sign it off.</p>
+            </div>
+            <div className="bl-panel" aria-hidden="true">
+              <span className="bl-doc-head"><b>Ready for launch</b><span className="bl-meta">Spring launch · checked page by page</span></span>
+              <ul className="bl-list">
+                <li><Check />Every page checked against the original</li>
+                <li><Check />Right on phone, tablet and desktop</li>
+                <li><Check />Speed and accessibility on every key page</li>
+                <li><Check />Anything not done, listed with the reason</li>
+              </ul>
+              <span className="bl-row-end"><span className="bl-chip">Go live</span><span className="bl-dec-label c-gold">Your sign-off</span></span>
+            </div>
+          </div>
+
+          <div className="bl-step">
+            <div className="bl-step-copy">
+              <span className="bl-step-n" aria-hidden="true">6</span>
+              <h3>Your team edits it on day one.</h3>
+              <p>Every page is built in your platform, the way your team already works. Change a headline, swap an image, launch a variant: no ticket, no developer. Every change stays on the record.</p>
             </div>
             <div className="bl-panel" aria-hidden="true">
               <span className="bl-doc-head row"><b>Spring hero</b><span className="bl-meta">Sitecore · Optimizely · Contentful</span></span>
@@ -160,26 +171,13 @@ export default function HowItWorks() {
               <span className="bl-row-end"><span className="bl-chip">Publish</span><span className="bl-chip alt">Preview</span></span>
             </div>
           </div>
-
-          <div className="bl-step">
-            <div className="bl-step-copy">
-              <span className="bl-step-n" aria-hidden="true">6</span>
-              <h3>You always know. Without a status meeting.</h3>
-              <p>Where it stands, what’s live and what I settled without you. Every change is on the record, so you can show anyone exactly what happened.</p>
-            </div>
-            <div className="bl-panel roomy">
-              <span className="bl-said"><EyeMark state="resting" size={56} /><span className="bl-voice small">On pace. <b>Nothing needs you</b> until Thursday.</span></span>
-              <span className="bl-track" aria-hidden="true">{PHASES.map(([name, team], i) => <span key={name} className={i < 5 ? `bg-${team}` : ''} />)}</span>
-              <span className="bl-meta">Halfway to launch. Eleven questions settled without you this week.</span>
-            </div>
-          </div>
         </section>
 
         <section className="bl-band">
           <div className="bl-w bl-sec bl-stack">
             <div className="bl-head">
-              <h2 className="bl-h2">One sentence, or every detail.</h2>
-              <p className="bl-lead">Most days you want two things: is it on track, and what needs you. When your CMO wants the detail, it’s one tap away.</p>
+              <h2 className="bl-h2v">You always know. <b>Without a status meeting.</b></h2>
+              <p className="bl-lead">Most days you want two things: is it on track, and what needs you. When your CMO wants every detail, it’s one tap away.</p>
             </div>
             <div className="bl-modes">
               <div className="bl-mode light">
@@ -200,15 +198,34 @@ export default function HowItWorks() {
         </section>
 
         <section className="bl-w bl-sec bl-stack">
-          <h2 className="bl-h2">When it’s done, it’s yours.</h2>
-          <ul className="bl-hand">
-            {HANDOVER.map(([t, b]) => (
-              <li key={t}><Check size={22} /><span><b>{t}</b><span>{b}</span></span></li>
-            ))}
-          </ul>
+          <div className="bl-head">
+            <h2 className="bl-h2v">Under the hood: <b>ten phases, two gates.</b></h2>
+            <p className="bl-lead">For the curious, and for IT. Every project runs the same ten phases from a playbook, each owned by a team. The two gates are yours: the plan, and the launch.</p>
+          </div>
+          <div className="bl-panel bl-phases">
+            <span className="bl-legend">
+              <span><i className="bg-iris" />Discovery</span><span><i className="bg-blue" />Engineering</span><span><i className="bg-teal" />Content</span><span><i className="bg-gold" />Quality</span>
+            </span>
+            <ol className="bl-phase-list">
+              {PHASES.map(([name, team, gate]) => (
+                <li key={name}><span className={`bl-seg bg-${team}`} aria-hidden="true" /><b>{name}</b>{gate && <span className="bl-gate">Your gate</span>}</li>
+              ))}
+            </ol>
+          </div>
         </section>
 
-        <section className="bl-w bl-after bl-faq-sec">
+        <section className="bl-band">
+          <div className="bl-w bl-sec bl-stack">
+            <h2 className="bl-h2v">When it’s done, <b>it’s yours.</b></h2>
+            <ul className="bl-hand">
+              {HANDOVER.map(([t, b]) => (
+                <li key={t}><Check size={22} /><span><b>{t}</b><span>{b}</span></span></li>
+              ))}
+            </ul>
+          </div>
+        </section>
+
+        <section className="bl-w bl-sec bl-faq-sec">
           <h2 className="bl-h2">Questions people ask.</h2>
           <Faq items={QA} />
         </section>

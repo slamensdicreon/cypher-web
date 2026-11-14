@@ -21,6 +21,13 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = { themeColor: '#f6f5fc', colorScheme: 'light' };
 
+/** Why a playbook, for a marketer who has lived through projects. */
+const WHY = [
+  ['Predictable.', 'The same steps and the same checks, every time. You know what you’ll get before it starts.'],
+  ['No change orders.', 'The playbook is the scope. When you want more, run another one.'],
+  ['Better every launch.', 'What worked goes into the next version. Yours never changes mid-flight.'],
+] as const;
+
 const ANATOMY = [
   ['The steps and sign-offs', 'From brief to launch, with the two moments you approve.'],
   ['The team', 'The specialists the work needs, each with a lead and someone checking their work.'],
@@ -49,9 +56,18 @@ export default function Playbooks() {
         </section>
 
         <section className="bl-w bl-after bl-stack">
+          <h2 className="bl-h2v">Why a playbook <b>beats a project.</b></h2>
+          <div className="bl-four">
+            {WHY.map(([t, b]) => (
+              <div key={t}><h3>{t}</h3><p>{b}</p></div>
+            ))}
+          </div>
+        </section>
+
+        <section className="bl-w bl-after bl-stack">
           <div className="bl-head">
-            <h2 className="bl-h2">Pick an outcome. There’s a playbook for it.</h2>
-            <p className="bl-lead">Run several at once: the migration on Monday, personalization on Thursday.</p>
+            <h2 className="bl-h2v">Pick an outcome. <b>There’s a playbook for it.</b></h2>
+            <p className="bl-lead">Run several at once: the migration on Monday, personalization on Thursday. Not sure where to start? Start with the homepage rebuild: it’s the one we show you in the demo.</p>
           </div>
           <div className="bl-pb-grid">
             {PLAYBOOKS.map((p) => (
@@ -73,7 +89,7 @@ export default function Playbooks() {
         <section className="bl-band">
           <div className="bl-w bl-sec bl-split">
             <div className="bl-head">
-              <h2 className="bl-h2">Everything your best launch ever learned. Written down.</h2>
+              <h2 className="bl-h2v">Everything your best launch ever learned. <b>Written down.</b></h2>
               <p className="bl-lead">A playbook isn’t a template. It’s how the work gets done, who does it, how it’s checked, and what to watch for on your platform.</p>
             </div>
             <ol className="bl-toc">
@@ -86,7 +102,7 @@ export default function Playbooks() {
 
         <section className="bl-w bl-sec bl-stack">
           <div className="bl-head">
-            <h2 className="bl-h2">Every launch makes the next one better.</h2>
+            <h2 className="bl-h2v">Every launch makes <b>the next one better.</b></h2>
             <p className="bl-lead">What worked goes into the playbook. Your project stays on the version it started with, so nothing moves under you, and your next launch starts smarter.</p>
           </div>
           <div className="bl-loop">

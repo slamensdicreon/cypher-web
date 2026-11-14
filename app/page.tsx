@@ -85,9 +85,12 @@ export default function Page() {
         <section className="bl-w bl-hero">
           <Eye />
           <h1 className="bl-voice-h1">Your whole marketing roadmap, live in a week. <b>You make three decisions.</b></h1>
-          <p className="bl-hero-p">Sitecore, Optimizely, Contentful or whatever you run. Your team edits it on day one.</p>
-          <div className="bl-ctas bl-ctas-note">
-            <CtaLink href="/demo" label="home-hero" className="bl-btn bl-btn-ink">Book a demo</CtaLink>
+          <p className="bl-hero-p">Sitecore, Optimizely, Contentful or whatever you run.<br />Your team edits it on day one.</p>
+          <div className="bl-hero-actions">
+            <div className="bl-ctas">
+              <CtaLink href="/demo" label="home-hero" className="bl-btn bl-btn-ink">Book a demo</CtaLink>
+              <CtaLink href="/how-it-works" label="home-how-hero" className="bl-btn bl-btn-ghost">How it works</CtaLink>
+            </div>
             <span className="bl-cta-note">30 minutes. Your platform. No slides.</span>
           </div>
         </section>

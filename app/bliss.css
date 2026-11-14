@@ -410,3 +410,8 @@ html:has(.bl),body:has(.bl){background:var(--bliss);color:var(--ink)}
 .bl-draft{align-self:flex-start;font-size:13px;font-weight:700;color:var(--ink);background:#ffd6cc;border-radius:999px;padding:5px 12px}
 .bl-proof-cta{grid-column:1/-1;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:20px 32px;padding-top:clamp(28px,3vw,40px);border-top:1px solid var(--ink-3)}
 .bl-proof-cta .bl-h2v{color:#fff;max-width:720px}
+
+/* Home hero: the two actions, then the line that answers "is this a sales call?" */
+.bl-hero-actions{display:flex;flex-direction:column;align-items:center;gap:12px}
+@media (max-width:560px){.bl-hero-actions{width:100%}}
+.bl-steps-head{padding-bottom:clamp(20px,2.4vw,32px)}
