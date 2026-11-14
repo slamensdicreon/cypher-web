@@ -1,0 +1,167 @@
+import type { Term } from '@/lib/content/types';
+
+/** The words a marketer meets in a website build, in plain language, alphabetical. */
+export const TERMS: Term[] = [
+  {
+    slug: 'a-b-n-test',
+    term: 'A/B/n test',
+    def: 'An experiment that shows different versions of a page or element to visitors at random and measures which performs best. An A/B test compares two versions; an A/B/n test compares three or more.',
+    see: ['/answers/how-to-run-ab-tests-in-your-cms', '/playbooks/personalization'],
+  },
+  {
+    slug: 'accessibility',
+    term: 'Accessibility (WCAG)',
+    def: 'Making a site usable by people with disabilities, including people who use screen readers, keyboards or magnification. The Web Content Accessibility Guidelines (WCAG) set the standard at three levels, A, AA and AAA; most organizations aim for AA.',
+    see: ['/answers/how-to-check-accessibility-before-launch', '/playbooks/optimization'],
+  },
+  {
+    slug: 'audience',
+    term: 'Audience',
+    def: 'A group of visitors a site can recognize and treat differently, such as returning visitors, people in one region or people who arrived from a campaign. Audiences are the starting point for personalization.',
+    see: ['/answers/why-isnt-our-personalization-switched-on', '/resources/personalization-readiness-checklist'],
+  },
+  {
+    slug: 'axe',
+    term: 'axe',
+    def: 'An open-source tool that scans web pages for accessibility problems against WCAG rules. It finds many issues automatically, but not all of them, so checks by a person still matter.',
+    see: ['/answers/how-to-check-accessibility-before-launch'],
+  },
+  {
+    slug: 'blueprint',
+    term: 'Blueprint',
+    def: 'In Cypher, the plan of record written at the end of discovery: every component, template, page and media item the team will build, and how. You approve it once, at the first gate; after that, nothing changes without you knowing.',
+    see: ['/how-it-works', '/glossary#gate'],
+  },
+  {
+    slug: 'canonical-tag',
+    term: 'Canonical tag',
+    def: 'A tag in a page’s code that tells search engines which URL is the main version of that page, so duplicate or near-identical pages don’t compete with each other in search results.',
+    see: ['/answers/how-to-keep-seo-rankings-during-a-migration'],
+  },
+  {
+    slug: 'component',
+    term: 'Component',
+    def: 'A reusable building block of a page, such as a hero banner, a card grid or a form. Developers build each component once; marketers arrange components to make pages.',
+    see: ['/glossary#component-catalog', '/playbooks/website-build'],
+  },
+  {
+    slug: 'component-catalog',
+    term: 'Component catalog',
+    def: 'A reference of every component on a site: what it’s for, its fields, its variations and where it’s used. Cypher hands one over with every build.',
+    see: ['/how-it-works', '/playbooks/design-systems'],
+  },
+  {
+    slug: 'composable',
+    term: 'Composable',
+    def: 'An approach where a website is assembled from separate services, such as a CMS, search, commerce and personalization, connected through APIs and each chosen on its own merits.',
+    see: ['/answers/what-is-a-headless-cms'],
+  },
+  {
+    slug: 'content-model',
+    term: 'Content model',
+    def: 'The structure of content in a CMS: the content types (such as article, product or event), their fields and how they relate to each other. A clear content model makes content easy to edit and reuse.',
+    see: ['/answers/what-is-a-headless-cms', '/playbooks/website-build'],
+  },
+  {
+    slug: 'content-parity',
+    term: 'Content parity',
+    def: 'How closely a migrated site matches the content of the original, page by page: the same pages, text, images, links and metadata. Cypher’s migration playbook delivers content parity of 98% or better.',
+    see: ['/answers/what-is-content-parity', '/playbooks/migration'],
+  },
+  {
+    slug: 'core-web-vitals',
+    term: 'Core Web Vitals',
+    def: 'Google’s measures of real-world page experience: how quickly the main content loads, how quickly the page responds when someone interacts with it, and how stable the layout stays while it loads.',
+    see: ['/playbooks/optimization', '/glossary#lighthouse'],
+  },
+  {
+    slug: 'design-system',
+    term: 'Design system',
+    def: 'A shared set of components, design rules and brand settings such as colors, type and spacing, which keeps sites consistent and lets teams build new pages and sites faster.',
+    see: ['/answers/one-design-system-for-many-brand-sites', '/playbooks/design-systems'],
+  },
+  {
+    slug: 'dxp',
+    term: 'DXP (digital experience platform)',
+    def: 'A suite that combines content management with tools such as personalization, testing, search, analytics and commerce. Sitecore and Optimizely are examples.',
+    see: ['/platforms/sitecore', '/platforms/optimizely'],
+  },
+  {
+    slug: 'editor-guide',
+    term: 'Editor guide',
+    def: 'A plain-language manual showing a team how to edit every page and component on their site. Every Cypher build comes with one, so marketers can edit on day one.',
+    see: ['/how-it-works'],
+  },
+  {
+    slug: 'gate',
+    term: 'Gate',
+    def: 'In Cypher, a point where the work stops until you approve it. There are two: the Blueprint at the end of discovery and UAT at the end of the build. Nothing moves past a gate without you.',
+    see: ['/how-it-works', '/answers/what-does-a-marketer-decide-in-a-website-build'],
+  },
+  {
+    slug: 'headless-cms',
+    term: 'Headless CMS',
+    def: 'A content management system that stores content and delivers it through an API without controlling how it’s displayed, so the same content can feed a website, an app and other channels.',
+    see: ['/answers/what-is-a-headless-cms', '/platforms/contentful'],
+  },
+  {
+    slug: 'known-gaps-report',
+    term: 'Known-gaps report',
+    def: 'In Cypher, a written list delivered at handover of anything not done, and why. It means no surprises in month three.',
+    see: ['/how-it-works'],
+  },
+  {
+    slug: 'lighthouse',
+    term: 'Lighthouse',
+    def: 'A free tool from Google that scores a web page on performance, accessibility, SEO and best practices, and explains what to fix.',
+    see: ['/playbooks/optimization', '/answers/how-to-check-accessibility-before-launch'],
+  },
+  {
+    slug: 'page-template',
+    term: 'Page template',
+    def: 'A reusable layout for one type of page, such as an article or a product page, defining which components appear and where. Templates keep pages consistent and quick to create.',
+    see: ['/glossary#component', '/playbooks/website-build'],
+  },
+  {
+    slug: 'personalization',
+    term: 'Personalization',
+    def: 'Showing different content to different audiences, such as a tailored hero for returning visitors or an offer by region, based on rules or data.',
+    see: ['/answers/why-isnt-our-personalization-switched-on', '/playbooks/personalization'],
+  },
+  {
+    slug: 'playbook',
+    term: 'Playbook',
+    def: 'In Cypher, the written method for an outcome: the phases and gates, the team, the definition of done, the checks, the platform knowledge and your rules. Every build follows one, and every build improves the next version.',
+    see: ['/playbooks'],
+  },
+  {
+    slug: 'redirect-301',
+    term: 'Redirect (301)',
+    def: 'An instruction that sends visitors and search engines from an old URL to a new one. A 301 redirect means the move is permanent, which tells search engines to treat the new address as the page’s home.',
+    see: ['/answers/how-to-keep-seo-rankings-during-a-migration', '/glossary#redirect-map'],
+  },
+  {
+    slug: 'redirect-map',
+    term: 'Redirect map',
+    def: 'A list pairing every old URL with its new destination, used to set up redirects when a site moves platforms or changes its structure.',
+    see: ['/resources/redirect-map-template', '/answers/how-to-keep-seo-rankings-during-a-migration'],
+  },
+  {
+    slug: 'uat',
+    term: 'UAT (user acceptance testing)',
+    def: 'The final check, before launch, that a site does what was agreed. In Cypher, UAT is the second gate, and you sign it off.',
+    see: ['/answers/what-should-a-website-launch-checklist-include', '/glossary#gate'],
+  },
+  {
+    slug: 'variant',
+    term: 'Variant',
+    def: 'One version of a page or element, shown to a particular audience or as part of a test. A personalized page might have one variant per audience.',
+    see: ['/glossary#personalization', '/glossary#a-b-n-test'],
+  },
+  {
+    slug: 'visual-parity',
+    term: 'Visual parity',
+    def: 'How closely a rebuilt page matches the look of the original at each screen size. Cypher checks visual parity at three breakpoints: phone, tablet and desktop.',
+    see: ['/answers/what-is-content-parity', '/playbooks/migration'],
+  },
+];

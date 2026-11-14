@@ -10,6 +10,8 @@ const ITEMS = [
   { href: '/', name: 'Home', line: 'Your whole marketing roadmap, live in a week.' },
   { href: '/how-it-works', name: 'How it works', line: 'Here’s how we work together. You stay in charge of the brand.' },
   { href: '/playbooks', name: 'Playbooks', line: 'Pick an outcome. There’s a playbook for it.' },
+  { href: '/platforms', name: 'Platforms', line: 'Sitecore, Optimizely, Contentful, or whatever you run.' },
+  { href: '/answers', name: 'Answers', line: 'Straight answers to what marketers ask about builds, migrations and launches.' },
 ] as const;
 
 /**
@@ -100,6 +102,8 @@ export default function SiteMenu() {
             <div className="bl-menu-foot">
               <span>Ignorance is bliss.</span>
               <span className="bl-menu-legal">
+                <Link href="/glossary" onClick={close}>Glossary</Link>
+                <Link href="/resources" onClick={close}>Checklists</Link>
                 <Link href="/terms" onClick={close}>Terms of Use</Link>
                 <Link href="/privacy" onClick={close}>Privacy</Link>
               </span>

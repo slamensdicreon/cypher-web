@@ -4,12 +4,14 @@ import InterestForm from '@/components/InterestForm';
 import SiteFooter from '@/components/SiteFooter';
 import SiteHeader from '@/components/SiteHeader';
 import Track from '@/components/Track';
+import JsonLd from '@/components/site/JsonLd';
+import { faqPage, graph } from '@/lib/schema';
 import { Faq, PageHero, Steps } from '@/components/site/parts';
 
 const description = 'Book a demo of Cypher. We point it at your site, on your platform, and you watch it work: Sitecore, Optimizely, Contentful or any enterprise platform.';
 
 export const metadata: Metadata = {
-  title: 'Book a demo | Cypher',
+  title: { absolute: 'Book a demo: watch Cypher rebuild your homepage' },
   description,
   alternates: { canonical: '/demo' },
   openGraph: { type: 'website', url: '/demo', siteName: 'Cypher', locale: 'en_US', title: 'Book a demo of Cypher', description },
@@ -63,6 +65,7 @@ export default function Demo() {
       </main>
       <SiteFooter />
       <Track />
+      <JsonLd data={graph(faqPage(QA))} />
     </div>
   );
 }

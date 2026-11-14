@@ -2,15 +2,17 @@ import type { Metadata, Viewport } from 'next';
 import SiteFooter from '@/components/SiteFooter';
 import SiteHeader from '@/components/SiteHeader';
 import Track from '@/components/Track';
+import JsonLd from '@/components/site/JsonLd';
+import { contentPage, faqPage, graph } from '@/lib/schema';
 import CtaLink from '@/components/site/CtaLink';
 import { Check, EyeMark } from '@/components/site/Marks';
 import { Breadcrumbs, Faq } from '@/components/site/parts';
 
 const description =
-  'How Cypher works with marketers: tell it what you want to grow, approve the plan once, answer about three questions, and edit everything on day one. On Sitecore, Optimizely, Contentful or any enterprise platform.';
+  'How Cypher works with marketers: approve the plan once, answer about three questions and edit everything on day one. On Sitecore, Optimizely, Contentful and more.';
 
 export const metadata: Metadata = {
-  title: 'How it works | Cypher',
+  title: { absolute: 'How Cypher works | AI-run website projects, start to launch' },
   description,
   alternates: { canonical: '/how-it-works' },
   openGraph: { type: 'website', url: '/how-it-works', siteName: 'Cypher', locale: 'en_US', title: 'How Cypher works', description },
@@ -221,6 +223,7 @@ export default function HowItWorks() {
 
       <SiteFooter />
       <Track />
+      <JsonLd data={graph(contentPage({ path: '/how-it-works', title: 'How Cypher works', description, updated: '2026-11-14' }), faqPage(QA))} />
     </div>
   );
 }

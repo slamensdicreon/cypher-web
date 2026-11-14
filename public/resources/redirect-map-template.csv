@@ -1,0 +1,6 @@
+old_url,new_url,status_code,type,owner,notes,checked
+https://www.example.com/about-us.html,https://www.example.com/about,301,page,Marketing,Example row: page renamed,no
+https://www.example.com/news/2021/spring-sale,https://www.example.com/news/spring-sale,301,page,Content,Example row: date removed from the URL,no
+https://www.example.com/products/widgets/,https://www.example.com/products/widgets,301,category,Ecommerce,Example row: trailing slash dropped,no
+https://www.example.com/files/brochure-2022.pdf,https://www.example.com/resources/brochure,301,document,Marketing,Example row: PDF replaced by a page,no
+https://www.example.com/team-old,https://www.example.com/about,301,page,Marketing,Example row: retired page sent to its closest match,no

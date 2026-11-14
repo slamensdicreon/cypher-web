@@ -32,6 +32,10 @@ export const metadata: Metadata = {
   twitter: { card: 'summary_large_image', title, description },
   robots: process.env.ALLOW_INDEXING ? { index: true, follow: true } : { index: false, follow: false },
   formatDetection: { telephone: false, email: false, address: false },
+  verification: {
+    ...(process.env.GOOGLE_SITE_VERIFICATION ? { google: process.env.GOOGLE_SITE_VERIFICATION } : {}),
+    ...(process.env.BING_SITE_VERIFICATION ? { other: { 'msvalidate.01': process.env.BING_SITE_VERIFICATION } } : {}),
+  },
 };
 
 export const viewport: Viewport = {

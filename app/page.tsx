@@ -1,12 +1,25 @@
-import type { Viewport } from 'next';
+import type { Metadata, Viewport } from 'next';
 import Eye from '@/components/Eye';
 import SiteFooter from '@/components/SiteFooter';
 import SiteHeader from '@/components/SiteHeader';
 import Track from '@/components/Track';
+import JsonLd from '@/components/site/JsonLd';
+import { graph, homeVideo, organization, software, website } from '@/lib/schema';
 import CtaLink from '@/components/site/CtaLink';
 import DemoStart from '@/components/site/DemoStart';
 import HomeVideo from '@/components/site/HomeVideo';
 import { EyeMark } from '@/components/site/Marks';
+
+const description =
+  'Twenty-one AI specialists and the mind that runs them. Cypher builds, migrates, personalizes and optimizes sites on Sitecore, Optimizely, Contentful and more.';
+
+export const metadata: Metadata = {
+  title: { absolute: 'Cypher | AI website builds, migrations and personalization' },
+  description,
+  alternates: { canonical: '/' },
+  openGraph: { type: 'website', url: '/', siteName: 'Cypher', locale: 'en_US', title: 'Ignorance is bliss.', description },
+  twitter: { card: 'summary_large_image', title: 'Ignorance is bliss.', description },
+};
 
 export const viewport: Viewport = { themeColor: '#f6f5fc', colorScheme: 'light' };
 
@@ -128,6 +141,7 @@ export default function Page() {
 
       <SiteFooter />
       <Track />
+      <JsonLd data={graph(organization(), website(), software(), homeVideo())} />
     </div>
   );
 }

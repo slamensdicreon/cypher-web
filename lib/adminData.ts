@@ -9,6 +9,26 @@ import { hasStore, migrate, sql, type Row } from './store';
 const TZ = 'America/New_York';
 
 export type Count = { label: string; n: number };
+
+/**
+ * AI answer engines, by the host a visit comes from or the utm_source on the link (ChatGPT tags the
+ * links it cites with utm_source=chatgpt.com).
+ */
+export const AI_ENGINES: Record<string, string> = {
+  'chatgpt.com': 'ChatGPT',
+  'chat.openai.com': 'ChatGPT',
+  'openai.com': 'ChatGPT',
+  'perplexity.ai': 'Perplexity',
+  'copilot.microsoft.com': 'Copilot',
+  'gemini.google.com': 'Gemini',
+  'bard.google.com': 'Gemini',
+  'claude.ai': 'Claude',
+  'meta.ai': 'Meta AI',
+  'chat.deepseek.com': 'DeepSeek',
+  'grok.com': 'Grok',
+  'you.com': 'You.com',
+  'phind.com': 'Phind',
+};
 export type Day = { day: string; visits: number; views: number };
 export type CardStat = { card: string; scans: number; ok: number; declined: number };
 
@@ -24,6 +44,8 @@ export type Dashboard = {
   declined: number;
   allTime: { ok: number; declined: number; visits: number };
   sources: Count[];
+  /** Visits sent by AI answer engines, by engine. */
+  ai: Count[];
   countries: Count[];
   devices: Count[];
   pages: Count[];
@@ -38,7 +60,8 @@ export async function dashboard(days: number): Promise<Dashboard | null> {
   const since = db`now() - make_interval(days => ${days})`;
   const dayVisitor = db`((at at time zone ${TZ})::date || ':' || visitor)`;
 
-  const [daily, totals, subs, allTime, sources, countries, devices, pages] = await Promise.all([
+  const aiHosts = Object.keys(AI_ENGINES);
+  const [daily, totals, subs, allTime, sources, countries, devices, pages, ai] = await Promise.all([
     db<{ day: string; visits: string; views: string }[]>`
       with d as (
         select generate_series((now() at time zone ${TZ})::date - ${days - 1}::int, (now() at time zone ${TZ})::date, interval '1 day')::date as day
@@ -76,6 +99,10 @@ export async function dashboard(days: number): Promise<Dashboard | null> {
       from events where kind = 'view' and at > ${since} group by 1 order by n desc`,
     db<{ label: string; n: string }[]>`
       select path as label, count(*) as n from events where kind = 'view' and at > ${since} group by 1 order by n desc limit 8`,
+    db<{ label: string; n: string }[]>`
+      select case when utm in ${db(aiHosts)} then utm else ref end as label, count(distinct ${dayVisitor}) as n
+      from events where kind = 'view' and at > ${since} and (ref in ${db(aiHosts)} or utm in ${db(aiHosts)})
+      group by 1`,
   ]);
 
   const t = totals[0] ?? {};
@@ -94,6 +121,15 @@ export async function dashboard(days: number): Promise<Dashboard | null> {
     declined: Object.entries(by).filter(([k]) => k !== 'ok').reduce((a, [, v]) => a + v, 0),
     allTime: { ok: num(allTime[0]?.ok), declined: num(allTime[0]?.declined), visits: num(allTime[0]?.visits) },
     sources: counts(sources),
+    ai: Object.entries(
+      ai.reduce<Record<string, number>>((acc, r) => {
+        const name = AI_ENGINES[r.label] ?? r.label;
+        acc[name] = (acc[name] ?? 0) + num(r.n);
+        return acc;
+      }, {}),
+    )
+      .map(([label, n]) => ({ label, n }))
+      .sort((a, b) => b.n - a.n),
     countries: counts(countries),
     devices: counts(devices),
     pages: counts(pages),

@@ -1,14 +1,18 @@
 import type { MetadataRoute } from 'next';
+import { entries } from '@/lib/content';
+import { SITE_URL } from '@/lib/site';
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.ignoranceisbliss.ai';
-
+/** Every public page, with when it was last reviewed where we know. */
 export default function sitemap(): MetadataRoute.Sitemap {
+  const top: Record<string, number> = { '/': 1, '/how-it-works': 0.9, '/playbooks': 0.9, '/platforms': 0.9, '/demo': 0.9, '/answers': 0.8, '/resources': 0.7, '/glossary': 0.7 };
   return [
-    { url: `${siteUrl}/`, changeFrequency: 'weekly', priority: 1 },
-    { url: `${siteUrl}/how-it-works`, changeFrequency: 'monthly', priority: 0.9 },
-    { url: `${siteUrl}/playbooks`, changeFrequency: 'monthly', priority: 0.9 },
-    { url: `${siteUrl}/demo`, changeFrequency: 'monthly', priority: 0.9 },
-    { url: `${siteUrl}/privacy`, changeFrequency: 'yearly', priority: 0.3 },
-    { url: `${siteUrl}/terms`, changeFrequency: 'monthly', priority: 0.3 },
+    ...entries().map((e) => ({
+      url: `${SITE_URL}${e.path === '/' ? '/' : e.path}`,
+      ...(e.updated ? { lastModified: e.updated } : {}),
+      changeFrequency: (e.path === '/' ? 'weekly' : 'monthly') as 'weekly' | 'monthly',
+      priority: top[e.path] ?? 0.7,
+    })),
+    { url: `${SITE_URL}/privacy`, changeFrequency: 'yearly', priority: 0.3 },
+    { url: `${SITE_URL}/terms`, changeFrequency: 'yearly', priority: 0.3 },
   ];
 }

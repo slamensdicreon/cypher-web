@@ -5,12 +5,14 @@ import Track from '@/components/Track';
 import CtaLink from '@/components/site/CtaLink';
 import { EyeMark } from '@/components/site/Marks';
 import { Breadcrumbs } from '@/components/site/parts';
+import Link from 'next/link';
+import { PLAYBOOKS } from '@/lib/content';
 
 const description =
-  'Cypher works from playbooks, not blank pages: the steps, the team, the checks and every lesson from the last launch, written down. New sites, migrations, portals, personalization, optimization and more, on any enterprise platform.';
+  'Cypher works from playbooks, not blank pages: new sites, migrations, portals, personalization and optimization, run the same way every time, on any platform.';
 
 export const metadata: Metadata = {
-  title: 'Playbooks | Cypher',
+  title: { absolute: 'Playbooks for website builds, migrations and personalization' },
   description,
   alternates: { canonical: '/playbooks' },
   openGraph: { type: 'website', url: '/playbooks', siteName: 'Cypher', locale: 'en_US', title: 'Playbooks, not projects', description },
@@ -18,16 +20,6 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = { themeColor: '#f6f5fc', colorScheme: 'light' };
-
-const PLAYBOOKS = [
-  { name: 'Website build', line: 'A new site, pixel for pixel. Your team edits it on day one.', gets: ['Every page and template, in your brand', 'An editor guide and component catalog', 'Speed and accessibility reports'] },
-  { name: 'Migration', line: 'Move platforms, or merge six sites into one. Nothing left behind.', gets: ['Content parity of 98% or better', 'Every old URL redirected', 'Looks right on phone, tablet and desktop'] },
-  { name: 'Customer and member portals', line: 'Log in, self-serve, done. The portal your customers keep asking for.', gets: ['Journeys working end to end, by persona', 'Sign-in and profiles wired to your systems', 'Tested on real accounts'] },
-  { name: 'Personalization', line: 'The personalization you paid for and never switched on.', gets: ['Audiences and page variants', 'A/B/n tests set up in your platform', 'Each one checked before you see it'] },
-  { name: 'Optimization', line: 'Faster, accessible, easier to find, with the reports to prove it.', gets: ['Speed and accessibility on every key page', 'SEO fields, sitemap and redirects', 'Error pages that help'] },
-  { name: 'Design systems and brand sites', line: 'Thirty brand sites on one design system. Yes, thirty.', gets: ['One component library, every brand', 'A theme per brand, rules for all', 'New sites from the system, not from scratch'] },
-  { name: 'Storefronts and intranets', line: 'The two projects that always slip a quarter. They won’t.', gets: ['Shopping or employee journeys end to end', 'Content models your teams can run', 'A handover your people can own'] },
-] as const;
 
 const ANATOMY = [
   ['The steps and sign-offs', 'From brief to launch, with the two moments you approve.'],
@@ -62,19 +54,17 @@ export default function Playbooks() {
             <p className="bl-lead">Run several at once: the migration on Monday, personalization on Thursday.</p>
           </div>
           <div className="bl-pb-grid">
-            <article className="bl-pb demo">
-              <span className="bl-yours-label"><EyeMark state="needs" size={20} />The one in the demo</span>
-              <h3>Homepage rebuild</h3>
-              <p>Your homepage, rebuilt on your platform, while you watch.</p>
-              <ul><li>Your real homepage, rebuilt</li><li>The replay of every step</li><li>What the rest would take</li></ul>
-              <CtaLink href="/demo" label="playbooks-card" className="bl-pb-foot bl-pb-cta">Book a demo</CtaLink>
-            </article>
             {PLAYBOOKS.map((p) => (
-              <article key={p.name} className="bl-pb">
-                <h3>{p.name}</h3>
-                <p>{p.line}</p>
+              <article key={p.slug} className={`bl-pb${p.demo ? ' demo' : ''}`}>
+                {p.demo && <span className="bl-yours-label"><EyeMark state="needs" size={20} />The one in the demo</span>}
+                <h3><Link className="bl-pb-link" href={`/playbooks/${p.slug}`}>{p.name}</Link></h3>
+                <p>{p.card}</p>
                 <ul>{p.gets.map((g) => <li key={g}>{g}</li>)}</ul>
-                <span className="bl-pb-foot">{PLATFORMS}</span>
+                {p.demo ? (
+                  <CtaLink href="/demo" label="playbooks-card" className="bl-pb-foot bl-pb-cta">Book a demo</CtaLink>
+                ) : (
+                  <span className="bl-pb-foot">{PLATFORMS}</span>
+                )}
               </article>
             ))}
           </div>

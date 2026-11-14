@@ -296,6 +296,7 @@ export default async function Admin({ searchParams }: { searchParams: Promise<Se
               </ul>
             </section>
             <Ranked title="Where visits come from" rows={d.sources} />
+            <Ranked title="From AI answer engines" rows={d.ai} empty="None yet. ChatGPT, Perplexity, Copilot, Gemini and Claude show up here when they send someone." />
             <Ranked title="Countries" rows={d.countries} />
             <Ranked title="Devices" rows={d.devices} />
             <Ranked title="Pages" rows={d.pages} />
