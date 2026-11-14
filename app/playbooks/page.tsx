@@ -15,8 +15,8 @@ export const metadata: Metadata = {
   title: { absolute: 'Playbooks for website builds, migrations and personalization' },
   description,
   alternates: { canonical: '/playbooks' },
-  openGraph: { type: 'website', url: '/playbooks', siteName: 'Cypher', locale: 'en_US', title: 'Playbooks, not projects', description },
-  twitter: { card: 'summary_large_image', title: 'Playbooks, not projects', description },
+  openGraph: { type: 'website', url: '/playbooks', siteName: 'Cypher', locale: 'en_US', title: 'Playbooks, not projects: every outcome, written down', description },
+  twitter: { card: 'summary_large_image', title: 'Playbooks, not projects: every outcome, written down', description },
 };
 
 export const viewport: Viewport = { themeColor: '#f6f5fc', colorScheme: 'light' };

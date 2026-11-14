@@ -8,14 +8,14 @@ import JsonLd from '@/components/site/JsonLd';
 import { faqPage, graph } from '@/lib/schema';
 import { Faq, PageHero, Steps } from '@/components/site/parts';
 
-const description = 'Book a demo of Cypher. We point it at your site, on your platform, and you watch it work: Sitecore, Optimizely, Contentful or any enterprise platform.';
+const description = 'Thirty minutes, no slides: Cypher rebuilds your homepage on your platform while you watch. Sitecore, Optimizely, Contentful or whatever you run.';
 
 export const metadata: Metadata = {
   title: { absolute: 'Book a demo: watch Cypher rebuild your homepage' },
   description,
   alternates: { canonical: '/demo' },
-  openGraph: { type: 'website', url: '/demo', siteName: 'Cypher', locale: 'en_US', title: 'Book a demo of Cypher', description },
-  twitter: { card: 'summary_large_image', title: 'Book a demo of Cypher', description },
+  openGraph: { type: 'website', url: '/demo', siteName: 'Cypher', locale: 'en_US', title: 'Book a demo: watch Cypher rebuild your homepage', description },
+  twitter: { card: 'summary_large_image', title: 'Book a demo: watch Cypher rebuild your homepage', description },
 };
 
 export const viewport: Viewport = { themeColor: '#f6f5fc', colorScheme: 'light' };

@@ -777,6 +777,8 @@ form.ad-wide{margin-top:16px}
 .as-colours code{font-size:12px;color:var(--on-ink-muted)}
 .as-chip{flex:none;width:44px;height:44px;border-radius:12px;box-shadow:inset 0 0 0 1px rgba(255,255,255,.18)}
 .as-type-xb{margin:0;font-size:30px;font-weight:800;letter-spacing:-.03em;line-height:1.1}
+.as-type-voice{margin:0;font-size:28px;font-weight:300;letter-spacing:-.025em;line-height:1.15}
+.as-type-voice b{font-weight:700}
 .as-type-md{margin:8px 0 10px;font-size:16px;font-weight:500;color:var(--on-ink-soft)}
 .as-voice{margin:0;padding-left:18px;font-size:14px;line-height:1.6;color:var(--on-ink-soft)}
 .as-voice b{color:var(--on-ink)}
@@ -790,6 +792,8 @@ form.ad-wide{margin-top:16px}
 .as-banners img{width:100%;height:auto;display:block;border-radius:10px;box-shadow:0 0 0 1px var(--ink-3)}
 .as-ads{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px}
 .as-ads img{width:100%;height:auto;display:block;border-radius:12px}
+.as-post{margin:10px 0 0;display:flex;flex-direction:column;gap:4px;font-size:13.5px;line-height:1.5;color:var(--on-ink-soft);user-select:all}
+.as-post .ad-dim{font-size:12.5px;font-weight:700;user-select:none}
 .as-videos{display:grid;grid-template-columns:minmax(0,.62fr) minmax(0,1fr) minmax(0,1.6fr);gap:16px;align-items:end}
 .as-video{margin:0;display:flex;flex-direction:column;gap:8px;min-width:0}
 .as-video video{width:100%;display:block;border-radius:12px;background:#000}

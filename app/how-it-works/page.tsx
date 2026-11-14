@@ -15,8 +15,8 @@ export const metadata: Metadata = {
   title: { absolute: 'How Cypher works | AI-run website projects, start to launch' },
   description,
   alternates: { canonical: '/how-it-works' },
-  openGraph: { type: 'website', url: '/how-it-works', siteName: 'Cypher', locale: 'en_US', title: 'How Cypher works', description },
-  twitter: { card: 'summary_large_image', title: 'How Cypher works', description },
+  openGraph: { type: 'website', url: '/how-it-works', siteName: 'Cypher', locale: 'en_US', title: 'How Cypher works: you stay in charge of the brand', description },
+  twitter: { card: 'summary_large_image', title: 'How Cypher works: you stay in charge of the brand', description },
 };
 
 export const viewport: Viewport = { themeColor: '#f6f5fc', colorScheme: 'light' };
@@ -223,7 +223,7 @@ export default function HowItWorks() {
 
       <SiteFooter />
       <Track />
-      <JsonLd data={graph(contentPage({ path: '/how-it-works', title: 'How Cypher works', description, updated: '2026-11-14' }), faqPage(QA))} />
+      <JsonLd data={graph(contentPage({ path: '/how-it-works', title: 'How Cypher works: you stay in charge of the brand', description, updated: '2026-11-14' }), faqPage(QA))} />
     </div>
   );
 }

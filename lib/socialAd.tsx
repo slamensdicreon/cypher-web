@@ -1,13 +1,61 @@
 import { ImageResponse } from 'next/og';
 import { EYE_COLORS, THEMES } from './cardStyle';
 import { HERO_GEO, draw } from './eyeEngine';
-import { EYE, USE_CASES, type Postcard } from './postcards';
+import { EYE, type Postcard } from './postcards';
 import { fonts } from './shareImage';
 
-/** A card as a square social ad: 1080 × 1080 PNG, the size Instagram, LinkedIn, Facebook and X take. */
+/**
+ * The square social ads: 1080 × 1080 PNG, the size Instagram, LinkedIn, Facebook and X take. They
+ * speak to the marketer the site speaks to, in the campaign's colours, each with a post to go with
+ * it. The printed postcards keep their own copy; these are separate.
+ */
 
 export const AD_SIZE = 1080;
-export const AD_CARDS: Postcard[] = USE_CASES.flatMap((u) => u.cards);
+
+/** One ad: the card, the post to publish with it, and the page it links to. */
+export type Ad = Postcard & { caption: string; link: string };
+
+const ad = (id: string, theme: Ad['theme'], eye: keyof typeof EYE, line: string, payoff: string, kicker: string, link: string, caption: string): Ad => ({ id, theme, eye, line, payoff, kicker, link, caption });
+const SITE = 'ignoranceisbliss.ai';
+
+export const AD_GROUPS: { name: string; note: string; ads: Ad[] }[] = [
+  {
+    name: 'The line',
+    note: 'What Cypher is for a marketer: the whole roadmap, three decisions, editing on day one.',
+    ads: [
+      ad('sa-roadmap', 'coral', 'stare', 'Your whole marketing roadmap. Live in a week.', 'You make three decisions.', 'Sitecore · Optimizely · Contentful', '/',
+        `The new site. The campaign pages. The personalization you paid for and never switched on. Cypher builds it on your platform, your team edits it on day one, and you make about three decisions. ${SITE}`),
+      ad('sa-decisions', 'ink', 'think', 'Three decisions. Not three hundred.', 'Everything technical, handled.', 'Each one with Cypher’s pick and a deadline.', '/how-it-works',
+        `You approve the plan, answer the questions only a marketer can answer, and say when it goes live. Everything else is settled and on the record. ${SITE}/how-it-works`),
+      ad('sa-dayone', 'lavender', 'wide', 'Your team edits it on day one.', 'No ticket. No developer.', 'Built in your platform, the way you work.', '/how-it-works',
+        `Every page is built in your platform, the way your team already works. Change a headline, swap an image, launch a variant. No ticket required. ${SITE}/how-it-works`),
+    ],
+  },
+  {
+    name: 'Outcomes',
+    note: 'One playbook each, linked to its page on the site.',
+    ads: [
+      ad('sa-personalize', 'iris', 'side', 'The personalization you paid for. Switched on.', 'Finally.', 'Audiences, variants and tests, checked first.', '/playbooks/personalization',
+        `Audiences, page variants and A/B/n tests, set up in your platform and checked before you see them. ${SITE}/playbooks/personalization`),
+      ad('sa-migrate', 'white', 'squint', 'Move platforms. Keep every URL.', 'Every page checked against the original.', 'Migrations, nothing left behind.', '/playbooks/migration',
+        `Old platform to new, or six sites into one. Every redirect kept, every page checked against the original, before you sign off. ${SITE}/playbooks/migration`),
+      ad('sa-queue', 'violet', 'roll', 'No dev queue. No change orders.', 'No waiting for next quarter.', 'Playbooks, not projects.', '/playbooks',
+        `Your annual roadmap, in a week: the new site Monday, the campaign pages Tuesday, the migration Wednesday, personalization Thursday. ${SITE}/playbooks`),
+    ],
+  },
+  {
+    name: 'Proof',
+    note: 'The one number we use, always with its qualifier, and the demo.',
+    ads: [
+      ad('sa-512', 'coral', 'wide', '$400,000+ quoted. $512 to run.', 'Think what the rest of your budget could do.', 'The cost of the run, not the price.', '/',
+        `One build an agency quoted at $400,000+ cost $512 to run. That’s the cost of the run, not the price of Cypher. ${SITE}`),
+      ad('sa-demo', 'ink', 'qr', 'Watch it rebuild your homepage.', 'Thirty minutes. No slides.', 'Book a demo at ignoranceisbliss.ai', '/demo',
+        `Thirty minutes. Cypher rebuilds your homepage on your platform while you watch. Sitecore, Optimizely, Contentful or whatever you run. ${SITE}/demo`),
+    ],
+  },
+];
+
+export const AD_CARDS: Ad[] = AD_GROUPS.flatMap((g) => g.ads);
 export const adFile = (id: string) => `cypher-${id}.png`;
 export const idFromFile = (file: string) => file.replace(/^cypher-/, '').replace(/\.png$/, '');
 

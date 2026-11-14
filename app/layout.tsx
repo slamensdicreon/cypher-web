@@ -16,20 +16,22 @@ const jakarta = Plus_Jakarta_Sans({
 });
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.ignoranceisbliss.ai';
-const title = 'Ignorance is bliss.';
+const title = 'Cypher | AI website builds, migrations and personalization';
+const ogTitle = 'Your whole marketing roadmap, live in a week.';
 const description =
-  'Twenty-one specialists and the mind that runs them. Cypher builds, migrates, personalizes and optimizes on any enterprise platform, for a rounding error of what you pay now. See it on your site.';
+  'Your marketing roadmap, live in a week. Cypher’s AI specialists build, migrate and personalize on Sitecore, Optimizely or Contentful. You make three decisions.';
 
-// The share image comes from app/opengraph-image.tsx and app/twitter-image.tsx; Next.js adds
-// og:image, its size, type and alt, and twitter:image, as absolute URLs on metadataBase.
+// Each page's share image comes from the opengraph-image.tsx beside it (the site's from
+// app/opengraph-image.tsx); Next.js adds og:image as an absolute URL on metadataBase, and X falls
+// back to it.
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
-  title: `${title} | Cypher`,
+  title,
   description,
   applicationName: 'Cypher',
   alternates: { canonical: '/' },
-  openGraph: { type: 'website', url: '/', siteName: 'Cypher', locale: 'en_US', title, description },
-  twitter: { card: 'summary_large_image', title, description },
+  openGraph: { type: 'website', url: '/', siteName: 'Cypher', locale: 'en_US', title: ogTitle, description },
+  twitter: { card: 'summary_large_image', title: ogTitle, description },
   robots: process.env.ALLOW_INDEXING ? { index: true, follow: true } : { index: false, follow: false },
   formatDetection: { telephone: false, email: false, address: false },
   verification: {

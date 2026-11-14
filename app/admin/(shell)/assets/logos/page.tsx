@@ -62,18 +62,19 @@ export default async function Logos() {
       <div className="ad-grid2">
         <section className="ad-card">
           <h3>Type</h3>
-          <p className="as-type-xb">Plus Jakarta Sans ExtraBold</p>
-          <p className="as-type-md">Plus Jakarta Sans Medium, for everything that isn’t a headline.</p>
+          <p className="as-type-voice">Plus Jakarta Sans Light, for Cypher’s voice. <b>Bold for what’s yours.</b></p>
+          <p className="as-type-md">ExtraBold for the wordmark only; Medium for small text and labels.</p>
           <p className="ad-fine">Free under the SIL Open Font License.</p>
           <div className="ad-actions"><Dl href={`${FILES}/fonts/cypher-fonts.zip`}>Fonts (ZIP)</Dl></div>
         </section>
         <section className="ad-card">
           <h3>How it talks</h3>
           <ul className="as-voice">
-            <li><b>Any enterprise platform.</b> Sitecore, AEM, Optimizely, Contentful and the rest. Never “a Sitecore product”.</li>
-            <li><b>Outcomes, not builds:</b> build, migrate, personalize, optimize.</li>
-            <li><b>Short, sure, a little cocky.</b> One idea a line. The eye does the winking.</li>
-            <li><b>Figures say where they came from.</b> Hours are customer-reported; the dollar conversion is ours.</li>
+            <li><b>Talk to the marketer.</b> The person growing a brand on Sitecore, Optimizely or Contentful: their roadmap, their campaigns, their team editing on day one.</li>
+            <li><b>The line:</b> Your whole marketing roadmap, live in a week. You make three decisions.</li>
+            <li><b>Cypher speaks in the first person, in sentences.</b> Light for the voice, bold for the part that’s yours. No eyebrows, no jargon.</li>
+            <li><b>Any enterprise platform.</b> Name Sitecore, Optimizely and Contentful; never “a Sitecore product”. Never name a competitor or an agency.</li>
+            <li><b>Figures say where they came from.</b> $512 is the cost of the run, not the price of Cypher. Hours are customer-reported; the dollar conversion is ours.</li>
           </ul>
         </section>
       </div>

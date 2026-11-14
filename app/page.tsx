@@ -11,14 +11,14 @@ import HomeVideo from '@/components/site/HomeVideo';
 import { EyeMark } from '@/components/site/Marks';
 
 const description =
-  'Twenty-one AI specialists and the mind that runs them. Cypher builds, migrates, personalizes and optimizes sites on Sitecore, Optimizely, Contentful and more.';
+  'Your marketing roadmap, live in a week. Cypher’s AI specialists build, migrate and personalize on Sitecore, Optimizely or Contentful. You make three decisions.';
 
 export const metadata: Metadata = {
   title: { absolute: 'Cypher | AI website builds, migrations and personalization' },
   description,
   alternates: { canonical: '/' },
-  openGraph: { type: 'website', url: '/', siteName: 'Cypher', locale: 'en_US', title: 'Ignorance is bliss.', description },
-  twitter: { card: 'summary_large_image', title: 'Ignorance is bliss.', description },
+  openGraph: { type: 'website', url: '/', siteName: 'Cypher', locale: 'en_US', title: 'Your whole marketing roadmap, live in a week.', description },
+  twitter: { card: 'summary_large_image', title: 'Your whole marketing roadmap, live in a week.', description },
 };
 
 export const viewport: Viewport = { themeColor: '#f6f5fc', colorScheme: 'light' };
