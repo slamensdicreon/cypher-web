@@ -96,6 +96,9 @@ export default async function OrganizationPage({ params, searchParams }: { param
                   ) : (
                     <p className="ad-empty">No license.</p>
                   )}
+                  {l && l.playbooks.length > 0 && (
+                    <p className="ad-fine lw-gap">Their Directors can add rules and lessons of their own to these playbooks, for their projects only. See them on <Link href={`/admin/platform/rules?owner=${encodeURIComponent(org.id)}`}>Rules</Link> and <Link href={`/admin/platform/knowledge?owner=${encodeURIComponent(org.id)}`}>Knowledge</Link>, or <Link href={`/admin/platform/in-force?playbook=${encodeURIComponent(l.playbooks[0])}&organization=${encodeURIComponent(org.id)}`}>their version in In force</Link>.</p>
+                  )}
                   {(lic.data.history ?? []).length > 0 && (
                     <details className="lw-history">
                       <summary>History ({(lic.data.history ?? []).length})</summary>

@@ -1,48 +1,84 @@
 import Link from 'next/link';
 import { Banner } from '@/components/admin/AdminNav';
-import { Back, Refused, Status, attempt, plural, stamp } from '@/components/admin/platform/parts';
+import { Back, Owner, Refused, Status, attempt, plural, stamp } from '@/components/admin/platform/parts';
 import { requireUser } from '@/lib/auth/request';
 import { can } from '@/lib/auth/roles';
-import { CATEGORIES, platform, type Diagnostics, type HistoryItem, type Playbook, type Rule } from '@/lib/platform';
+import { CATEGORIES, ICREON, isCustomers, ownerName, platform, type Diagnostics, type HistoryItem, type Org, type Playbook, type Rule } from '@/lib/platform';
 
 const HISTORY: Record<string, string> = { created: 'Created', edited: 'Edited', activated: 'Activated', retired: 'Retired', applied: 'Applied', overridden: 'Overridden by a Director' };
 const times = (n: number) => (n === 1 ? 'once' : n === 2 ? 'twice' : `${n} times`);
 
-/** Rules: when this happens, do that. The Leads apply active rules to cards in their scope, in every customer's projects. */
-export default async function Rules({ searchParams }: { searchParams: Promise<{ msg?: string; history?: string }> }) {
+/**
+ * Rules: when this happens, do that. The Leads apply active rules to cards in their scope. Icreon's
+ * reach every customer's projects; a customer's own reach only theirs, and here they can only be retired.
+ */
+export default async function Rules({ searchParams }: { searchParams: Promise<{ msg?: string; history?: string; owner?: string }> }) {
   const s = await requireUser('platform', 'read', '/admin/platform/rules');
   const sp = await searchParams;
-  const [rules, cat, diag] = await Promise.all([
+  const [rules, cat, diag, orgList] = await Promise.all([
     attempt(platform<Rule[]>(s.user, 'GET', '/rules')),
     attempt(platform<Playbook[]>(s.user, 'GET', '/playbooks')),
     attempt(platform<Diagnostics>(s.user, 'GET', '/portfolio/diagnostics')),
+    attempt(platform<Org[]>(s.user, 'GET', '/admin/organizations')),
   ]);
   const hist = sp.history ? await attempt(platform<HistoryItem[]>(s.user, 'GET', `/rules/${encodeURIComponent(sp.history)}/history`)) : null;
   const writable = can(s.user.roles, 'platform', 'write');
   const playbooks = cat.ok ? cat.data : [];
   const platforms = [...new Map(playbooks.map((p) => [p.platform.id, p.platform.name])).entries()];
   const projects = diag.ok ? diag.data.projects : [];
-  const scopeOf = (r: Rule) =>
-    r.scope.kind === 'project'
+  const orgs = orgList.ok ? orgList.data : [];
+  const pbName = (id: string) => playbooks.find((p) => p.id === id)?.name ?? id;
+  const scopeOf = (r: Rule) => {
+    // A customer's own rule reaches only their projects; their project names aren't visible from here.
+    if (isCustomers(r)) {
+      const who = ownerName(r, orgs);
+      return r.scope.kind === 'project' ? `${who}’s project ${r.scope.id}` : r.scope.kind === 'playbook' ? `${who}’s projects on the ${pbName(r.scope.id)} playbook` : `${who}’s projects on ${platforms.find(([id]) => id === r.scope.id)?.[1] ?? r.scope.id}`;
+    }
+    return r.scope.kind === 'project'
       ? `Project: ${projects.find((p) => p.projectId === r.scope.id)?.name ?? r.scope.id}`
       : r.scope.kind === 'playbook'
-        ? `Every project on the ${playbooks.find((p) => p.id === r.scope.id)?.name ?? r.scope.id} playbook`
+        ? `Every project on the ${pbName(r.scope.id)} playbook`
         : `Every project on ${platforms.find(([id]) => id === r.scope.id)?.[1] ?? r.scope.id}`;
-  const back = '/admin/platform/rules';
+  };
+  // Filter by owner: everyone, Icreon's, or one customer's own.
+  const all = rules.ok ? rules.data : [];
+  // Customers with items of their own, plus one asked for by link (e.g. from its organization page).
+  const ids = new Set(all.filter(isCustomers).map((r) => r.organizationId!));
+  if (sp.owner && sp.owner !== ICREON && orgs.some((o) => o.id === sp.owner)) ids.add(sp.owner);
+  const customers = [...ids].map((id) => ({ id, name: ownerName({ organizationId: id }, orgs) }));
+  const owner = sp.owner === 'icreon' || ids.has(sp.owner ?? '') ? sp.owner! : '';
+  const shown = all.filter((r) => (owner === '' ? true : owner === 'icreon' ? !isCustomers(r) : r.organizationId === owner));
+  const back = `/admin/platform/rules${owner ? `?owner=${encodeURIComponent(owner)}` : ''}`;
+  const href = (p: { owner?: string; history?: string }) => {
+    const u = new URLSearchParams(Object.entries({ owner, ...p }).filter(([, v]) => v) as [string, string][]).toString();
+    return `/admin/platform/rules${u ? `?${u}` : ''}`;
+  };
 
-  const card = (r: Rule) => (
+  const card = (r: Rule) => {
+    const theirs = isCustomers(r);
+    const who = ownerName(r, orgs);
+    return (
     <article key={r.id} id={`r-${r.id}`} className={`lw-card${r.flagged ? ' flagged' : ''}`}>
       <div className="lw-card-head">
         <span className="lw-ref">{r.ref}</span>
         <Status value={r.status} />
+        <Owner of={r} orgs={orgs} />
         <span className="ad-pill no">{CATEGORIES[r.category] ?? r.category}</span>
         <span className="crm-tl-meta">{scopeOf(r)}{r.roles.length ? ` · only for ${r.roles.join(', ')}` : ''}</span>
       </div>
       <p className="lw-rule"><b>When</b> {r.when}, <b>then</b> {r.then}.</p>
-      <p className="crm-tl-meta">Applied {times(r.applied)}, overridden {times(r.overridden)}. Version {r.version}, from {plural(r.sources.length, 'card')}. By {r.author === 'cypher' ? 'Cypher' : 'a Director'}, updated {stamp(r.updatedAt)}.</p>
-      {r.flagged && <p className="lw-flag">Directors keep overriding it: edit it or retire it.</p>}
+      <p className="crm-tl-meta">Applied {times(r.applied)}, overridden {times(r.overridden)}. Version {r.version}, from {plural(r.sources.length, 'card')}. By {theirs ? `${who}’s Directors` : r.author === 'cypher' ? 'Cypher' : 'a Director'}, updated {stamp(r.updatedAt)}.</p>
+      {r.flagged && <p className="lw-flag">{theirs ? `Directors keep overriding it: retire it and tell ${who}.` : 'Directors keep overriding it: edit it or retire it.'}</p>}
       <div className="lw-card-foot">
-        {writable && (
+        {writable && theirs && r.status !== 'retired' && (
+          <form method="post" className="lw-decide">
+            <input type="hidden" name="id" value={r.id} />
+            <Back to={back} />
+            <label className="ad-check"><input type="checkbox" name="confirm" required /> <span>Confirm: this switches it off for {who}’s running projects</span></label>
+            <button className="ad-btn small" formAction="/api/admin/platform/rule-retire">Retire</button>
+          </form>
+        )}
+        {writable && !theirs && (
           <form method="post" className="lw-decide">
             <input type="hidden" name="id" value={r.id} />
             <Back to={back} />
@@ -52,17 +88,18 @@ export default async function Rules({ searchParams }: { searchParams: Promise<{ 
             {r.status !== 'retired' && <button className="ad-btn small" formAction="/api/admin/platform/rule-retire">{r.status === 'proposed' ? 'Reject' : 'Retire'}</button>}
           </form>
         )}
-        <Link className="ad-btn small ghost" href={`/admin/platform/rules?history=${encodeURIComponent(r.id)}#r-${r.id}`}>History</Link>
+        <Link className="ad-btn small ghost" href={`${href({ history: r.id })}#r-${r.id}`}>History</Link>
       </div>
       {hist && sp.history === r.id && (
         hist.ok ? (
           <ol className="lw-hist">{hist.data.map((h, i) => <li key={i}><b>{HISTORY[h.kind] ?? h.kind}</b> {stamp(h.at)}{typeof h.detail.escalationId === 'string' && !h.detail.escalationId.startsWith('task:') ? ` · card ${h.detail.escalationId}` : ''}</li>)}</ol>
         ) : <p className="lw-flag">{hist.err.message}</p>
       )}
-      {(writable || r.sources.length > 0) && (
+      {theirs && <p className="lw-note">{who}’s Directors wrote this, for their projects only. To change it, retire it and tell them: they edit it in Launchworks.</p>}
+      {((writable && !theirs) || r.sources.length > 0) && (
         <details className="lw-more">
-          <summary>{writable ? 'Edit, and the cards it came from' : 'The cards it came from'}</summary>
-          {writable && (
+          <summary>{writable && !theirs ? 'Edit, and the cards it came from' : 'The cards it came from'}</summary>
+          {writable && !theirs && (
             <form method="post" action="/api/admin/platform/rule-edit" className="ad-form">
               <input type="hidden" name="id" value={r.id} />
               <input type="hidden" name="was" value={r.status} />
@@ -80,9 +117,10 @@ export default async function Rules({ searchParams }: { searchParams: Promise<{ 
         </details>
       )}
     </article>
-  );
+    );
+  };
 
-  const of = (st: Rule['status']) => (rules.ok ? rules.data.filter((r) => r.status === st) : []);
+  const of = (st: Rule['status']) => shown.filter((r) => r.status === st);
   const [proposed, active, retired] = [of('proposed'), of('active'), of('retired')];
 
   return (
@@ -90,7 +128,7 @@ export default async function Rules({ searchParams }: { searchParams: Promise<{ 
       <header className="ad-top">
         <div>
           <h1>Rules</h1>
-          <p>When this happens, do that. The Leads apply active rules to cards in their scope, so nobody is asked the same thing twice; proposed rules apply nowhere until approved.</p>
+          <p>When this happens, do that. The Leads apply active rules to cards in their scope, so nobody is asked the same thing twice; proposed rules apply nowhere until approved. A customer’s Directors can add their own on the playbooks they license: those reach only their projects, and you can retire them here.</p>
         </div>
       </header>
       <Banner msg={sp.msg} />
@@ -142,7 +180,13 @@ export default async function Rules({ searchParams }: { searchParams: Promise<{ 
               )}
             </div>
           )}
+          {customers.length > 0 && (
+            <nav className="ad-tabs lw-gap" aria-label="Whose rules">
+              {[['', 'Everyone’s'], ['icreon', 'Icreon’s'], ...customers.map((c) => [c.id, `${c.name}’s own`])].map(([k, v]) => <Link key={k || 'all'} href={href({ owner: k, history: '' })} className={owner === k ? 'on' : undefined}>{v}</Link>)}
+            </nav>
+          )}
           {rules.data.length === 0 && <p className="ad-empty lw-gap">No rules yet. On a card a Director answered, “Make this a rule” proposes one.</p>}
+          {rules.data.length > 0 && shown.length === 0 && <p className="ad-empty lw-gap">{owner === 'icreon' ? 'No rules of Icreon’s.' : `${ownerName({ organizationId: owner }, orgs)} hasn’t added any rules of its own.`}</p>}
           {proposed.length > 0 && <section className="ad-card ad-wide"><h3>Proposed <span className="ad-dim">· waiting for you · {proposed.length}</span></h3><div className="lw-cards">{proposed.map(card)}</div></section>}
           {active.length > 0 && <section className="ad-card ad-wide"><h3>Active <span className="ad-dim">· {active.length}</span></h3><div className="lw-cards">{active.map(card)}</div></section>}
           {retired.length > 0 && <details className="ad-card ad-wide lw-fold"><summary>Retired · {retired.length}</summary><div className="lw-cards">{retired.map(card)}</div></details>}

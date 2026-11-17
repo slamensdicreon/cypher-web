@@ -1,65 +1,91 @@
 import Link from 'next/link';
 import { Banner } from '@/components/admin/AdminNav';
 import ProposalReview from '@/components/admin/platform/ProposalReview';
-import { Back, Refused, Status, attempt, plural, stamp } from '@/components/admin/platform/parts';
+import { Back, Owner, Refused, Status, attempt, plural, stamp } from '@/components/admin/platform/parts';
 import { requireUser } from '@/lib/auth/request';
 import { can } from '@/lib/auth/roles';
-import { platform, type Entry, type HistoryItem, type KnowledgeList, type Playbook, type Rule } from '@/lib/platform';
+import { ICREON, isCustomers, ownerName, platform, type Entry, type HistoryItem, type KnowledgeList, type Org, type Playbook, type Rule } from '@/lib/platform';
 
-type Search = { msg?: string; status?: string; kind?: string; q?: string; history?: string };
+type Search = { msg?: string; status?: string; kind?: string; q?: string; history?: string; owner?: string };
 const KINDS = { lesson: 'Lesson', procedure: 'Procedure', gap: 'Known gap' } as const;
 
-/** What the team knows across projects: lessons, procedures and gaps every new build starts with. */
+/**
+ * What the team knows across projects: lessons, procedures and gaps every new build starts with.
+ * Icreon's reach every build in scope; a customer's own reach only theirs, and here they can only be retired.
+ */
 export default async function Knowledge({ searchParams }: { searchParams: Promise<Search> }) {
   const s = await requireUser('platform', 'read', '/admin/platform/knowledge');
   const sp = await searchParams;
   const status = ['proposed', 'active', 'retired'].includes(sp.status ?? '') ? sp.status! : '';
   const kind = sp.kind && sp.kind in KINDS ? sp.kind : '';
   const q = (sp.q ?? '').slice(0, 200);
-  const qs = new URLSearchParams(Object.entries({ status, kind, q }).filter(([, v]) => v) as [string, string][]).toString();
-  const [list, waiting, rulesWaiting, cat] = await Promise.all([
-    attempt(platform<KnowledgeList>(s.user, 'GET', `/knowledge${qs ? `?${qs}` : ''}`)),
+  const apiQs = new URLSearchParams(Object.entries({ status, kind, q }).filter(([, v]) => v) as [string, string][]).toString();
+  const [list, waiting, rulesWaiting, cat, orgList] = await Promise.all([
+    attempt(platform<KnowledgeList>(s.user, 'GET', `/knowledge${apiQs ? `?${apiQs}` : ''}`)),
     attempt(platform<KnowledgeList>(s.user, 'GET', '/knowledge?status=proposed')),
     attempt(platform<Rule[]>(s.user, 'GET', '/rules?status=proposed')),
     attempt(platform<Playbook[]>(s.user, 'GET', '/playbooks')),
+    attempt(platform<Org[]>(s.user, 'GET', '/admin/organizations')),
   ]);
   const hist = sp.history ? await attempt(platform<HistoryItem[]>(s.user, 'GET', `/knowledge/${encodeURIComponent(sp.history)}/history`)) : null;
   const writable = can(s.user.roles, 'platform', 'write');
   const playbooks = cat.ok ? cat.data : [];
   const platforms = [...new Map(playbooks.map((p) => [p.platform.id, p.platform.name])).entries()];
+  const orgs = orgList.ok ? orgList.data : [];
+  // Filter by owner (the platform lists everyone's): Icreon's, or one customer's own.
+  const all = list.ok ? list.data.entries : [];
+  // Customers with items of their own, plus one asked for by link (e.g. from its organization page).
+  const ids = new Set(all.filter(isCustomers).map((e) => e.organizationId!));
+  if (sp.owner && sp.owner !== ICREON && orgs.some((o) => o.id === sp.owner)) ids.add(sp.owner);
+  const customers = [...ids].map((id) => ({ id, name: ownerName({ organizationId: id }, orgs) }));
+  const owner = sp.owner === 'icreon' || ids.has(sp.owner ?? '') ? sp.owner! : '';
+  const shown = all.filter((e) => (owner === '' ? true : owner === 'icreon' ? !isCustomers(e) : e.organizationId === owner));
+  const qs = new URLSearchParams(Object.entries({ status, kind, q, owner }).filter(([, v]) => v) as [string, string][]).toString();
   const back = `/admin/platform/knowledge${qs ? `?${qs}` : ''}`;
   const effects = new Map(list.ok ? list.data.effects.map((e) => [e.id, e]) : []);
   const scopeOf = (e: Entry) =>
-    e.scope.kind === 'global' ? 'Everywhere'
+    isCustomers(e) ? `${ownerName(e, orgs)}’s ${e.scope.kind === 'project' ? `project ${e.scope.id}` : e.scope.kind === 'playbook' ? `projects on the ${playbooks.find((p) => p.id === e.scope.id)?.name ?? e.scope.id} playbook` : 'projects'}`
+    : e.scope.kind === 'global' ? 'Everywhere'
     : e.scope.kind === 'platform' ? `Every ${platforms.find(([id]) => id === e.scope.id)?.[1] ?? e.scope.id} project`
     : e.scope.kind === 'playbook' ? `The ${playbooks.find((p) => p.id === e.scope.id)?.name ?? e.scope.id} playbook`
     : e.scope.kind === 'role' ? `Role: ${e.scope.id}` : `Project: ${e.scope.id}`;
   const waitingCount = (waiting.ok ? waiting.data.entries.length : 0) + (rulesWaiting.ok ? rulesWaiting.data.length : 0);
   const href = (p: Partial<Search>) => {
-    const u = new URLSearchParams(Object.entries({ status, kind, q, ...p }).filter(([, v]) => v) as [string, string][]).toString();
+    const u = new URLSearchParams(Object.entries({ status, kind, q, owner, ...p }).filter(([, v]) => v) as [string, string][]).toString();
     return `/admin/platform/knowledge${u ? `?${u}` : ''}`;
   };
 
   const card = (e: Entry) => {
     const fx = effects.get(e.id);
+    const theirs = isCustomers(e);
+    const who = ownerName(e, orgs);
     return (
       <article key={e.id} id={`k-${e.id}`} className={`lw-card${fx?.flagged ? ' flagged' : ''}`}>
         <div className="lw-card-head">
           <span className="lw-ref">{e.ref}</span>
           <Status value={e.status} />
           <span className="ad-pill no">{KINDS[e.kind]}</span>
+          <Owner of={e} orgs={orgs} />
           <span className="crm-tl-meta">{scopeOf(e)}{e.roles.length ? ` · ${e.roles.join(', ')}` : ''}</span>
         </div>
         <p className="lw-rule"><b>{e.title}</b></p>
         <p className="crm-tl-text">{e.text}</p>
         <p className="crm-tl-meta">
-          In {plural(e.used, 'brief')}{fx ? ` · carried by ${plural(fx.tasks, 'task')}, ${fx.failed} still failed` : ''} · version {e.version} · by {e.author === 'seed' ? 'the seed documents' : e.author === 'cypher' ? 'Cypher' : 'a Director'}
+          In {plural(e.used, 'brief')}{fx ? ` · carried by ${plural(fx.tasks, 'task')}, ${fx.failed} still failed` : ''} · version {e.version} · by {theirs ? `${who}’s Directors` : e.author === 'seed' ? 'the seed documents' : e.author === 'cypher' ? 'Cypher' : 'a Director'}
           {e.source?.projectId ? ` · from ${e.source.projectId}${e.source.phase !== null ? `, phase ${e.source.phase}` : ''}` : ''} · updated {stamp(e.updatedAt)}
           {e.tags.length ? ` · ${e.tags.join(', ')}` : ''}
         </p>
-        {fx?.flagged && <p className="lw-flag">Work that carries it keeps failing anyway: edit it or retire it.</p>}
+        {fx?.flagged && <p className="lw-flag">{theirs ? `Work that carries it keeps failing anyway: retire it and tell ${who}.` : 'Work that carries it keeps failing anyway: edit it or retire it.'}</p>}
         <div className="lw-card-foot">
-          {writable && (
+          {writable && theirs && e.status !== 'retired' && (
+            <form method="post" className="lw-decide">
+              <input type="hidden" name="id" value={e.id} />
+              <Back to={back} />
+              <label className="ad-check"><input type="checkbox" name="confirm" required /> <span>Confirm: this takes it out of {who}’s next briefs</span></label>
+              <button className="ad-btn small" formAction={`/api/admin/platform/knowledge-${e.status === 'proposed' ? 'reject' : 'retire'}`}>Retire</button>
+            </form>
+          )}
+          {writable && !theirs && (
             <form method="post" className="lw-decide">
               <input type="hidden" name="id" value={e.id} />
               <Back to={back} />
@@ -74,10 +100,11 @@ export default async function Knowledge({ searchParams }: { searchParams: Promis
         {hist && sp.history === e.id && (hist.ok
           ? <ol className="lw-hist">{hist.data.map((h, i) => <li key={i}><b>{h.kind[0].toUpperCase() + h.kind.slice(1)}</b> {stamp(h.at)}</li>)}</ol>
           : <p className="lw-flag">{hist.err.message}</p>)}
-        {(writable || e.evidence.length > 0) && (
+        {theirs && <p className="lw-note">{who}’s Directors wrote this, for their projects only. To change it, retire it and tell them: they edit it in Launchworks.</p>}
+        {((writable && !theirs) || e.evidence.length > 0) && (
           <details className="lw-more">
-            <summary>{writable ? 'Edit, and what it stands on' : 'What it stands on'}</summary>
-            {writable && (
+            <summary>{writable && !theirs ? 'Edit, and what it stands on' : 'What it stands on'}</summary>
+            {writable && !theirs && (
               <form method="post" action="/api/admin/platform/knowledge-edit" className="ad-form">
                 <input type="hidden" name="id" value={e.id} />
                 <input type="hidden" name="was" value={e.status} />
@@ -104,7 +131,7 @@ export default async function Knowledge({ searchParams }: { searchParams: Promis
       <header className="ad-top">
         <div>
           <h1>Knowledge</h1>
-          <p>Lessons, procedures and known gaps every new build on a playbook starts with. Proposed entries reach no brief until approved.</p>
+          <p>Lessons, procedures and known gaps every new build on a playbook starts with. Proposed entries reach no brief until approved. A customer’s Directors can add their own on the playbooks they license: those reach only their builds, and you can retire them here.</p>
         </div>
         {platforms.length > 0 && (
           <form method="get" action="/api/admin/platform/knowledge-export" className="ad-controls">
@@ -152,11 +179,12 @@ export default async function Knowledge({ searchParams }: { searchParams: Promis
             </nav>
             <form className="ad-search" method="get" action="/admin/platform/knowledge">
               {status && <input type="hidden" name="status" value={status} />}
+              {customers.length > 0 && <select className="ad-input ad-select" name="owner" defaultValue={owner} aria-label="Whose"><option value="">Everyone’s</option><option value="icreon">Icreon’s</option>{customers.map((c) => <option key={c.id} value={c.id}>{c.name}’s own</option>)}</select>}
               <select className="ad-input ad-select" name="kind" defaultValue={kind} aria-label="Kind"><option value="">Every kind</option>{Object.entries(KINDS).map(([k, v]) => <option key={k} value={k}>{v}</option>)}</select>
               <input type="search" name="q" defaultValue={q} placeholder="Search titles and text" aria-label="Search knowledge" />
               <button className="ad-btn" type="submit">Search</button>
             </form>
-            {list.data.entries.length === 0 ? <p className="ad-empty">{q || kind || status ? 'Nothing matches.' : 'No entries yet.'}</p> : <div className="lw-cards">{list.data.entries.map(card)}</div>}
+            {shown.length === 0 ? <p className="ad-empty">{owner && owner !== 'icreon' && !q && !kind && !status ? `${ownerName({ organizationId: owner }, orgs)} hasn’t added any lessons or procedures of its own.` : q || kind || status || owner ? 'Nothing matches.' : 'No entries yet.'}</p> : <div className="lw-cards">{shown.map(card)}</div>}
           </section>
         </>
       )}

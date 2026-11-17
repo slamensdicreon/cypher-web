@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { audit } from '@/lib/audit';
 import { apiUser } from '@/lib/auth/request';
-import { CATEGORIES, PlatformError, platform, type Applied, type Org, type Playbook, type Recommendation, type Rule, type Entry } from '@/lib/platform';
+import { CATEGORIES, PlatformError, isCustomers, ownerName, platform, type Applied, type Entry, type KnowledgeList, type Org, type Playbook, type Recommendation, type Rule } from '@/lib/platform';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -48,6 +48,16 @@ export async function POST(req: Request, { params }: { params: Promise<{ action:
     return i > 0 ? { kind: v.slice(0, i), id: v.slice(i + 1) } : null;
   };
   const id = encodeURIComponent(str('id'));
+  // A customer's own rule or entry: Icreon can switch it off, but its text, and whether it's on, are the
+  // customer's (their Directors change it in Launchworks). Editing or turning one on is refused here.
+  const customersOwn = async (kind: 'rule' | 'knowledge') => {
+    const item = kind === 'rule'
+      ? (await platform<Rule[]>(as, 'GET', '/rules')).find((r) => r.id === str('id'))
+      : (await platform<KnowledgeList>(as, 'GET', '/knowledge')).entries.find((e) => e.id === str('id'));
+    if (!item || !isCustomers(item)) return null;
+    const orgs = await platform<Org[]>(as, 'GET', '/admin/organizations').catch(() => [] as Org[]);
+    return done(`That didn’t work: ${item.ref} is ${ownerName(item, orgs)}’s own. Retire it here and tell them; they change it in Launchworks.`);
+  };
 
   try {
     switch (action) {
@@ -114,6 +124,8 @@ export async function POST(req: Request, { params }: { params: Promise<{ action:
         return done(`${r.ref} saved as ${status}.`);
       }
       case 'rule-edit': {
+        const theirs = await customersOwn('rule');
+        if (theirs) return theirs;
         if (str('was') === 'active') {
           const stop = await live();
           if (stop) return stop;
@@ -128,6 +140,10 @@ export async function POST(req: Request, { params }: { params: Promise<{ action:
       }
       case 'rule-activate':
       case 'rule-retire': {
+        if (action === 'rule-activate') {
+          const theirs = await customersOwn('rule');
+          if (theirs) return theirs;
+        }
         const stop = await live();
         if (stop) return stop;
         const r = await platform<Rule>(as, 'POST', `/rules/${id}/${action === 'rule-activate' ? 'activate' : 'retire'}`);
@@ -154,6 +170,8 @@ export async function POST(req: Request, { params }: { params: Promise<{ action:
         return done(`${e.ref} saved as ${status}.`);
       }
       case 'knowledge-edit': {
+        const theirs = await customersOwn('knowledge');
+        if (theirs) return theirs;
         if (str('was') === 'active') {
           const stop = await live();
           if (stop) return stop;
@@ -171,9 +189,13 @@ export async function POST(req: Request, { params }: { params: Promise<{ action:
       case 'knowledge-activate':
       case 'knowledge-reject':
       case 'knowledge-retire': {
+        const verb = action.slice('knowledge-'.length);
+        if (verb === 'approve' || verb === 'activate') {
+          const theirs = await customersOwn('knowledge');
+          if (theirs) return theirs;
+        }
         const stop = await live();
         if (stop) return stop;
-        const verb = action.slice('knowledge-'.length);
         const e = await platform<Entry>(as, 'POST', `/knowledge/${id}/${verb}`);
         const past = { approve: 'Approved', activate: 'Activated', reject: 'Rejected', retire: 'Retired' }[verb as 'approve'];
         await log(`${past} ${e.ref}`, 'knowledge', e.id);

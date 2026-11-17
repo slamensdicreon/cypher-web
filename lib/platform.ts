@@ -102,12 +102,18 @@ export const CATEGORIES = {
   release: 'Releases, gates and budget', other: 'Other',
 } as const;
 export type Category = keyof typeof CATEGORIES;
+/**
+ * Whose a rule or entry is. null is Icreon's, for every project in scope; an id is that customer's own,
+ * added by their Directors on a playbook they license, for their projects only. Absent means a
+ * platform from before customers' variants: Icreon's.
+ */
+export type Owned = { organizationId?: string | null };
 export type Rule = {
   id: string; ref: string; status: 'proposed' | 'active' | 'retired'; category: Category;
   scope: { kind: 'project' | 'playbook' | 'platform'; id: string }; when: string; then: string; roles: string[];
   sources: { projectId: string; escalationId: string; title: string; answer: string | null }[];
   author: 'director' | 'cypher'; version: number; applied: number; overridden: number; flagged: boolean; createdAt: string; updatedAt: string;
-};
+} & Owned;
 export type HistoryItem = { at: string; kind: string; detail: Record<string, unknown> };
 export type Entry = {
   id: string; ref: string; kind: 'lesson' | 'procedure' | 'gap'; status: 'proposed' | 'active' | 'retired';
@@ -115,11 +121,11 @@ export type Entry = {
   roles: string[]; operations: string[]; templates: string[]; tags: string[];
   evidence: { projectId: string | null; ref: string; label: string }[]; author: 'seed' | 'director' | 'cypher';
   source: { doc: string | null; projectId: string | null; phase: number | null } | null; version: number; used: number; createdAt: string; updatedAt: string;
-};
+} & Owned;
 export type KnowledgeList = { entries: Entry[]; effects: { id: string; tasks: number; failed: number; flagged: boolean }[] };
 export type InForce = {
   playbook: { id: string; name: string; version: string }; platform: { id: string; name: string }; roles: { role: string; name: string }[];
-  rules: Rule[]; entries: { id: string; ref: string; kind: 'lesson' | 'procedure'; title: string; text: string; scope: Entry['scope']; roles: string[]; used: number; updatedAt: string }[];
+  rules: Rule[]; entries: { id: string; ref: string; kind: 'lesson' | 'procedure'; title: string; text: string; scope: Entry['scope']; roles: string[]; used: number; updatedAt: string; organizationId?: string | null }[];
   gaps: { id: string; ref: string; title: string; text: string }[]; pending: { knowledge: number; rules: number };
 };
 export type Diagnostics = {
@@ -137,6 +143,13 @@ export const byName = (subject: string) => subject.replace(/^[a-z]+:/, '');
 
 export const STANDING: Record<Standing, string> = { unlimited: 'No license needed', none: 'No license', upcoming: 'Starts later', active: 'Active', ended: 'Ended' };
 export const ICREON = 'org-icreon';
+
+/** Is this a customer's own rule or entry (not Icreon's)? */
+export const isCustomers = (x: Owned) => Boolean(x.organizationId) && x.organizationId !== ICREON;
+
+/** The owner's name: Icreon, or the customer's name from the organizations list. */
+export const ownerName = (x: Owned, orgs: readonly Pick<Org, 'id' | 'name'>[]) =>
+  isCustomers(x) ? (orgs.find((o) => o.id === x.organizationId)?.name ?? x.organizationId!) : 'Icreon';
 
 /** Is this person an Icreon Director on the platform (and so allowed into the platform screens)? */
 export async function platformMe(as: Pick<User, 'email' | 'name'>): Promise<{ ok: true; name: string } | { ok: false; code: string; message: string }> {

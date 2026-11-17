@@ -738,6 +738,9 @@ form.ad-wide{margin-top:16px}
 .lw-card-head{display:flex;flex-wrap:wrap;align-items:center;gap:8px 10px}
 .lw-card .crm-tl-meta{margin:0}
 .lw-ref{font-size:12px;font-weight:800;font-variant-numeric:tabular-nums;color:var(--lavender);white-space:nowrap}
+.lw-owner{display:inline-block;font-size:12px;font-weight:700;padding:3px 10px;border-radius:999px;white-space:nowrap;border:1px solid var(--ink-3);color:var(--on-ink-quiet)}
+.lw-owner.cust{border-color:rgba(243,201,105,.55);background:rgba(243,201,105,.12);color:#f3c969}
+.lw-note{margin:0;font-size:13px;line-height:1.5;color:var(--on-ink-soft)}
 .lw-rule{margin:0;font-size:15px;line-height:1.5;color:var(--on-ink)}
 .lw-flag{margin:0;font-size:13px;font-weight:700;color:#f3c969}
 .lw-card-foot{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;margin-top:2px}

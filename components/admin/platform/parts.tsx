@@ -1,4 +1,4 @@
-import { PlatformError } from '@/lib/platform';
+import { PlatformError, isCustomers, ownerName, type Org, type Owned } from '@/lib/platform';
 
 /** Shared pieces of the Launchworks screens: refusals explained, confirmations, formats. */
 
@@ -69,4 +69,9 @@ export const plural = (n: number, one: string, many = `${one}s`) => `${n} ${n ==
 /** A status dot and word, for services, orchestrators, rules and entries. */
 export function Status({ value, label }: { value: string; label?: string }) {
   return <span className={`lw-status s-${value}`}>{label ?? value}</span>;
+}
+
+/** Whose a rule or entry is: Icreon's, or a customer's own (marked, since it reaches only their projects). */
+export function Owner({ of, orgs }: { of: Owned; orgs: readonly Pick<Org, 'id' | 'name'>[] }) {
+  return isCustomers(of) ? <span className="lw-owner cust">{ownerName(of, orgs)}’s own</span> : <span className="lw-owner">Icreon</span>;
 }
