@@ -2,7 +2,7 @@
   "name": "cypher-web",
   "version": "1.0.0",
   "private": true,
-  "description": "ignoranceisbliss \u2014 the Cypher selection site for SitecoreAI",
+  "description": "ignoranceisbliss — the Cypher selection site for SitecoreAI",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -15,7 +15,7 @@
   },
   "dependencies": {
     "fflate": "0.8.2",
-    "next": "16.4.2",
+    "next": "16.4.6",
     "postgres": "3.4.9",
     "qrcode": "1.5.4",
     "react": "19.3.1",
