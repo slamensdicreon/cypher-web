@@ -20,10 +20,10 @@ data, sitemap entry and line in `/llms.txt`.
 - **Checklists and templates:** `/resources`, a migration checklist, a redirect map template
   (with a CSV download) and a personalization readiness checklist.
 
-## To sign off
+## Signed off
 
-No page adds a new number about Cypher; the proof points are the ones the site already uses. These
-sentences are new claims or platform facts a person should confirm.
+All approved on November 17, 2026. No page adds a new number about Cypher; the proof points are the
+ones the site already uses. These sentences were the new claims and platform facts reviewed.
 
 **About what Cypher does**
 - Sitecore FAQ: Cypher builds headless front ends and works with Sitecore's SaaS direction as well
@@ -53,7 +53,8 @@ sentences are new claims or platform facts a person should confirm.
 - Run A/B tests for at least a full week; WCAG AA is the usual target; two or three well-defined
   audiences beat a long list nobody maintains.
 
-## Still to do by hand
+## Search engines
 
-- Add the Google Search Console and Bing Webmaster Tools verification codes as environment
-  variables in Vercel, redeploy, then submit `https://www.ignoranceisbliss.ai/sitemap.xml` in both.
+Done November 17, 2026. Google Search Console verified the site automatically (URL prefix
+`https://www.ignoranceisbliss.ai/`), the sitemap is submitted, and Bing Webmaster Tools imported the
+site from Search Console. The verification code variables are no longer needed.

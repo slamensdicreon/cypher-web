@@ -64,14 +64,14 @@ const CREDS = [
 ] as const;
 
 /**
- * The customer quote. Until a real customer has said it and agreed to it, it's a draft: drafts show
- * on preview deployments to judge the layout, and never in production. Set `real` once it's real.
+ * The customer quote: Cypher's first customer, in their own words. `real` keeps the safeguard for
+ * any future draft: a quote that isn't real yet shows on preview deployments only, never in production.
  */
 const QUOTE = {
-  text: 'We had a quarter of site work stuck in the backlog. Cypher cleared it before our next planning meeting, and my team edits every page themselves.',
-  who: 'Director of digital marketing',
-  where: 'Enterprise manufacturer',
-  real: false,
+  text: '…it was beyond the most impressive thing I’ve ever seen. Discovery was done in 15 minutes, our entire 200-page website lifted and ready to use within 3 hours…',
+  who: 'VP Delivery',
+  where: 'Icreon',
+  real: true,
 };
 const showQuote = QUOTE.real || process.env.VERCEL_ENV === 'preview';
 
