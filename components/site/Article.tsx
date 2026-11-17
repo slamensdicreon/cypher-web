@@ -73,6 +73,25 @@ export default function Article({
                     ))}
                   </ol>
                 )}
+                {b.table && (
+                  <table className="bl-art-table">
+                    <thead><tr>{b.table.head.map((h, i) => <th key={i} scope="col">{h}</th>)}</tr></thead>
+                    <tbody>
+                      {b.table.rows.map((r) => (
+                        <tr key={r[0]}>
+                          <th scope="row">{r[0]}</th>
+                          {r.slice(1).map((c, i) => <td key={i} data-label={b.table!.head[i + 1]}>{c}</td>)}
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                )}
+                {b.quote && (
+                  <figure className="bl-art-quote">
+                    <blockquote>“{b.quote.text}”</blockquote>
+                    <figcaption>{b.quote.who}</figcaption>
+                  </figure>
+                )}
               </section>
             ))}
             {children}

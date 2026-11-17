@@ -58,3 +58,60 @@ ones the site already uses. These sentences were the new claims and platform fac
 Done November 17, 2026. Google Search Console verified the site automatically (URL prefix
 `https://www.ignoranceisbliss.ai/`), the sitemap is submitted, and Bing Webmaster Tools imported the
 site from Search Console. The verification code variables are no longer needed.
+
+# Second round: proof, security, comparisons and playbook notes
+
+Added November 17, 2026. Content is in `lib/content/trust.ts` (Proof, Security) and
+`lib/content/compare.ts` (comparisons); playbook notes are written and published in the admin.
+
+## What's new
+
+- **Proof** (`/proof`): the $512 run, and Icreon's story in the words of its approved quote.
+- **Security** (`/security`): how a project is kept safe, from what the site already says and what
+  the platform does today. No certification is claimed.
+- **Compare** (`/compare`, plus `/compare/agency-build`, `/compare/in-house-team`,
+  `/compare/ai-coding-tools`): kinds, never companies, and each says when the other way is better.
+- **Playbook notes** (`/notes`): admin → Playbook notes lists Icreon's active lessons from the
+  Launchworks knowledge base (never a customer's). A person rewrites one for the public and
+  publishes it. Publishing is refused while the note names any organization on the platform, and
+  the page stays out of search results until the first note is published.
+- **IndexNow**: once a day, and right after a note is published, every page's main text is
+  fingerprinted and only new, changed or removed pages are sent to Bing and the other engines that
+  share IndexNow. Production only. The key is public by design, at `/indexnow.txt`.
+- The menu gains Proof; the footer gains Proof, Security and Compare (and Playbook notes once one
+  is published). The sitemap has 46 pages.
+
+## To sign off
+
+**Security: platform facts stated publicly for the first time**
+- Each client's work is kept apart and "access is checked on every request. One client never sees
+  another's work."
+- A customer's own rules and lessons apply to their projects only.
+- Roles: Directors approve the plan, answer decisions and sign off launch; Watchers follow every
+  step but change nothing.
+- Expert support access is granted "for a set number of hours, up to three days", shows in the
+  customer's list of people, and ends on its own.
+- Every plan, decision, page and approval is logged and exportable; any build can be replayed.
+- When an agreement ends: projects become read only, everything can be exported for 90 days, then
+  projects, records and the customer's own rules and lessons are deleted. (This is what the
+  platform does; legal may want it to match the contract wording.)
+
+**Proof**
+- "Cypher ran that build for $512" and "What it shows is how much of a traditional build is work
+  that Cypher's specialists now do."
+- Icreon named as Cypher's first customer on a full page, with discovery described as "the step
+  where Cypher reads the brand and inventories every page."
+
+**Comparisons: general statements about the alternatives**
+- Agency: pace "often over months"; "a testing phase, usually near the end"; ownership "depends on
+  the contract"; editing "after handover and training"; "much of a traditional build's calendar
+  goes to coordination."
+- In-house: quality checks "as time allows"; what's learned "leaves when people leave."
+- DIY AI tools: platform knowledge is "what the model knows in general"; the record is "your chat
+  history"; a developer is needed throughout.
+- The "when the other way is better" lists on each page.
+
+## Still to come
+
+- More detail for Icreon's story when you have it: the platform, what "ready to use" covered, and
+  anything they're happy to add.

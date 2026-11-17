@@ -10,12 +10,16 @@
 
 export type Faq = { q: string; a: string };
 
-/** One section of a page: a heading, then any of paragraphs, a list, or numbered steps. */
+/** One section of a page: a heading, then any of paragraphs, a list, numbered steps, a comparison or a quote. */
 export type Block = {
   h: string;
   p?: string[];
   list?: string[];
   steps?: { t: string; b: string }[];
+  /** A side-by-side comparison: the column heads (the first is the row label's), then one row per point. */
+  table?: { head: string[]; rows: string[][] };
+  /** A customer's words, as they said them and agreed to them. */
+  quote?: { text: string; who: string };
 };
 
 export type Page = {
@@ -74,6 +78,12 @@ export type Resource = Page & {
   groups: { h: string; items: string[] }[];
   /** A file to download, e.g. a CSV template in /public/resources. */
   download?: { href: string; label: string };
+};
+
+/** /compare/[slug]: Cypher against another way of getting the work done (a kind, never a company). */
+export type Compare = Page & {
+  /** One line for the compare index card. */
+  card: string;
 };
 
 /** /glossary#slug */

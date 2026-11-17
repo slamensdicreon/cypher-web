@@ -1,10 +1,12 @@
 import type { MetadataRoute } from 'next';
 import { entries } from '@/lib/content';
+import { publishedNotes } from '@/lib/notes';
 import { SITE_URL } from '@/lib/site';
 
-/** Every public page, with when it was last reviewed where we know. */
-export default function sitemap(): MetadataRoute.Sitemap {
-  const top: Record<string, number> = { '/': 1, '/how-it-works': 0.9, '/playbooks': 0.9, '/platforms': 0.9, '/demo': 0.9, '/answers': 0.8, '/resources': 0.7, '/glossary': 0.7 };
+/** Every public page, with when it was last reviewed where we know. Playbook notes join once one is published. */
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const notes = await publishedNotes();
+  const top: Record<string, number> = { '/': 1, '/how-it-works': 0.9, '/playbooks': 0.9, '/platforms': 0.9, '/demo': 0.9, '/answers': 0.8, '/resources': 0.7, '/glossary': 0.7, '/proof': 0.9, '/security': 0.8, '/compare': 0.8 };
   return [
     ...entries().map((e) => ({
       url: `${SITE_URL}${e.path === '/' ? '/' : e.path}`,
@@ -12,6 +14,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: (e.path === '/' ? 'weekly' : 'monthly') as 'weekly' | 'monthly',
       priority: top[e.path] ?? 0.7,
     })),
+    ...(notes.length
+      ? [
+          { url: `${SITE_URL}/notes`, lastModified: new Date(notes[0].publishedAt ?? notes[0].updatedAt).toISOString().slice(0, 10), changeFrequency: 'weekly' as const, priority: 0.7 },
+          ...notes.map((n) => ({ url: `${SITE_URL}/notes/${n.slug}`, lastModified: new Date(n.updatedAt).toISOString().slice(0, 10), changeFrequency: 'monthly' as const, priority: 0.6 })),
+        ]
+      : []),
     { url: `${SITE_URL}/privacy`, changeFrequency: 'yearly', priority: 0.3 },
     { url: `${SITE_URL}/terms`, changeFrequency: 'yearly', priority: 0.3 },
   ];

@@ -399,4 +399,35 @@ export const MIGRATIONS: Migration[] = [
       alter table events add column if not exists label text not null default '';
     `,
   },
+  {
+    id: '0006_indexnow_and_notes',
+    sql: `
+      -- IndexNow: each public page's fingerprint when it was last sent, so only changes are sent again.
+      create table if not exists indexnow_pages (
+        url text primary key,
+        hash text not null,
+        submitted_at timestamptz not null default now()
+      );
+
+      -- Playbook notes: a lesson from the platform's knowledge base, rewritten for the public and
+      -- published by a person. The source is always one of Icreon's own lessons, never a customer's.
+      create table if not exists site_notes (
+        id bigserial primary key,
+        slug text not null unique,
+        source_id text not null default '',
+        source_ref text not null default '',
+        platform text not null default '',
+        title text not null,
+        summary text not null,
+        body text not null,
+        published boolean not null default false,
+        published_at timestamptz,
+        created_at timestamptz not null default now(),
+        updated_at timestamptz not null default now(),
+        created_by text not null default '',
+        updated_by text not null default ''
+      );
+      create index if not exists site_notes_published on site_notes (published, published_at desc);
+    `,
+  },
 ];

@@ -18,6 +18,7 @@ const ICONS = {
   tasks: <g {...P}><rect x="3.5" y="3.5" width="17" height="17" rx="2.5" /><path d="m8 12 3 3 5-6" /></g>,
   email: <g {...P}><rect x="3" y="5" width="18" height="14" rx="2" /><path d="m4 7 8 6 8-6" /></g>,
   contacts: <g {...P}><circle cx="9" cy="9" r="3.2" /><path d="M3.5 19a5.5 5.5 0 0 1 11 0M16 7.5a3 3 0 0 1 0 5.8M17.5 19a5 5 0 0 0-2-4" /></g>,
+  notes: <g {...P}><path d="M6.5 3.5h8l4 4V20a.5.5 0 0 1-.5.5H6.5A.5.5 0 0 1 6 20V4a.5.5 0 0 1 .5-.5z" /><path d="M14.5 3.5V8h4M9 12h6M9 16h4" /></g>,
   assets: <g {...P}><rect x="3" y="4" width="18" height="16" rx="2" /><circle cx="9" cy="10" r="2" /><path d="m21 16-5-5-9 9" /></g>,
   people: <g {...P}><circle cx="12" cy="8" r="3.5" /><path d="M5 20a7 7 0 0 1 14 0" /></g>,
   audit: <g {...P}><path d="M12 7v5l3 2" /><circle cx="12" cy="12" r="8.5" /></g>,

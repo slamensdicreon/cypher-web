@@ -1,4 +1,5 @@
 import { entries } from '@/lib/content';
+import { publishedNotes } from '@/lib/notes';
 import { WHAT_CYPHER_IS } from '@/lib/schema';
 import { SITE_URL } from '@/lib/site';
 
@@ -8,9 +9,10 @@ export const dynamic = 'force-static';
  * llms.txt: a plain map of the site for AI crawlers and answer engines (llmstxt.org): what Cypher is,
  * then every page that matters, each with one line.
  */
-export function GET() {
+export async function GET() {
   const all = entries();
-  const groups = ['Cypher', 'Platforms', 'Playbooks', 'Answers', 'Checklists and templates', 'Learn'];
+  const notes = await publishedNotes();
+  const groups = ['Cypher', 'Platforms', 'Playbooks', 'Answers', 'Compare', 'Checklists and templates', 'Learn'];
   const lines: string[] = [
     '# Cypher',
     '',
@@ -24,6 +26,11 @@ export function GET() {
     if (!items.length) continue;
     lines.push(`## ${g}`, '');
     for (const e of items) lines.push(`- [${e.name}](${SITE_URL}${e.path === '/' ? '/' : e.path}): ${e.line}`);
+    lines.push('');
+  }
+  if (notes.length) {
+    lines.push('## Playbook notes', '');
+    for (const n of notes.slice(0, 50)) lines.push(`- [${n.title}](${SITE_URL}/notes/${n.slug}): ${n.summary.split('. ')[0].replace(/\.$/, '')}.`);
     lines.push('');
   }
   lines.push('## Optional', '', `- [Privacy](${SITE_URL}/privacy): What the site collects, why, and how to have it deleted.`, `- [Terms of Use](${SITE_URL}/terms): A parody. Read slowly.`, '');
