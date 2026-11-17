@@ -1,16 +1,16 @@
-type DataLayerWindow = Window & { dataLayer?: Record<string, unknown>[] };
+type GtagWindow = Window & { gtag?: (...args: unknown[]) => void };
 
 /**
- * Client side: an event for Google Analytics, through Tag Manager's data layer. Only names and
- * labels, never an email, a name or anything typed into the form. A no-op where Tag Manager isn't
- * loaded (previews, local copies).
+ * Client side: an event for Google Analytics. Only names and labels, never an email, a name or
+ * anything typed into the form. Sent with gtag('event'), which the Tag Manager container's Google
+ * tag forwards to Analytics; a no-op where Tag Manager isn't loaded (previews, local copies).
  */
 export function gaEvent(event: string, params: Record<string, string> = {}) {
   if (typeof window === 'undefined') return;
-  const w = window as DataLayerWindow;
-  if (!w.dataLayer) return;
+  const w = window as GtagWindow;
+  if (typeof w.gtag !== 'function') return;
   try {
-    w.dataLayer.push({ event, ...params });
+    w.gtag('event', event, params);
   } catch {
     /* analytics must never break the page */
   }
