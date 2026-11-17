@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import SiteFooter from '@/components/SiteFooter';
 import SiteHeader from '@/components/SiteHeader';
-import Track from '@/components/Track';
+import Analytics from '@/components/site/Analytics';
 import { Breadcrumbs } from '@/components/site/parts';
 
 const description = 'What Cypher collects on ignoranceisbliss.ai, why, who processes it, how long it’s kept, and how to have it deleted.';
@@ -29,7 +29,7 @@ export default function Privacy() {
           <p>What we collect, why, and how to make us forget it. Unlike our Terms of Use, this page means exactly what it says.</p>
         </div>
         <article className="paper privacy">
-          <p className="caps">Last updated November 13, 2026</p>
+          <p className="caps">Last updated November 17, 2026</p>
 
           <section>
             <h2>Who we are</h2>
@@ -44,7 +44,9 @@ export default function Privacy() {
 
           <section>
             <h2>What we measure on the site</h2>
-            <p>We count visits without cookies and without storing your IP address. Each visit is counted under a code made from the date, your network address and your browser, scrambled with a secret key so it can’t be reversed, and it changes every day, so we can’t follow you from one day to the next. With it we record the page, the site that linked to you, a campaign tag if the link had one, your country (from our host’s network) and whether you’re on a phone, tablet or computer. We also count presses of buttons like “Book a demo” and plays of the decision cards.</p>
+            <p>Our own visit count uses no cookies and doesn’t store your IP address. Each visit is counted under a code made from the date, your network address and your browser, scrambled with a secret key so it can’t be reversed, and it changes every day, so we can’t follow you from one day to the next. With it we record the page, the site that linked to you, a campaign tag if the link had one, your country (from our host’s network) and whether you’re on a phone, tablet or computer. We also count presses of buttons like “Book a demo” and plays of the decision cards.</p>
+            <p>We also use Google Analytics, loaded through Google Tag Manager, to see how the site is used: which pages are read, how people arrive, which buttons they press, and when someone books a demo. It never receives what you type into the form. Outside the European Economic Area, the UK and Switzerland, it sets its own cookies (named <code>_ga</code>) that recognize a returning browser for up to two years. Visitors in the European Economic Area, the UK and Switzerland get no Google Analytics cookies. We don’t use it for advertising: advertising cookies and ad personalization are switched off for everyone.</p>
+            <p>You can stop Google Analytics by blocking cookies in your browser or with <a href="https://tools.google.com/dlpage/gaoptout" rel="noreferrer">Google’s opt-out add-on</a>. <a href="https://policies.google.com/technologies/partner-sites" rel="noreferrer">How Google uses information from sites that use its services</a>.</p>
             <p>To stop the form being abused, we keep a scrambled code of the network a request came from, never the address itself.</p>
           </section>
 
@@ -55,12 +57,12 @@ export default function Privacy() {
 
           <section>
             <h2>Who processes it for us</h2>
-            <p>Our hosting provider runs the site, our database provider stores the records, and our email provider sends and tracks our emails. They process it on our behalf and for no other purpose. We don’t sell your information, and we don’t share it with advertisers.</p>
+            <p>Our hosting provider runs the site, our database provider stores the records, our email provider sends and tracks our emails, and Google runs Google Analytics. They process it on our behalf. We don’t sell your information, and we don’t share it with advertisers.</p>
           </section>
 
           <section>
             <h2>How long we keep it</h2>
-            <p>Demo requests and the conversations that follow stay as long as they’re useful to the relationship, and are deleted when you ask. Visit counts are kept as anonymous totals. An unsubscribe is kept for good, so we never email that address again.</p>
+            <p>Demo requests and the conversations that follow stay as long as they’re useful to the relationship, and are deleted when you ask. Our own visit counts are kept as anonymous totals; Google Analytics keeps its data for no more than 14 months. An unsubscribe is kept for good, so we never email that address again.</p>
           </section>
 
           <section>
@@ -75,7 +77,7 @@ export default function Privacy() {
         </article>
       </main>
       <SiteFooter />
-      <Track />
+      <Analytics />
     </div>
   );
 }

@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from 'next';
 import Link from 'next/link';
 import SiteFooter from '@/components/SiteFooter';
 import SiteHeader, { Resting } from '@/components/SiteHeader';
-import Track from '@/components/Track';
+import Analytics from '@/components/site/Analytics';
 import { Breadcrumbs } from '@/components/site/parts';
 
 const description =
@@ -158,7 +158,7 @@ export default function Terms() {
 
       </main>
       <SiteFooter />
-      <Track />
+      <Analytics />
     </div>
   );
 }

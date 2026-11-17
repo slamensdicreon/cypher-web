@@ -6,6 +6,9 @@
 /** Where the site lives; links in structured data are absolute. */
 export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.ignoranceisbliss.ai';
 
+/** Google Tag Manager: the container that loads Google Analytics (G-97WZQSSDXS) on the public site. */
+export const GTM_ID = 'GTM-W3ZRGWG2';
+
 export type NavItem = { href: string; label: string; note: string; group: 'Product' | 'Outcomes' | 'Platforms' | 'Company'; live: boolean; top?: boolean };
 
 /** Pages join the navigation and footer as they ship: flip `live` when a page is built. */

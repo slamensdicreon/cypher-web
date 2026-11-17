@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import SiteFooter from '@/components/SiteFooter';
 import SiteHeader from '@/components/SiteHeader';
-import Track from '@/components/Track';
+import Analytics from '@/components/site/Analytics';
 import JsonLd from '@/components/site/JsonLd';
 import { contentPage, faqPage, graph } from '@/lib/schema';
 import CtaLink from '@/components/site/CtaLink';
@@ -239,7 +239,7 @@ export default function HowItWorks() {
       </main>
 
       <SiteFooter />
-      <Track />
+      <Analytics />
       <JsonLd data={graph(contentPage({ path: '/how-it-works', title: 'How Cypher works: you stay in charge of the brand', description, updated: '2026-11-14' }), faqPage(QA))} />
     </div>
   );

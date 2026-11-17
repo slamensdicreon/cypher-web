@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import SiteFooter from '@/components/SiteFooter';
 import SiteHeader from '@/components/SiteHeader';
-import Track from '@/components/Track';
+import Analytics from '@/components/site/Analytics';
 import CtaLink from '@/components/site/CtaLink';
 import { EyeMark } from '@/components/site/Marks';
 import { Breadcrumbs } from '@/components/site/parts';
@@ -121,7 +121,7 @@ export default function Playbooks() {
       </main>
 
       <SiteFooter />
-      <Track />
+      <Analytics />
     </div>
   );
 }

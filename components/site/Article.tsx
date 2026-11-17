@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import SiteFooter from '@/components/SiteFooter';
 import SiteHeader from '@/components/SiteHeader';
-import Track from '@/components/Track';
+import Analytics from '@/components/site/Analytics';
 import CtaLink from '@/components/site/CtaLink';
 import JsonLd from '@/components/site/JsonLd';
 import { Arrow, EyeMark } from '@/components/site/Marks';
@@ -129,7 +129,7 @@ export default function Article({
         </article>
       </main>
       <SiteFooter />
-      <Track />
+      <Analytics />
       <JsonLd data={graph(contentPage({ path, title: page.h1.bold || `${page.h1.light}`, description: page.description, updated: page.updated, article }), ...(page.faq.length ? [faqPage(page.faq)] : []))} />
     </div>
   );
@@ -150,7 +150,7 @@ export function IndexShell({ label, data, children }: { label: string; data: obj
         </section>
       </main>
       <SiteFooter />
-      <Track />
+      <Analytics />
       <JsonLd data={data} />
     </div>
   );

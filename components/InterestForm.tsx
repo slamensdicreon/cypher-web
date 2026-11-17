@@ -4,7 +4,7 @@ import { useEffect, useRef, useState, type CSSProperties, type KeyboardEvent } f
 import { companyOf, domainOf } from '@/lib/company';
 import { NOTED, OUTCOMES } from '@/lib/config';
 import { eye, eyeLook, eyeMood } from './eyeBus';
-import { track } from '@/lib/track';
+import { gaEvent, track } from '@/lib/track';
 import { MAX_SLOTS, PARTS, PLATFORMS, dayLabel, nextWeekdays, type Part } from '@/lib/site';
 import LivingEye from './LivingEye';
 import Morph from './Morph';
@@ -174,6 +174,8 @@ export default function InterestForm() {
         const where = site.trim().replace(/^https?:\/\//i, '').replace(/\/$/, '');
         try { localStorage.setItem(STORE_KEY, JSON.stringify({ company: c, level, site: where })); } catch { /* private mode */ }
         eye('calm'); eye('delight');
+        // The one that matters: a demo request, for Google Analytics (no personal details).
+        gaEvent('generate_lead', { form_name: 'demo', platform: platform === 'other' ? 'other' : platform || 'unknown' });
         setPhase({ kind: 'noted', company: c, level, site: where });
       } else {
         const k = (['sitecore', 'vendor', 'personal', 'bad', 'slow'].includes(data.status) ? data.status : 'error') as ReplyKind;

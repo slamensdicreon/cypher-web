@@ -3,7 +3,7 @@ import Eye from '@/components/Eye';
 import InterestForm from '@/components/InterestForm';
 import SiteFooter from '@/components/SiteFooter';
 import SiteHeader from '@/components/SiteHeader';
-import Track from '@/components/Track';
+import Analytics from '@/components/site/Analytics';
 import JsonLd from '@/components/site/JsonLd';
 import { faqPage, graph } from '@/lib/schema';
 import { Faq, PageHero, Steps } from '@/components/site/parts';
@@ -64,7 +64,7 @@ export default function Demo() {
         </section>
       </main>
       <SiteFooter />
-      <Track />
+      <Analytics />
       <JsonLd data={graph(faqPage(QA))} />
     </div>
   );

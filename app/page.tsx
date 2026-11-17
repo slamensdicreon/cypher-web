@@ -3,7 +3,7 @@ import Link from 'next/link';
 import Eye from '@/components/Eye';
 import SiteFooter from '@/components/SiteFooter';
 import SiteHeader from '@/components/SiteHeader';
-import Track from '@/components/Track';
+import Analytics from '@/components/site/Analytics';
 import CtaLink from '@/components/site/CtaLink';
 import DemoStart from '@/components/site/DemoStart';
 import HomeVideo from '@/components/site/HomeVideo';
@@ -196,7 +196,7 @@ export default function Page() {
       </main>
 
       <SiteFooter />
-      <Track />
+      <Analytics />
       <JsonLd data={graph(organization(), website(), software(), homeVideo())} />
     </div>
   );
