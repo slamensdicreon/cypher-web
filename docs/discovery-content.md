@@ -61,12 +61,13 @@ site from Search Console. The verification code variables are no longer needed.
 
 # Second round: proof, security, comparisons and playbook notes
 
-Added November 17, 2026. Content is in `lib/content/trust.ts` (Proof, Security) and
+Added November 17, 2026. Content is in `lib/content/trust.ts` (Security) and
 `lib/content/compare.ts` (comparisons); playbook notes are written and published in the admin.
 
 ## What's new
 
-- **Proof** (`/proof`): the $512 run, and Icreon's story in the words of its approved quote.
+- **Proof** (`/proof`): retired November 18, 2026; the address goes to the homepage, which keeps the
+  $512 run and the Icreon quote.
 - **Security** (`/security`): how a project is kept safe, from what the site already says and what
   the platform does today. No certification is claimed.
 - **Compare** (`/compare`, plus `/compare/agency-build`, `/compare/in-house-team`,
@@ -78,8 +79,8 @@ Added November 17, 2026. Content is in `lib/content/trust.ts` (Proof, Security) 
 - **IndexNow**: once a day, and right after a note is published, every page's main text is
   fingerprinted and only new, changed or removed pages are sent to Bing and the other engines that
   share IndexNow. Production only. The key is public by design, at `/indexnow.txt`.
-- The menu gains Proof; the footer gains Proof, Security and Compare (and Playbook notes once one
-  is published). The sitemap has 46 pages.
+- The footer gains Security and Compare (and Playbook notes once one is published). The menu's main
+  links are Home, How it works, Playbooks and Platforms; Answers is in the footer.
 
 ## To sign off
 
@@ -95,12 +96,6 @@ Added November 17, 2026. Content is in `lib/content/trust.ts` (Proof, Security) 
 - When an agreement ends: projects become read only, everything can be exported for 90 days, then
   projects, records and the customer's own rules and lessons are deleted. (This is what the
   platform does; legal may want it to match the contract wording.)
-
-**Proof**
-- "Cypher ran that build for $512" and "What it shows is how much of a traditional build is work
-  that Cypher's specialists now do."
-- Icreon named as Cypher's first customer on a full page, with discovery described as "the step
-  where Cypher reads the brand and inventories every page."
 
 **Comparisons: general statements about the alternatives**
 - Agency: pace "often over months"; "a testing phase, usually near the end"; ownership "depends on

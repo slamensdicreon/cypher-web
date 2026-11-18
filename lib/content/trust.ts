@@ -1,7 +1,7 @@
 import type { Page } from './types';
 
 /**
- * The pages that answer "can we trust it?": how Cypher keeps a project safe, and the proof so far.
+ * The page that answers "can we trust it?": how Cypher keeps a project safe.
  * Only facts the site already states, or that the platform does today; new claims are listed for
  * sign-off in docs/discovery-content.md. No certifications are claimed.
  */
@@ -68,50 +68,6 @@ export const SECURITY: Page = {
     { q: 'Who owns the code?', a: 'You do. It’s in your repository and your hosting, with your keys. There’s no lock-in and no retainer.' },
     { q: 'What happens to our data when we stop?', a: 'Your projects become read only and you can export everything for 90 days. After that, your projects and records are deleted.' },
   ],
-  related: ['/how-it-works', '/proof', '/compare/agency-build', '/answers/what-does-a-marketer-decide-in-a-website-build', '/answers/how-does-an-ai-team-build-a-website'],
-  updated: '2026-11-17',
-};
-
-export const PROOF: Page = {
-  slug: 'proof',
-  name: 'Proof',
-  h1: { light: 'Don’t take our word for it.', bold: 'Here are the receipts.' },
-  metaTitle: 'Cypher results: the $512 build and 200 pages in 3 hours',
-  description: 'What Cypher has done so far: a build an agency quoted at $400,000+ that cost $512 to run, and a 200-page website lifted and ready to use within three hours.',
-  answer:
-    'Two results so far. A build an agency quoted at $400,000+ cost $512 to run: the cost of the run, not the price of Cypher. And for Icreon, Cypher’s first customer, discovery took 15 minutes and a 200-page website was lifted and ready to use within three hours.',
-  blocks: [
-    {
-      h: '$400,000+ quoted. $512 to run.',
-      p: [
-        'An agency quoted more than $400,000 for one website build. Cypher ran that build for $512.',
-        'That’s the cost of the run, not the price of Cypher. What it shows is how much of a traditional build is work that Cypher’s specialists now do, with every page checked before a person sees it.',
-      ],
-    },
-    {
-      h: 'Icreon: 200 pages in three hours',
-      p: [
-        'Icreon was Cypher’s first customer. Discovery, the step where Cypher reads the brand and inventories every page, was done in 15 minutes. The entire 200-page website was lifted and ready to use within three hours.',
-      ],
-      quote: {
-        text: '…it was beyond the most impressive thing I’ve ever seen. Discovery was done in 15 minutes, our entire 200-page website lifted and ready to use within 3 hours…',
-        who: 'VP Delivery, Icreon',
-      },
-    },
-    {
-      h: 'Every build leaves a record',
-      p: ['Every action in a Cypher build is logged: who did it, when and why. Any build can be replayed step by step, so a result like these can be checked, not just claimed.'],
-    },
-    {
-      h: 'The best proof is your own site',
-      p: ['In a 30-minute demo, Cypher rebuilds your homepage on your platform while you watch. You keep the replay of every step and a plain account of what the rest of your site would take.'],
-    },
-  ],
-  faq: [
-    { q: 'Is $512 the price of Cypher?', a: 'No. $512 is what one build cost to run. It isn’t the price of Cypher.' },
-    { q: 'Who was Cypher’s first customer?', a: 'Icreon. Its VP Delivery said discovery was done in 15 minutes and its entire 200-page website was lifted and ready to use within three hours.' },
-    { q: 'How can I check these results for myself?', a: 'Book a demo. Cypher rebuilds your own homepage while you watch, and you keep the replay of every step.' },
-  ],
-  related: ['/playbooks/homepage-rebuild', '/how-it-works', '/security', '/compare/agency-build', '/playbooks/migration'],
+  related: ['/how-it-works', '/compare/agency-build', '/compare/in-house-team', '/answers/what-does-a-marketer-decide-in-a-website-build', '/answers/how-does-an-ai-team-build-a-website'],
   updated: '2026-11-17',
 };

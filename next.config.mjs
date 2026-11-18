@@ -14,6 +14,8 @@ const nextConfig = {
   // The campaign assets moved into the admin shell; old links (and bookmarks) follow them.
   async redirects() {
     return [
+      // The Proof page was retired; its story lives on the homepage.
+      { source: '/proof', destination: '/', permanent: true },
       { source: '/postcards', destination: '/admin/assets/postcards', permanent: false },
       { source: '/postcards/trading', destination: '/admin/assets/trading', permanent: false },
       { source: '/postcards/social', destination: '/admin/assets/social-ads', permanent: false },

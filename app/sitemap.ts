@@ -6,7 +6,7 @@ import { SITE_URL } from '@/lib/site';
 /** Every public page, with when it was last reviewed where we know. Playbook notes join once one is published. */
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const notes = await publishedNotes();
-  const top: Record<string, number> = { '/': 1, '/how-it-works': 0.9, '/playbooks': 0.9, '/platforms': 0.9, '/demo': 0.9, '/answers': 0.8, '/resources': 0.7, '/glossary': 0.7, '/proof': 0.9, '/security': 0.8, '/compare': 0.8 };
+  const top: Record<string, number> = { '/': 1, '/how-it-works': 0.9, '/playbooks': 0.9, '/platforms': 0.9, '/demo': 0.9, '/answers': 0.8, '/resources': 0.7, '/glossary': 0.7, '/security': 0.8, '/compare': 0.8 };
   return [
     ...entries().map((e) => ({
       url: `${SITE_URL}${e.path === '/' ? '/' : e.path}`,

@@ -11,8 +11,6 @@ const ITEMS = [
   { href: '/how-it-works', name: 'How it works', line: 'Here’s how we work together. You stay in charge of the brand.' },
   { href: '/playbooks', name: 'Playbooks', line: 'Pick an outcome. There’s a playbook for it.' },
   { href: '/platforms', name: 'Platforms', line: 'Sitecore, Optimizely, Contentful, or whatever you run.' },
-  { href: '/proof', name: 'Proof', line: 'The receipts: $400,000+ quoted, $512 to run.' },
-  { href: '/answers', name: 'Answers', line: 'Straight answers to what marketers ask about builds, migrations and launches.' },
 ] as const;
 
 /**

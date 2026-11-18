@@ -66,7 +66,7 @@ export const COMPARES: Compare[] = [
       { q: 'Can our agency work alongside Cypher?', a: 'Yes. Bring your agency’s designs: Cypher builds them pixel for pixel on your platform.' },
       { q: 'How does the cost compare?', a: 'We talk about pricing in the demo, against your own project. As one data point, a build an agency quoted at $400,000+ cost $512 to run. That’s the cost of the run, not the price of Cypher.' },
     ],
-    related: ['/compare/in-house-team', '/compare/ai-coding-tools', '/proof', '/how-it-works', '/playbooks/website-build'],
+    related: ['/compare/in-house-team', '/compare/ai-coding-tools', '/how-it-works', '/security', '/playbooks/website-build'],
     updated: '2026-11-17',
   },
   {

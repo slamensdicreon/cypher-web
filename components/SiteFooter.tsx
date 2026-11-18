@@ -16,7 +16,7 @@ export default async function SiteFooter() {
         </div>
         <nav className="bl-foot-nav" aria-label="Footer">
           <span><Link href="/how-it-works">How it works</Link><Link href="/playbooks">Playbooks</Link><Link href="/platforms">Platforms</Link></span>
-          <span><Link href="/proof">Proof</Link><Link href="/security">Security</Link><Link href="/compare">Compare</Link></span>
+          <span><Link href="/security">Security</Link><Link href="/compare">Compare</Link></span>
           <span><Link href="/answers">Answers</Link><Link href="/glossary">Glossary</Link><Link href="/resources">Checklists and templates</Link>{notes && <Link href="/notes">Playbook notes</Link>}</span>
           <span><CtaLink href="/demo" label="footer">Book a demo</CtaLink></span>
           <span><Link href="/terms">Terms of Use</Link><Link href="/privacy">Privacy</Link></span>

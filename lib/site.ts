@@ -26,7 +26,6 @@ export const NAV: NavItem[] = [
   { href: '/platforms/sitecore', label: 'Sitecore', note: '', group: 'Platforms', live: false },
   { href: '/platforms/optimizely', label: 'Optimizely', note: '', group: 'Platforms', live: false },
   { href: '/platforms/contentful', label: 'Contentful', note: '', group: 'Platforms', live: false },
-  { href: '/proof', label: 'Proof', note: 'The receipts', group: 'Company', live: false },
   { href: '/security', label: 'Security', note: '', group: 'Company', live: false },
   { href: '/demo', label: 'Book a demo', note: '', group: 'Company', live: true },
 ];
