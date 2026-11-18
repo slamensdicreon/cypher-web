@@ -67,8 +67,8 @@ test('first run sends every page; an unchanged run sends nothing; a change sends
   assert.deepEqual(second.result, { skipped: 'nothing to send' });
   assert.equal(sent.length, 1);
 
-  const proof = first.sent.find((u) => u.endsWith('/proof'))!;
-  pages.set(proof, 'New words on the proof page');
+  const proof = first.sent.find((u) => u.endsWith('/security'))!;
+  pages.set(proof, 'New words on the security page');
   const third = await ix.runIndexNow();
   assert.deepEqual(third.sent, [proof]);
   assert.deepEqual(sent[1], [proof]);

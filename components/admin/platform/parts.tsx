@@ -11,6 +11,7 @@ export const WHY: Record<string, { title: string; fix: string }> = {
   not_a_member: { title: 'You aren’t a member of Icreon on Launchworks.', fix: 'Ask an Icreon Director to add you in Launchworks, under the email you sign in here with.' },
   no_actor: { title: 'The admin didn’t say who you are.', fix: 'This is a bug in the admin: it must send your email on every call.' },
   unreachable: { title: 'Launchworks didn’t answer.', fix: 'Try again in a minute. If it persists, check the platform’s health.' },
+  timeout: { title: 'Launchworks took too long to answer.', fix: 'Try again in a minute. If it persists, check the platform’s health.' },
 };
 
 export type Got<T> = { ok: true; data: T } | { ok: false; err: PlatformError };

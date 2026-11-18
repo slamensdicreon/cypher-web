@@ -94,8 +94,9 @@ Added November 17, 2026. Content is in `lib/content/trust.ts` (Security) and
   customer's list of people, and ends on its own.
 - Every plan, decision, page and approval is logged and exportable; any build can be replayed.
 - When an agreement ends: projects become read only, everything can be exported for 90 days, then
-  projects, records and the customer's own rules and lessons are deleted. (This is what the
-  platform does; legal may want it to match the contract wording.)
+  projects, records and the customer's own rules and lessons are deleted, while the site keeps
+  running and the code is kept for handover (icreon-claude PR 46). (This is what the platform does;
+  legal may want it to match the contract wording.)
 
 **Comparisons: general statements about the alternatives**
 - Agency: pace "often over months"; "a testing phase, usually near the end"; ownership "depends on

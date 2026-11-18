@@ -20,6 +20,8 @@ export class PlatformError extends Error {
     readonly status: number,
     readonly code: string,
     message: string,
+    /** The whole answer, for refusals that carry more than a message (e.g. purge_failed). */
+    readonly body?: unknown,
   ) {
     super(message);
   }
@@ -27,14 +29,14 @@ export class PlatformError extends Error {
 
 type Method = 'GET' | 'POST' | 'PUT' | 'DELETE';
 
-export async function platform<T>(as: Pick<User, 'email' | 'name'>, method: Method, path: string, body?: unknown): Promise<T> {
+export async function platform<T>(as: Pick<User, 'email' | 'name'>, method: Method, path: string, body?: unknown, opts: { timeoutMs?: number } = {}): Promise<T> {
   if (!platformConfigured()) throw new PlatformError(503, 'unset', 'The platform isn’t connected here (no Launchworks key).');
   let res: Response;
   try {
     res = await fetch(`${base()}${path}`, {
       method,
       cache: 'no-store',
-      signal: AbortSignal.timeout(20_000),
+      signal: AbortSignal.timeout(opts.timeoutMs ?? 20_000),
       headers: {
         authorization: `Bearer ${key()}`,
         accept: 'application/json',
@@ -46,7 +48,8 @@ export async function platform<T>(as: Pick<User, 'email' | 'name'>, method: Meth
       ...(body !== undefined ? { body: JSON.stringify(body) } : {}),
     });
   } catch (err) {
-    throw new PlatformError(502, 'unreachable', `The platform didn’t answer (${(err as Error).message}).`);
+    const timedOut = (err as Error).name === 'TimeoutError';
+    throw new PlatformError(timedOut ? 504 : 502, timedOut ? 'timeout' : 'unreachable', `The platform didn’t answer (${(err as Error).message}).`);
   }
   const json = (await res.json().catch(() => null)) as { error?: { code?: string; message?: string } | string; message?: string } | null;
   if (!res.ok) {
@@ -54,7 +57,7 @@ export async function platform<T>(as: Pick<User, 'email' | 'name'>, method: Meth
     const e = json?.error;
     const code = typeof e === 'string' ? e : e?.code;
     const message = typeof e === 'string' ? json?.message : e?.message;
-    throw new PlatformError(res.status, code ?? 'error', message ?? `The platform answered ${res.status}.`);
+    throw new PlatformError(res.status, code ?? 'error', message ?? `The platform answered ${res.status}.`, json);
   }
   return json as T;
 }
@@ -94,6 +97,13 @@ export type Usage = {
   projects: { projectId: string; name: string; status: string; claude: { usd: number; tokens: number; hours: number }; toolMinutes: Record<string, number>; vercel: { hostingProject: string | null; deployments: number; failed: number; buildMinutes: number } | null; vercelNote: string | null }[];
   cachedForMinutes: number;
 };
+/** What's left of a deleted organization: who deleted it, when, and what went. */
+export type Deletion = {
+  organizationId: string; name: string; slug: string; deletedBy: string; deletedAt: string;
+  detail: { projects?: { projectId: string; name: string }[]; keptCode?: boolean; connections?: number; rules?: number; lessons?: number; conversations?: number };
+};
+/** A deletion stopped because some projects couldn't be purged; the organization is still there. */
+export type PurgeFailed = { purged: string[]; failed: { projectId: string; name: string; error: string }[] };
 export type Playbook = { id: string; name: string; version: string; description: string; platform: { id: string; name: string }; roles?: { role: string; name: string }[] };
 
 export const CATEGORIES = {

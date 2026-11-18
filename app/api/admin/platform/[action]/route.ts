@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { audit } from '@/lib/audit';
 import { apiUser } from '@/lib/auth/request';
-import { CATEGORIES, PlatformError, isCustomers, ownerName, platform, type Applied, type Entry, type KnowledgeList, type Org, type Playbook, type Recommendation, type Rule } from '@/lib/platform';
+import { CATEGORIES, ICREON, PlatformError, isCustomers, ownerName, platform, type Applied, type Deletion, type Entry, type KnowledgeList, type Org, type Playbook, type PurgeFailed, type Recommendation, type Rule } from '@/lib/platform';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -108,6 +108,36 @@ export async function POST(req: Request, { params }: { params: Promise<{ action:
         await log(`Gave themselves ${hours}h support access to ${name} as ${role}`, 'organization', str('id'), r);
         const until = new Intl.DateTimeFormat('en-US', { timeZone: 'America/New_York', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' }).format(new Date(r.expiresAt));
         return done(`You’re a ${role === 'director' ? 'Director' : 'Watcher'} in ${name} until ${until} ET. Use it in Launchworks: account menu, then ${name}.`);
+      }
+      case 'delete-org': {
+        // For good: a ticked box, the organization's name typed exactly, and a fresh sign-in.
+        const stop = await live();
+        if (stop) return stop;
+        const orgId = str('id');
+        if (!orgId || orgId === ICREON) return done('That didn’t work: Icreon can’t be deleted.');
+        const typed = str('name_typed');
+        const keepCode = on('keep_code');
+        try {
+          // Purging every project can take a while: wait as long as this function may run.
+          const r = await platform<{ deleted: Deletion }>(as, 'POST', `/admin/organizations/${encodeURIComponent(orgId)}/delete`, { confirm: typed, keepCode }, { timeoutMs: 55_000 });
+          const d = r.deleted;
+          const n = d.detail.projects?.length ?? 0;
+          await log(`Deleted organization ${d.name} (${n} project(s); code ${d.detail.keptCode === false ? 'deleted too' : 'kept'})`, 'organization', orgId, d);
+          return done(`${d.name} is deleted: ${n} project${n === 1 ? '' : 's'} purged, ${d.detail.keptCode === false ? 'their code and sites deleted too' : 'their code and sites kept'}.`, '/admin/platform');
+        } catch (err) {
+          const e = err as PlatformError;
+          if (e instanceof PlatformError && e.code === 'purge_failed') {
+            const b = (e.body ?? {}) as Partial<PurgeFailed>;
+            const failed = (b.failed ?? []).map((f) => `${f.name || f.projectId} (${f.error.slice(0, 120)})`).join('; ');
+            await log(`Tried to delete organization ${orgId}: ${b.failed?.length ?? 0} project(s) failed, ${b.purged?.length ?? 0} purged; not deleted`, 'organization', orgId, b);
+            return done(`That didn’t work: ${e.message} Couldn’t delete: ${failed || 'see the platform'}.`);
+          }
+          if (e instanceof PlatformError && e.code === 'timeout') {
+            await log(`Deletion of organization ${orgId} still running when the admin stopped waiting`, 'organization', orgId);
+            return done('That didn’t work in time: the platform may still be deleting it. Check Deleted organizations on the Organizations page in a minute. Running it again is safe: finished projects are skipped.');
+          }
+          throw err;
+        }
       }
       // ---------------------------------------------------------------- rules
       case 'rule-create': {

@@ -13,6 +13,8 @@
 :root[data-theme="dark"]{--bg:var(--ink);--fg:var(--on-ink)}
 html{scroll-padding-top:env(safe-area-inset-top,0px);scroll-behavior:smooth;overflow-x:hidden}
 *,*::before,*::after{box-sizing:inherit}
+/* A <details> passes its children through the browser's own slot, which doesn't inherit box-sizing: set it again. */
+details>*{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--fg);font-size:17px;line-height:1.5;-webkit-font-smoothing:antialiased;font-variant-numeric:tabular-nums;overflow-x:hidden;max-width:100vw}
 img,svg{max-width:100%}
 a{color:var(--on-ink-muted)}
@@ -359,6 +361,10 @@ tr.ad-dim td{opacity:.55}
 .ad-actions{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:14px}
 .ad-btn.primary{background:var(--coral);border-color:var(--coral);color:#fff}
 .ad-btn.primary:disabled{background:transparent;border-color:var(--ink-3);color:var(--on-ink-quiet);cursor:default}
+.ad-btn.danger{border-color:rgba(232,85,61,.75);color:#ffb3a5}
+.ad-btn.danger:hover{background:var(--coral);border-color:var(--coral);color:#fff}
+.lw-danger{border:1px solid rgba(232,85,61,.4)}
+.lw-danger > summary{color:#ffb3a5}.lw-danger[open] > summary{margin-bottom:12px}
 .ad-btn:disabled{opacity:.55;cursor:default}
 .ad-btn.ghost{border-color:transparent;color:var(--on-ink-muted)}
 .ad-btn.small{padding:5px 10px;font-size:12px}

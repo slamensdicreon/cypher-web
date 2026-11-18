@@ -152,6 +152,31 @@ export default async function OrganizationPage({ params, searchParams }: { param
               </>
             )}
           </section>
+
+          {!icreon && writable && (
+            <details className="ad-card lw-danger" id="delete">
+              <summary>Delete organization</summary>
+              <p className="lw-gap">This deletes <b>{org.name}</b> from Launchworks for good. It can’t be undone. What goes:</p>
+              <ul className="lw-sources lw-gap">
+                <li>{plural(org.projects, 'project')}, purged{org.running ? `, including the ${org.running} running` : ''}</li>
+                <li>Its people ({plural(org.directors, 'Director')}, {plural(org.watchers, 'Watcher')}) and {plural(org.invitations, 'open invitation')}. People who are only in {org.name} can no longer sign in.</li>
+                <li>Its license and license history</li>
+                <li>Its saved connections and their secrets</li>
+                <li>Its own rules and lessons, and its Cypher conversations</li>
+              </ul>
+              <form method="post" action="/api/admin/platform/delete-org" className="ad-form">
+                <input type="hidden" name="id" value={id} />
+                <Back to={back} />
+                <label className="ad-check"><input type="checkbox" name="keep_code" defaultChecked /> <span><b>Keep their code.</b> Each project’s GitHub repository and Vercel project stay, so their site keeps running and the code can still be handed over. Untick to delete those too, which takes their site down.</span></label>
+                <label className="ad-field"><span>Type <b>{org.name}</b> to confirm</span>
+                  <input className="ad-input" name="name_typed" required autoComplete="off" spellCheck={false} pattern={org.name.replace(/[\^$.*+?()[\]{}|/]/g, '\\$&')} title={`Type ${org.name} exactly`} />
+                </label>
+                <Confirm>I understand {org.name} is deleted for good.</Confirm>
+                <div className="ad-actions"><button className="ad-btn danger" type="submit">Delete {org.name}</button></div>
+              </form>
+              <p className="ad-fine lw-gap">If some projects can’t be deleted, nothing is: {org.name} stays, and running it again skips the projects already done.</p>
+            </details>
+          )}
         </div>
 
         <aside className="crm-side">

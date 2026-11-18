@@ -3,7 +3,7 @@ import { Banner } from '@/components/admin/AdminNav';
 import { Back, Refused, attempt, day, num, usd } from '@/components/admin/platform/parts';
 import { requireUser } from '@/lib/auth/request';
 import { can } from '@/lib/auth/roles';
-import { ICREON, PlatformError, STANDING, platform, platformConfigured, platformMe, type Org } from '@/lib/platform';
+import { ICREON, PlatformError, STANDING, byName, platform, platformConfigured, platformMe, type Deletion, type Org } from '@/lib/platform';
 
 /** Launchworks organizations: every customer, its people, projects, spend and license. */
 export default async function Organizations({ searchParams }: { searchParams: Promise<{ msg?: string }> }) {
@@ -12,7 +12,10 @@ export default async function Organizations({ searchParams }: { searchParams: Pr
   if (!platformConfigured()) return <Shell msg={msg}><Refused err={new PlatformError(503, 'unset', '')} /></Shell>;
   const me = await platformMe(s.user);
   if (!me.ok) return <Shell msg={msg}><Refused err={new PlatformError(403, me.code, me.message)} /></Shell>;
-  const got = await attempt(platform<Org[]>(s.user, 'GET', '/admin/organizations'));
+  const [got, deleted] = await Promise.all([
+    attempt(platform<Org[]>(s.user, 'GET', '/admin/organizations')),
+    attempt(platform<Deletion[]>(s.user, 'GET', '/admin/organizations/deleted')),
+  ]);
   const writable = can(s.user.roles, 'platform', 'write');
 
   return (
@@ -67,6 +70,31 @@ export default async function Organizations({ searchParams }: { searchParams: Pr
             </div>
             <p className="ad-fine">Icreon needs no license and can’t be given support access, so its page shows usage only.</p>
           </section>
+          {deleted.ok && (
+            <details className="ad-card ad-wide lw-fold">
+              <summary>Deleted organizations · {deleted.data.length}</summary>
+              {deleted.data.length === 0 ? (
+                <p className="ad-empty">None deleted.</p>
+              ) : (
+                <div className="ad-scroll">
+                  <table className="ad-tbl">
+                    <thead><tr><th>Organization</th><th>Deleted</th><th>By</th><th className="r">Projects</th><th>Their code</th></tr></thead>
+                    <tbody>
+                      {deleted.data.map((d) => (
+                        <tr key={d.organizationId + d.deletedAt}>
+                          <td><b>{d.name}</b><br /><span className="ad-dim">{d.slug}</span></td>
+                          <td>{day(d.deletedAt)}</td>
+                          <td>{byName(d.deletedBy)}</td>
+                          <td className="r">{d.detail.projects?.length ?? 0}</td>
+                          <td>{d.detail.keptCode === false ? 'Deleted too' : 'Kept'}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </details>
+          )}
         </>
       )}
     </Shell>

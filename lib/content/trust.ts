@@ -54,7 +54,7 @@ export const SECURITY: Page = {
     },
     {
       h: 'When an agreement ends',
-      p: ['Your projects become read only. You can export everything for 90 days; after that, your projects, records and your own rules and lessons are deleted.'],
+      p: ['Your projects become read only. You can export everything for 90 days; after that, your projects, records and your own rules and lessons are deleted. Your site keeps running, and your code is kept so it can be handed over.'],
     },
     {
       h: 'People behind every build',
@@ -66,8 +66,8 @@ export const SECURITY: Page = {
     { q: 'What access does Cypher need to our platform?', a: 'The access the playbook needs, and nothing more. It’s checked in discovery, before anyone builds, and you can remove it when the project ends.' },
     { q: 'Can we see everything Cypher did?', a: 'Yes. Every action is logged with who did it, when and why, the record can be exported, and any build can be replayed step by step.' },
     { q: 'Who owns the code?', a: 'You do. It’s in your repository and your hosting, with your keys. There’s no lock-in and no retainer.' },
-    { q: 'What happens to our data when we stop?', a: 'Your projects become read only and you can export everything for 90 days. After that, your projects and records are deleted.' },
+    { q: 'What happens to our data when we stop?', a: 'Your projects become read only and you can export everything for 90 days. After that, your projects and records are deleted, but your site keeps running and your code is kept so it can be handed over.' },
   ],
   related: ['/how-it-works', '/compare/agency-build', '/compare/in-house-team', '/answers/what-does-a-marketer-decide-in-a-website-build', '/answers/how-does-an-ai-team-build-a-website'],
-  updated: '2026-11-17',
+  updated: '2026-11-18',
 };
