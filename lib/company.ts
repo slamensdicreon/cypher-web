@@ -20,3 +20,11 @@ export function companyOf(domain: string): string {
     .map((w) => w[0].toUpperCase() + w.slice(1))
     .join(' ');
 }
+
+/**
+ * The free email providers most people use, checked in the browser so a personal address is caught
+ * at the first step. The server's own lists stay on the server and still decide.
+ */
+const COMMON_PERSONAL = ['gmail.com', 'googlemail.com', 'yahoo.com', 'hotmail.com', 'outlook.com', 'live.com', 'icloud.com', 'me.com', 'aol.com', 'proton.me', 'protonmail.com', 'msn.com'];
+
+export const isCommonPersonal = (domain: string) => COMMON_PERSONAL.includes(domain.toLowerCase());

@@ -91,6 +91,19 @@ section.band.dark{--band:var(--ink-2);color:var(--on-ink)}
 .join .copy p.close{color:var(--on-ink);font-weight:700}
 .card{background:var(--surface);color:var(--ink);border-radius:28px;padding:26px 24px 28px;display:flex;flex-direction:column;gap:22px;min-width:0}
 .card h2{margin:0;font-size:24px;font-weight:800;letter-spacing:-.035em;line-height:1.1}
+.step-head{display:flex;flex-direction:column;gap:10px;margin-top:-8px}
+.stepbar{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;list-style:none;margin:0;padding:0}
+.stepbar li{height:4px;border-radius:999px;background:var(--mist);transition:background .3s}
+.stepbar li.done{background:var(--ink)}
+.stepbar li.on{background:var(--coral)}
+.steplabel{margin:0;font-size:13px;font-weight:700;color:var(--text-3)}
+.steplabel span{font-weight:500}
+.step-body{display:flex;flex-direction:column;gap:22px;min-width:0}
+.step-title{margin:0;font-size:22px;font-weight:300;letter-spacing:-.02em;line-height:1.2;color:var(--ink)}
+.step-note{margin:-10px 0 0;padding:12px 14px;border-radius:14px;background:var(--coral-tint,#fdf1ee);font-size:14px;line-height:1.5;color:var(--ink)}
+.step-actions{display:flex;gap:10px}
+.step-actions .btn{flex:1}
+.step-actions .btn.back{flex:none;width:auto;padding-left:24px;padding-right:24px}
 label.f{display:flex;flex-direction:column;gap:8px;font-size:13px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--text-3)}
 label.f input{font-size:17px;font-weight:500;letter-spacing:0;text-transform:none;padding:15px 16px;border:1px solid var(--mist);border-radius:14px;background:var(--bliss);color:var(--ink);width:100%;min-width:0;transition:background .3s,border-color .3s,box-shadow .4s cubic-bezier(.2,.9,.3,1)}
 label.f input:focus{background:#fff;border-color:var(--ink-3);box-shadow:0 6px 22px -10px rgba(20,20,51,.35)}

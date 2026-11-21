@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState, type CSSProperties, type KeyboardEvent } from 'react';
-import { companyOf, domainOf } from '@/lib/company';
+import { companyOf, domainOf, isCommonPersonal } from '@/lib/company';
 import { NOTED, OUTCOMES } from '@/lib/config';
 import { eye, eyeLook, eyeMood } from './eyeBus';
 import { gaEvent, track } from '@/lib/track';
@@ -31,6 +31,14 @@ type Phase =
   | { kind: 'reply'; reply: ReplyKind }
   | { kind: 'noted'; company: string; level: number; site: string };
 
+/** The request, one question at a time. */
+const STEPS = [
+  { label: 'You', title: 'Who’s asking?' },
+  { label: 'Your site', title: 'Where do you live online?' },
+  { label: 'The job', title: 'What should Cypher do?' },
+  { label: 'Times', title: 'When suits you?' },
+] as const;
+
 const STORE_KEY = 'iib-demo';
 const reducedMotion = () =>
   typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -53,6 +61,11 @@ export default function InterestForm({ defaultPlatform = '' }: { defaultPlatform
   const rawRef = useRef(1);
   const tween = useRef(0);
   const [sending, setSending] = useState(false);
+  const [step, setStep] = useState(0);
+  // A problem with the address, said at the first step instead of after the last.
+  const [note, setNote] = useState<ReplyKind | null>(null);
+  const stepRef = useRef<HTMLDivElement>(null);
+  const moved = useRef(false);
   const website = useRef<HTMLInputElement>(null);
   const input = useRef<HTMLInputElement>(null);
   const measure = useRef<CanvasRenderingContext2D | null>(null);
@@ -61,7 +74,8 @@ export default function InterestForm({ defaultPlatform = '' }: { defaultPlatform
 
   const level = Math.round(raw);
   const domain = domainOf(email);
-  const company = domain ? companyOf(domain) : '';
+  // A free email provider isn't a company: no "For: Gmail".
+  const company = domain && !isCommonPersonal(domain) ? companyOf(domain) : '';
   if (company) lastCompany.current = company;
   const L = LEVELS[level];
 
@@ -69,7 +83,12 @@ export default function InterestForm({ defaultPlatform = '' }: { defaultPlatform
   useEffect(() => {
     setDays(nextWeekdays(6));
     const handed = new URLSearchParams(window.location.search).get('email');
-    if (handed) setEmail(handed.slice(0, 254));
+    if (handed) {
+      setEmail(handed.slice(0, 254));
+      // Arrived with a work address (from a Book a demo box): start at the next question.
+      const d = domainOf(handed);
+      if (d && !isCommonPersonal(d)) setStep(1);
+    }
     try { setTz(Intl.DateTimeFormat().resolvedOptions().timeZone || ''); } catch { /* old browser */ }
   }, []);
 
@@ -88,6 +107,38 @@ export default function InterestForm({ defaultPlatform = '' }: { defaultPlatform
   }, [company]);
 
   useEffect(() => () => cancelAnimationFrame(tween.current), []);
+
+  // A new step: its first field takes the focus, and the step rises in.
+  useEffect(() => {
+    if (!moved.current) return;
+    const el = stepRef.current;
+    if (!el) return;
+    (el.querySelector('input:not([type=range]), button.chip') as HTMLElement | null)?.focus({ preventScroll: true });
+    if (!reducedMotion()) el.animate([{ opacity: 0, transform: 'translateY(10px)' }, { opacity: 1, transform: 'none' }], { duration: 380, easing: 'cubic-bezier(.2,.9,.3,1)' });
+  }, [step]);
+
+  function next() {
+    if (step === 0) {
+      const problem: ReplyKind | null = !domain ? 'bad' : isCommonPersonal(domain) ? 'personal' : null;
+      if (problem) {
+        setNote(problem);
+        eye('shake'); eye('squint', 900);
+        input.current?.focus();
+        return;
+      }
+    }
+    setNote(null);
+    moved.current = true;
+    gaEvent('form_step', { form_name: 'demo', step: String(step + 2) });
+    eye('blink');
+    setStep((s) => Math.min(STEPS.length - 1, s + 1));
+  }
+
+  function back() {
+    setNote(null);
+    moved.current = true;
+    setStep((s) => Math.max(0, s - 1));
+  }
 
   function react(v: number) {
     eyeMood(v / 3);
@@ -190,9 +241,22 @@ export default function InterestForm({ defaultPlatform = '' }: { defaultPlatform
     }
   }
 
+  /** A problem with the address: back to the first step with the rest of the answers kept. */
+  function fixEmail() {
+    eye('wake');
+    setEmail('');
+    setNote(null);
+    moved.current = true;
+    setStep(0);
+    setPhase({ kind: 'form' });
+  }
+
   function reset() {
     try { localStorage.removeItem(STORE_KEY); } catch { /* ignore */ }
     eye('wake');
+    moved.current = true;
+    setStep(0);
+    setNote(null);
     setEmail('');
     setSite('');
     setWants([]);
@@ -215,7 +279,9 @@ export default function InterestForm({ defaultPlatform = '' }: { defaultPlatform
           <p>{r.p}</p>
           <span className="a" style={{ color: r.accent }}>{r.a}</span>
         </div>
-        <button className="btn light" type="button" onClick={reset}>Try another address</button>
+        {phase.reply === 'error' || phase.reply === 'slow'
+          ? <button className="btn light" type="button" onClick={() => setPhase({ kind: 'form' })}>Back to my request</button>
+          : <button className="btn light" type="button" onClick={fixEmail}>Try another address</button>}
       </div>
     );
   } else if (phase.kind === 'noted') {
@@ -237,172 +303,204 @@ export default function InterestForm({ defaultPlatform = '' }: { defaultPlatform
     );
   } else {
     content = (
-      <form className="card" onSubmit={(e) => { e.preventDefault(); submit(); }} noValidate>
+      <form className="card" onSubmit={(e) => { e.preventDefault(); if (step < STEPS.length - 1) next(); else submit(); }} noValidate>
         <h2>Book a demo.</h2>
-        <label className="f" htmlFor="email">
-          Work email
-          <input
-            id="email"
-            ref={input}
-            type="email"
-            autoComplete="email"
-            inputMode="email"
-            placeholder="you@yourcompany.com"
-            required
-            value={email}
-            onChange={(e) => { setEmail(e.target.value); requestAnimationFrame(lookAtCaret); }}
-            onSelect={lookAtCaret}
-            onFocus={() => { eye('focus'); lookAtCaret(); if (!started.current) { started.current = true; track('form_start'); } }}
-            onBlur={() => eye('unfocus')}
-          />
-          <span className={company ? 'co on' : 'co'} aria-live="polite" aria-hidden={company ? undefined : true}>
-            <span>For:</span> {company || lastCompany.current}
-          </span>
-        </label>
-        <label className="f" htmlFor="name">
-          <span>Your name <span className="opt">optional</span></span>
-          <input
-            id="name"
-            type="text"
-            autoComplete="name"
-            placeholder="First and last"
-            maxLength={80}
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            onFocus={() => eye('focus')}
-            onBlur={() => eye('unfocus')}
-          />
-        </label>
-        <label className="f" htmlFor="site">
-          Your site
-          <input
-            id="site"
-            type="text"
-            inputMode="url"
-            autoComplete="url"
-            autoCapitalize="none"
-            spellCheck={false}
-            placeholder="yourcompany.com"
-            value={site}
-            onChange={(e) => setSite(e.target.value)}
-            onFocus={() => eye('focus')}
-            onBlur={() => eye('unfocus')}
-          />
-        </label>
-        <fieldset className="wants">
-          <legend>Your platform</legend>
-          <div className="chips">
-            {[...PLATFORMS, 'other'].map((p) => {
-              const on = platform === p;
-              return (
-                <button
-                  key={p}
-                  type="button"
-                  className={on ? 'chip on' : 'chip'}
-                  aria-pressed={on}
-                  onClick={() => { setPlatform(on ? '' : p); eye(on ? 'blink' : 'widen', 500); }}
-                >
-                  {p === 'other' ? 'Something else' : p}
-                </button>
-              );
-            })}
-          </div>
-          {platform === 'other' && (
-            <input
-              className="other"
-              type="text"
-              aria-label="Which platform?"
-              placeholder="Which one? AEM, Drupal, Contentstack…"
-              maxLength={60}
-              value={otherPlatform}
-              onChange={(e) => setOtherPlatform(e.target.value)}
-            />
+        <div className="step-head">
+          <ol className="stepbar" aria-hidden="true">
+            {STEPS.map((x, i) => <li key={x.label} className={i < step ? 'done' : i === step ? 'on' : undefined} />)}
+          </ol>
+          <p className="steplabel" aria-live="polite">Step {step + 1} of {STEPS.length}: {STEPS[step].label}{step > 0 && company ? <span> · for {company}</span> : null}</p>
+        </div>
+        <div className="step-body" ref={stepRef} key={step}>
+          <h3 className="step-title">{STEPS[step].title}</h3>
+          {step === 0 && (
+            <>
+              <label className="f" htmlFor="email">
+                Work email
+                <input
+                  id="email"
+                  ref={input}
+                  type="email"
+                  autoComplete="email"
+                  inputMode="email"
+                  placeholder="you@yourcompany.com"
+                  required
+                  aria-invalid={note ? true : undefined}
+                  aria-describedby={note ? 'email-note' : undefined}
+                  value={email}
+                  onChange={(e) => { setEmail(e.target.value); setNote(null); requestAnimationFrame(lookAtCaret); }}
+                  onSelect={lookAtCaret}
+                  onFocus={() => { eye('focus'); lookAtCaret(); if (!started.current) { started.current = true; track('form_start'); } }}
+                  onBlur={() => eye('unfocus')}
+                />
+                <span className={company ? 'co on' : 'co'} aria-live="polite" aria-hidden={company ? undefined : true}>
+                  <span>For:</span> {company || lastCompany.current}
+                </span>
+              </label>
+              {note && <p className="step-note" id="email-note" role="alert"><b>{REPLY[note].h}</b> {REPLY[note].p}</p>}
+              <label className="f" htmlFor="name">
+                <span>Your name <span className="opt">optional</span></span>
+                <input
+                  id="name"
+                  type="text"
+                  autoComplete="name"
+                  placeholder="First and last"
+                  maxLength={80}
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  onFocus={() => eye('focus')}
+                  onBlur={() => eye('unfocus')}
+                />
+              </label>
+              <p className="small">Your work email, so we know it’s really yours. Four short questions, about a minute.</p>
+            </>
           )}
-        </fieldset>
-        <fieldset className="wants">
-          <legend>What should it do?</legend>
-          <div className="chips">
-            {OUTCOMES.map((o) => {
-              const on = wants.includes(o);
-              return (
-                <button
-                  key={o}
-                  type="button"
-                  className={on ? 'chip on' : 'chip'}
-                  aria-pressed={on}
-                  onClick={() => { setWants((w) => (on ? w.filter((x) => x !== o) : [...w, o])); eye(on ? 'blink' : 'widen', 500); }}
-                >
-                  {o}
-                </button>
-              );
-            })}
-          </div>
-        </fieldset>
-        <fieldset className="wants slots">
-          <legend>When suits you? <span className="opt">pick up to {MAX_SLOTS}</span></legend>
-          <div className="slot-grid">
-            {days.map((d) => (
-              <div className="slot-day" key={d}>
-                <span>{dayLabel(d)}</span>
-                {(Object.keys(PARTS) as Part[]).map((p) => {
-                  const k = `${d}|${p}`;
-                  const on = slots.includes(k);
-                  const full = !on && slots.length >= MAX_SLOTS;
-                  return (
-                    <button
-                      key={k}
-                      type="button"
-                      className={on ? 'chip on' : 'chip'}
-                      aria-pressed={on}
-                      aria-label={`${dayLabel(d)}, ${PARTS[p].toLowerCase()}`}
-                      disabled={full}
-                      onClick={() => { setSlots((s) => (on ? s.filter((x) => x !== k) : [...s, k])); eye(on ? 'blink' : 'widen', 400); }}
-                    >
-                      {PARTS[p]}
-                    </button>
-                  );
-                })}
+          {step === 1 && (
+            <>
+              <label className="f" htmlFor="site">
+                Your site
+                <input
+                  id="site"
+                  type="text"
+                  inputMode="url"
+                  autoComplete="url"
+                  autoCapitalize="none"
+                  spellCheck={false}
+                  placeholder="yourcompany.com"
+                  value={site}
+                  onChange={(e) => setSite(e.target.value)}
+                  onFocus={() => eye('focus')}
+                  onBlur={() => eye('unfocus')}
+                />
+              </label>
+              <fieldset className="wants">
+                <legend>Your platform</legend>
+                <div className="chips">
+                  {[...PLATFORMS, 'other'].map((p) => {
+                    const on = platform === p;
+                    return (
+                      <button
+                        key={p}
+                        type="button"
+                        className={on ? 'chip on' : 'chip'}
+                        aria-pressed={on}
+                        onClick={() => { setPlatform(on ? '' : p); eye(on ? 'blink' : 'widen', 500); }}
+                      >
+                        {p === 'other' ? 'Something else' : p}
+                      </button>
+                    );
+                  })}
+                </div>
+                {platform === 'other' && (
+                  <input
+                    className="other"
+                    type="text"
+                    aria-label="Which platform?"
+                    placeholder="Which one? AEM, Drupal, Contentstack…"
+                    maxLength={60}
+                    value={otherPlatform}
+                    onChange={(e) => setOtherPlatform(e.target.value)}
+                  />
+                )}
+              </fieldset>
+            </>
+          )}
+          {step === 2 && (
+            <>
+              <fieldset className="wants">
+                <legend>What should it do?</legend>
+                <div className="chips">
+                  {OUTCOMES.map((o) => {
+                    const on = wants.includes(o);
+                    return (
+                      <button
+                        key={o}
+                        type="button"
+                        className={on ? 'chip on' : 'chip'}
+                        aria-pressed={on}
+                        onClick={() => { setWants((w) => (on ? w.filter((x) => x !== o) : [...w, o])); eye(on ? 'blink' : 'widen', 500); }}
+                      >
+                        {o}
+                      </button>
+                    );
+                  })}
+                </div>
+              </fieldset>
+              <div className="dial">
+                <span className="q" id="dialq">How badly do you want this?</span>
+                <div className="read" aria-live="polite">
+                  <LivingEye variant="dial" level={raw} className="dialeye" />
+                  <span className="t" key={level}><b>{L.word}</b><span>{L.sub}</span></span>
+                </div>
+                <input
+                  type="range"
+                  min={0}
+                  max={3}
+                  step={0.001}
+                  value={raw}
+                  aria-labelledby="dialq"
+                  aria-valuetext={L.tick}
+                  style={{ '--p': `${(raw / 3) * 100}%` } as CSSProperties}
+                  onChange={(e) => { cancelAnimationFrame(tween.current); moveTo(Number(e.target.value)); }}
+                  onPointerUp={settle}
+                  onPointerCancel={settle}
+                  onTouchEnd={settle}
+                  onBlur={settle}
+                  onKeyDown={onDialKey}
+                />
+                <div className="ticks" aria-hidden="true">
+                  {LEVELS.map((x, i) => (
+                    <span key={x.tick} className={i === level ? 'on' : undefined} onClick={() => glideTo(i)}>{x.tick}</span>
+                  ))}
+                </div>
               </div>
-            ))}
-          </div>
-          {tz && <p className="small">In your time zone ({tz.replace(/_/g, ' ')}). Mornings 9 to 12, afternoons 1 to 5.</p>}
-        </fieldset>
+            </>
+          )}
+          {step === 3 && (
+            <>
+              <fieldset className="wants slots">
+                <legend>When suits you? <span className="opt">pick up to {MAX_SLOTS}</span></legend>
+                <div className="slot-grid">
+                  {days.map((d) => (
+                    <div className="slot-day" key={d}>
+                      <span>{dayLabel(d)}</span>
+                      {(Object.keys(PARTS) as Part[]).map((p) => {
+                        const k = `${d}|${p}`;
+                        const on = slots.includes(k);
+                        const full = !on && slots.length >= MAX_SLOTS;
+                        return (
+                          <button
+                            key={k}
+                            type="button"
+                            className={on ? 'chip on' : 'chip'}
+                            aria-pressed={on}
+                            aria-label={`${dayLabel(d)}, ${PARTS[p].toLowerCase()}`}
+                            disabled={full}
+                            onClick={() => { setSlots((s) => (on ? s.filter((x) => x !== k) : [...s, k])); eye(on ? 'blink' : 'widen', 400); }}
+                          >
+                            {PARTS[p]}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  ))}
+                </div>
+                {tz && <p className="small">In your time zone ({tz.replace(/_/g, ' ')}). Mornings 9 to 12, afternoons 1 to 5.</p>}
+              </fieldset>
+              <p className="small">In the demo, Cypher works on your site in front of you. We confirm one of your times within one business day.</p>
+            </>
+          )}
+        </div>
         <div className="hp" aria-hidden="true">
           <label htmlFor="website">Website</label>
           <input id="website" name="website" type="text" tabIndex={-1} autoComplete="off" ref={website} />
         </div>
-        <div className="dial">
-          <span className="q" id="dialq">How badly do you want this?</span>
-          <div className="read" aria-live="polite">
-            <LivingEye variant="dial" level={raw} className="dialeye" />
-            <span className="t" key={level}><b>{L.word}</b><span>{L.sub}</span></span>
-          </div>
-          <input
-            type="range"
-            min={0}
-            max={3}
-            step={0.001}
-            value={raw}
-            aria-labelledby="dialq"
-            aria-valuetext={L.tick}
-            style={{ '--p': `${(raw / 3) * 100}%` } as CSSProperties}
-            onChange={(e) => { cancelAnimationFrame(tween.current); moveTo(Number(e.target.value)); }}
-            onPointerUp={settle}
-            onPointerCancel={settle}
-            onTouchEnd={settle}
-            onBlur={settle}
-            onKeyDown={onDialKey}
-          />
-          <div className="ticks" aria-hidden="true">
-            {LEVELS.map((x, i) => (
-              <span key={x.tick} className={i === level ? 'on' : undefined} onClick={() => glideTo(i)}>{x.tick}</span>
-            ))}
-          </div>
+        <div className="step-actions">
+          {step > 0 && <button className="btn light back" type="button" onClick={back} disabled={sending}>Back</button>}
+          <button className={sending ? 'btn busy' : 'btn'} type="submit" disabled={sending}>
+            <span>{step < STEPS.length - 1 ? 'Next' : sending ? 'Cypher is reading…' : 'Book my demo'}</span>
+          </button>
         </div>
-        <button className={sending ? 'btn busy' : 'btn'} type="submit" disabled={sending}>
-          <span>{sending ? 'Cypher is reading…' : 'Book my demo'}</span>
-        </button>
-        <p className="small">Any enterprise platform. Your work email, so we know it’s really yours. In the demo, Cypher works on your site while you watch.</p>
       </form>
     );
   }
