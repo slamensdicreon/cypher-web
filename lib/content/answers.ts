@@ -643,4 +643,115 @@ export const ANSWERS: Answer[] = [
     related: ['/how-it-works', '/answers/what-does-a-marketer-decide-in-a-website-build', '/playbooks', '/demo'],
     updated: '2026-11-14',
   },
+  {
+    slug: 'what-is-optimizely-visual-builder',
+    name: 'What Optimizely Visual Builder is',
+    topic: 'Platforms',
+    h1: { light: '', bold: 'What is Optimizely Visual Builder?' },
+    metaTitle: 'What is Optimizely Visual Builder?',
+    description: 'What Optimizely Visual Builder is, how marketers compose pages with it, what a site must be built with for it to work, and what usually gets in the way.',
+    answer:
+      'Visual Builder is the page editor in Optimizely CMS (SaaS). Marketers compose a page from sections and elements, edit text and images inline in a live preview of the real site, and publish, without a developer. What they can add depends on the content types and display templates the site was built with.',
+    blocks: [
+      {
+        h: 'How it works',
+        list: [
+          'A page is an experience, made of sections, and sections hold elements.',
+          'Each section or element is a content type, and its display templates set how it looks.',
+          'Editing happens inline, in a live preview of the real front end.',
+          'Blueprints let a marketer start a new page from a set of default sections.',
+          'Shared blocks, such as the header, footer and navigation, are edited once for every page.',
+        ],
+      },
+      {
+        h: 'What the build has to give it',
+        p: [
+          'Visual Builder can only offer what the site was built with. Every component needs to be a content type with sensible defaults and a display template for each variant, or marketers get empty boxes and options nobody understands.',
+          'The front end also has to support live preview, and Visual Builder has to be able to open it: a preview behind a login can’t be framed for editing.',
+        ],
+      },
+      {
+        h: 'What usually gets in the way',
+        list: [
+          'Components built as one-offs, so a marketer can’t reuse them on a new page.',
+          'Copy hard-coded in the front end, so it can’t be edited inline.',
+          'No blueprints, so every new page starts from nothing.',
+          'Content saved but not published. The site reads published content only.',
+        ],
+      },
+      {
+        h: 'How Cypher builds for it',
+        p: ['Every component Cypher builds on Optimizely SaaS is a content type with display templates, enabled in Visual Builder. The site isn’t done until a person adds a section, edits it inline, changes a navigation link and publishes, and sees both changes on the site.'],
+      },
+    ],
+    faq: [
+      { q: 'Do marketers need a developer to use Visual Builder?', a: 'Not for building and editing pages. A developer, or Cypher, builds the components once; after that, marketers compose, edit and publish on their own.' },
+      { q: 'Can we control what marketers can add to a page?', a: 'Yes. They can only add the content types the site was built with, in the display templates it offers.' },
+      { q: 'Does Visual Builder run A/B tests?', a: 'No. Testing comes from Optimizely’s experimentation products, which are licensed separately.' },
+    ],
+    related: ['/platforms/optimizely/migration', '/demo/optimizely', '/answers/moving-from-optimizely-cms-12-to-saas', '/platforms/optimizely', '/glossary'],
+    updated: '2026-11-21',
+  },
+  {
+    slug: 'moving-from-optimizely-cms-12-to-saas',
+    name: 'Moving from Optimizely CMS 12 to SaaS',
+    topic: 'Migration',
+    h1: { light: '', bold: 'How do you move from Optimizely CMS 12 to SaaS?' },
+    metaTitle: 'How to move from Optimizely CMS 12 to SaaS',
+    description: 'Moving from Optimizely CMS 12 to Optimizely CMS (SaaS): what changes, what carries over, the steps in order, and the pitfalls that slow most teams down.',
+    answer:
+      'Treat it as a migration, not an upgrade. On Optimizely CMS (SaaS), Optimizely runs the CMS, your site is a separate front end reading published content through Optimizely Graph, and pages are composed in Visual Builder. So the front end and content model are rebuilt, the content is moved and checked, and every old URL is redirected.',
+    blocks: [
+      {
+        h: 'What changes',
+        list: [
+          'Optimizely hosts and updates the CMS, so there are no CMS upgrades to run.',
+          'The site’s templates and code no longer run inside the CMS: the front end is its own application.',
+          'Content reaches the site through Optimizely Graph, which serves published content only.',
+          'Marketers compose pages in Visual Builder from sections and elements.',
+          'Custom code and add-ons that ran inside CMS 12 don’t carry over as they are.',
+        ],
+      },
+      {
+        h: 'What carries over',
+        list: [
+          'Your content, mapped to the new content types and checked page by page.',
+          'Your design, rebuilt to match at phone, tablet and desktop widths.',
+          'Your URLs, kept or redirected, with titles and descriptions carried over.',
+          'What your editors need to do, written down and built into the new components.',
+        ],
+      },
+      {
+        h: 'The steps, in order',
+        steps: [
+          { t: 'Inventory', b: 'Every page, component, asset and integration on the CMS 12 site, and every sitemap URL.' },
+          { t: 'Model', b: 'Each component mapped to a content type with display templates, and each page to a page or experience type.' },
+          { t: 'Prove a slice', b: 'A few components, the header and footer, built, published and editable in Visual Builder, before the rest.' },
+          { t: 'Build and move content', b: 'Every component built, every page composed and published, every image moved with its alt text.' },
+          { t: 'Check and redirect', b: 'Content parity, visual parity, links, redirects, SEO settings, accessibility and speed.' },
+          { t: 'Launch and hand over', b: 'Published, indexed in Optimizely Graph, live, and documented for your team.' },
+        ],
+      },
+      {
+        h: 'Pitfalls that slow most teams down',
+        list: [
+          'An API key without content rights, discovered halfway through.',
+          'Content types shared by every site on the instance, with no prefix to keep each project’s apart.',
+          'Pages built but never published, so they never appear.',
+          'Integrations that only looked real on the old site, such as search or forms, found late.',
+        ],
+      },
+      {
+        h: 'How Cypher runs it',
+        p: ['Cypher’s Optimizely SaaS playbook runs these steps in order, with two gates that are yours: the Blueprint and the final acceptance in Visual Builder. Content parity of 98% or better is part of what done means.'],
+      },
+    ],
+    faq: [
+      { q: 'Is moving to SaaS an upgrade?', a: 'No. The front end and content model are rebuilt, and the content is moved. Plan it as a migration.' },
+      { q: 'Will our URLs change?', a: 'They can stay the same; any that change are redirected, with titles and descriptions carried over.' },
+      { q: 'Can our editors work in Visual Builder on day one?', a: 'Yes, if every component is built as a content type with display templates and enabled in Visual Builder.' },
+    ],
+    related: ['/platforms/optimizely/migration', '/answers/what-is-optimizely-visual-builder', '/demo/optimizely', '/answers/how-to-keep-seo-rankings-during-a-migration', '/resources/website-migration-checklist'],
+    updated: '2026-11-21',
+  },
 ];

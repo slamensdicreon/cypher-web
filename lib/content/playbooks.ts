@@ -231,13 +231,17 @@ export const PLAYBOOKS: Playbook[] = [
       },
       {
         h: 'Which platforms',
-        p: ['Sitecore, Optimizely and Contentful are home turf, and the systems behind sign-in and profiles are whichever ones you run. Tell us what they are when you book.'],
+        p: [
+          'Sitecore, Optimizely and Contentful are home turf, and the systems behind sign-in and profiles are whichever ones you run. Tell us what they are when you book.',
+          'On Optimizely CMS (SaaS), content that differs by role needs nothing beyond the CMS: each section has a setting for the role it’s shown to, and a marketer changes it in Visual Builder.',
+        ],
       },
     ],
     faq: [
       { q: 'Which sign-in systems do you work with?', a: 'The ones you already run. Cypher records what it finds in discovery and connects to it; the Blueprint says exactly how.' },
       { q: 'Can marketers edit content inside the portal?', a: 'Yes. Content inside and outside the login is built in your platform, so your team edits it the same way.' },
       { q: 'How is it tested?', a: 'Every journey runs end to end as each persona on real accounts, before it moves on. You see the results at sign-off.' },
+      { q: 'Do we need Optimizely personalization to show content by role?', a: 'No. On Optimizely CMS (SaaS), each section can be set to the role it’s shown to, in Visual Builder. Nothing beyond the CMS is needed.' },
     ],
     related: ['/how-it-works', '/playbooks/website-build', '/playbooks/personalization', '/answers/what-does-a-marketer-decide-in-a-website-build', '/platforms/other-platforms'],
     updated: '2026-11-14',

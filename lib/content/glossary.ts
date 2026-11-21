@@ -69,6 +69,12 @@ export const TERMS: Term[] = [
     see: ['/answers/what-is-content-parity', '/playbooks/migration'],
   },
   {
+    slug: 'content-type',
+    term: 'Content type',
+    def: 'The definition of one kind of content in a CMS, such as a hero, a card or an article: its fields and their rules. On Optimizely CMS (SaaS), content types are defined in code, so the model can be versioned and replayed.',
+    see: ['/answers/what-is-optimizely-visual-builder', '/platforms/optimizely/migration'],
+  },
+  {
     slug: 'core-web-vitals',
     term: 'Core Web Vitals',
     def: 'Google’s measures of real-world page experience: how quickly the main content loads, how quickly the page responds when someone interacts with it, and how stable the layout stays while it loads.',
@@ -81,6 +87,12 @@ export const TERMS: Term[] = [
     see: ['/answers/one-design-system-for-many-brand-sites', '/playbooks/design-systems'],
   },
   {
+    slug: 'display-template',
+    term: 'Display template',
+    def: 'In Optimizely CMS (SaaS), the settings that decide how a content type looks on the page, such as its layout or colour scheme. One content type can have several, and a marketer picks one in Visual Builder.',
+    see: ['/answers/what-is-optimizely-visual-builder'],
+  },
+  {
     slug: 'dxp',
     term: 'DXP (digital experience platform)',
     def: 'A suite that combines content management with tools such as personalization, testing, search, analytics and commerce. Sitecore and Optimizely are examples.',
@@ -91,6 +103,12 @@ export const TERMS: Term[] = [
     term: 'Editor guide',
     def: 'A plain-language manual showing a team how to edit every page and component on their site. Every Cypher build comes with one, so marketers can edit on day one.',
     see: ['/how-it-works'],
+  },
+  {
+    slug: 'experience',
+    term: 'Experience (Optimizely)',
+    def: 'A page in Optimizely CMS (SaaS) that a marketer composes in Visual Builder from sections and elements, rather than from a fixed template.',
+    see: ['/answers/what-is-optimizely-visual-builder', '/platforms/optimizely/migration'],
   },
   {
     slug: 'gate',
@@ -115,6 +133,12 @@ export const TERMS: Term[] = [
     term: 'Lighthouse',
     def: 'A free tool from Google that scores a web page on performance, accessibility, SEO and best practices, and explains what to fix.',
     see: ['/playbooks/optimization', '/answers/how-to-check-accessibility-before-launch'],
+  },
+  {
+    slug: 'optimizely-graph',
+    term: 'Optimizely Graph',
+    def: 'The service that delivers content from Optimizely CMS (SaaS) to the website. It serves published content only, so a page that’s saved but not published doesn’t appear on the site.',
+    see: ['/answers/moving-from-optimizely-cms-12-to-saas', '/platforms/optimizely/migration'],
   },
   {
     slug: 'page-template',
@@ -147,6 +171,12 @@ export const TERMS: Term[] = [
     see: ['/resources/redirect-map-template', '/answers/how-to-keep-seo-rankings-during-a-migration'],
   },
   {
+    slug: 'saas-cms',
+    term: 'SaaS CMS',
+    def: 'A content management system the vendor hosts and updates for you, with no upgrades to run. The website is a separate front end that reads content from it, as with Optimizely CMS (SaaS).',
+    see: ['/answers/moving-from-optimizely-cms-12-to-saas', '/answers/what-is-a-headless-cms'],
+  },
+  {
     slug: 'uat',
     term: 'UAT (user acceptance testing)',
     def: 'The final check, before launch, that a site does what was agreed. In Cypher, UAT is the second gate, and you sign it off.',
@@ -157,6 +187,12 @@ export const TERMS: Term[] = [
     term: 'Variant',
     def: 'One version of a page or element, shown to a particular audience or as part of a test. A personalized page might have one variant per audience.',
     see: ['/glossary#personalization', '/glossary#a-b-n-test'],
+  },
+  {
+    slug: 'visual-builder',
+    term: 'Visual Builder',
+    def: 'The page editor in Optimizely CMS (SaaS), where marketers compose pages from sections and elements, edit them inline in a live preview and publish, without a developer.',
+    see: ['/answers/what-is-optimizely-visual-builder', '/demo/optimizely'],
   },
   {
     slug: 'visual-parity',

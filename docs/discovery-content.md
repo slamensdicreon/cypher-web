@@ -111,3 +111,45 @@ Added November 17, 2026. Content is in `lib/content/trust.ts` (Security) and
 
 - More detail for Icreon's story when you have it: the platform, what "ready to use" covered, and
   anything they're happy to add.
+
+# Third round: Optimizely, now that its playbooks are built
+
+Added November 21, 2026. The facts come from the platform's Optimizely playbooks
+(icreon-claude `playbooks/optimizely-homepage-demo`, `optimizely-saas-migration` and
+`optimizely-customer-portal`).
+
+## What's new
+
+- **Moving to Optimizely CMS (SaaS)** (`/platforms/optimizely/migration`): who it's for, what
+  changes on SaaS, the steps, the checks, where these projects go wrong, and testing if licensed.
+  It also appears on the Optimizely page.
+- **Optimizely demo** (`/demo/optimizely`): a page for Optimizely campaigns, with the demo form
+  already set to Optimizely. Linked from Book a demo, the Optimizely pages and the new answers.
+- **Answers:** "What is Optimizely Visual Builder?" and "How do you move from Optimizely CMS 12 to
+  SaaS?"
+- **Glossary:** Content type, Display template, Experience (Optimizely), Optimizely Graph, SaaS CMS,
+  Visual Builder.
+- **Portals playbook:** on Optimizely SaaS, content by role needs nothing beyond the CMS.
+- **Optimizely page:** a section on Optimizely CMS (SaaS), a question about seeing it on your own
+  site, and links to the new pages.
+
+## To sign off
+
+**About the demo**
+- It audits the whole site in numbers (pages, page layouts, forms, languages and sites) and
+  rebuilds the homepage, header, footer and navigation on Optimizely SaaS, checked at phone, tablet
+  and desktop.
+- It runs on our Optimizely instance, from the live site, with no access needed; "in person or
+  partly live, depending on your team"; the prospect edits the page in Visual Builder.
+- "If you're weighing Optimizely, it's your own site on it, not a sample."
+
+**Platform facts (Optimizely)**
+- Optimizely runs and updates the SaaS CMS; the site is a separate front end reading content
+  through Optimizely Graph, which serves published content only.
+- On SaaS, content types and display templates are defined in code; pages are experiences made of
+  sections and elements; blueprints start new pages from default sections.
+- The CMS alone has no A/B testing; Web or Feature Experimentation is licensed separately.
+- Content types are shared by every site on an instance; an API key needs content rights as well as
+  API access; a preview behind a login can't be framed for editing.
+- CMS 12 to SaaS: "a migration, not an upgrade"; templates and code no longer run inside the CMS;
+  custom code and add-ons that ran inside CMS 12 don't carry over as they are.

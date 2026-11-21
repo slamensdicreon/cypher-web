@@ -35,14 +35,15 @@ const STORE_KEY = 'iib-demo';
 const reducedMotion = () =>
   typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-export default function InterestForm() {
+/** The demo request. `defaultPlatform` starts it on one platform (a platform's own demo page). */
+export default function InterestForm({ defaultPlatform = '' }: { defaultPlatform?: string } = {}) {
   const [phase, setPhase] = useState<Phase>({ kind: 'form' });
   const [email, setEmail] = useState('');
   const [site, setSite] = useState('');
   const [wants, setWants] = useState<string[]>([]);
   // The demo: who, on which platform, and when suits them (in their own time zone).
   const [name, setName] = useState('');
-  const [platform, setPlatform] = useState('');
+  const [platform, setPlatform] = useState(defaultPlatform);
   const [otherPlatform, setOtherPlatform] = useState('');
   const [slots, setSlots] = useState<string[]>([]);
   const [days, setDays] = useState<string[]>([]);
@@ -196,7 +197,7 @@ export default function InterestForm() {
     setSite('');
     setWants([]);
     setName('');
-    setPlatform('');
+    setPlatform(defaultPlatform);
     setOtherPlatform('');
     setSlots([]);
     setPhase({ kind: 'form' });

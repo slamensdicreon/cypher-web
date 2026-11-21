@@ -1,5 +1,6 @@
 import { ANSWERS } from './answers';
 import { COMPARES } from './compare';
+import { DEMOS } from './demos';
 import { TERMS } from './glossary';
 import { COMBOS, PLATFORMS } from './platforms';
 import { PLAYBOOKS } from './playbooks';
@@ -34,6 +35,7 @@ export function entries(): Entry[] {
     ...ANSWERS.map((a) => ({ path: `/answers/${a.slug}`, name: a.h1.bold || a.name, line: a.description, group: 'Answers', updated: a.updated })),
     ...RESOURCES.map((r) => ({ path: `/resources/${r.slug}`, name: r.name, line: r.card, group: 'Checklists and templates', updated: r.updated })),
     ...COMPARES.map((c) => ({ path: `/compare/${c.slug}`, name: c.name, line: c.card, group: 'Compare', updated: c.updated })),
+    ...DEMOS.map((d) => ({ path: `/demo/${d.slug}`, name: `${d.platform} demo`, line: d.description, group: 'Cypher', updated: d.updated })),
   ];
 }
 

@@ -3,6 +3,7 @@ import Eye from '@/components/Eye';
 import InterestForm from '@/components/InterestForm';
 import SiteFooter from '@/components/SiteFooter';
 import SiteHeader from '@/components/SiteHeader';
+import Link from 'next/link';
 import Analytics from '@/components/site/Analytics';
 import JsonLd from '@/components/site/JsonLd';
 import { faqPage, graph } from '@/lib/schema';
@@ -61,6 +62,7 @@ export default function Demo() {
         <section className="s">
           <h2 className="sec-h">Before you ask</h2>
           <Faq items={QA} />
+          <p className="demo-more">On Optimizely? See <Link href="/demo/optimizely">what the Optimizely demo shows</Link>.</p>
         </section>
       </main>
       <SiteFooter />

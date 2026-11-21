@@ -84,6 +84,10 @@ export const PLATFORMS: Platform[] = [
         ],
       },
       {
+        h: 'On Optimizely CMS (SaaS)',
+        p: ['On Optimizely’s SaaS CMS, every component is a content type with display templates, defined in code and enabled in Visual Builder, so marketers compose and publish pages themselves. Content reaches the site through Optimizely Graph, and the front end is yours. Moving from CMS 12 or another platform is its own playbook.'],
+      },
+      {
         h: 'Blocks your editors can reuse',
         p: ['Pages are built from blocks with the fields and options your team needs, so a marketer can put together a campaign page without a developer. Every block is written up in a component catalog, with where it’s used.'],
       },
@@ -107,9 +111,10 @@ export const PLATFORMS: Platform[] = [
       { q: 'Can you set up our A/B tests in Optimizely?', a: 'Yes. Tests are configured in the platform with one goal each, checked before they start, and handed over with a note on how to read the results.' },
       { q: 'Do you build personalization for different audiences?', a: 'Yes. Audiences are agreed first, then the variants are built and each one is verified before a visitor sees it. Who sees what is one of the few decisions that’s yours.' },
       { q: 'Can you migrate us onto Optimizely?', a: 'That’s the migration playbook: every page inventoried, content moved and checked for parity, every old URL redirected, and visual parity checked at three breakpoints.' },
+      { q: 'Can we see it on our own site first?', a: 'Yes. The Optimizely demo rebuilds your homepage, header, footer and navigation on Optimizely SaaS, and you edit it yourself in Visual Builder.' },
     ],
-    related: ['/platforms/optimizely/personalization', '/playbooks/personalization', '/answers/how-to-run-ab-tests-in-your-cms', '/resources/personalization-readiness-checklist', '/playbooks/migration'],
-    updated: '2026-11-14',
+    related: ['/demo/optimizely', '/platforms/optimizely/migration', '/answers/what-is-optimizely-visual-builder', '/platforms/optimizely/personalization', '/answers/how-to-run-ab-tests-in-your-cms', '/playbooks/migration'],
+    updated: '2026-11-21',
   },
   {
     slug: 'contentful',
@@ -357,5 +362,79 @@ export const COMBOS: Combo[] = [
     ],
     related: ['/platforms/contentful', '/answers/what-is-a-headless-cms', '/playbooks/migration', '/resources/website-migration-checklist', '/answers/what-is-content-parity'],
     updated: '2026-11-14',
+  },
+  {
+    platform: 'optimizely',
+    slug: 'migration',
+    name: 'Moving to Optimizely CMS (SaaS)',
+    card: 'From Optimizely CMS 12 or any other platform to Optimizely SaaS, with marketers building pages in Visual Builder.',
+    h1: { light: 'Moving to Optimizely CMS (SaaS).', bold: 'Your marketers build the pages.' },
+    metaTitle: 'Optimizely CMS (SaaS) migration with Cypher',
+    description: 'How Cypher moves a site to Optimizely CMS (SaaS) from CMS 12 or any platform: content types in code, Visual Builder pages, Optimizely Graph, 98% content parity.',
+    answer:
+      'A move to Optimizely CMS (SaaS) with Cypher rebuilds your live site as an Optimizely SaaS application: content types defined in code, pages your marketers compose in Visual Builder, and content delivered through Optimizely Graph. Content is checked for parity of 98% or better, the design at three screen sizes, and you get the code and hosting, running.',
+    blocks: [
+      {
+        h: 'Who it’s for',
+        list: [
+          'Teams on Optimizely CMS 12 moving to Optimizely’s SaaS CMS.',
+          'Teams on another platform moving onto Optimizely.',
+          'Teams who want marketers composing pages themselves, without a developer.',
+        ],
+      },
+      {
+        h: 'What changes on Optimizely SaaS',
+        list: [
+          'Optimizely runs and updates the CMS for you. Your site is a separate front end that reads content through Optimizely Graph.',
+          'The content model is code: every component is a content type with display templates, kept in your repository and replayable on any instance.',
+          'Marketers compose pages in Visual Builder from sections and elements, edit them inline in a live preview, and start new pages from blueprints.',
+          'Optimizely Graph serves published content only, so content is published as it’s built, in releases you approve.',
+        ],
+      },
+      {
+        h: 'How I run it',
+        steps: [
+          { t: 'Access, checked first', b: 'Every key is verified against its service, and your API key’s content rights are confirmed before anything is built.' },
+          { t: 'Discovery', b: 'Every page, component and asset on your live site inventoried, and every sitemap URL crawled.' },
+          { t: 'The Blueprint, your first gate', b: 'Every component mapped to a content type and every page to a page or experience type, with names, fields and display templates fixed. You approve it once.' },
+          { t: 'A pilot slice, end to end', b: 'A few components, the header, footer and navigation built, published through Optimizely Graph and ready in Visual Builder, before the rest is built.' },
+          { t: 'Build and migrate', b: 'Every component built and enabled in Visual Builder, every page composed and published, every image uploaded with its alt text.' },
+          { t: 'Launch readiness', b: 'Redirects, SEO settings, sitemap and error pages in place, and every page published and indexed in Optimizely Graph.' },
+          { t: 'Handover, your second gate', b: 'You accept the site in Visual Builder and on the live address, with the runbook, component catalog and known gaps in front of you.' },
+        ],
+      },
+      {
+        h: 'What I check',
+        list: [
+          'Content parity of 98% or better against your live site',
+          'Visual parity at phone, tablet and desktop widths',
+          'No broken internal links, and every old URL redirected',
+          'Your accessibility target and speed budgets, with the reports',
+          'The content model replays from the repository on a clean instance',
+        ],
+      },
+      {
+        h: 'Where these projects usually go wrong',
+        list: [
+          'An API key with access but no content rights. It can create content types and is refused every content write, so the rights are confirmed first.',
+          'Content types shared across sites. Every site on an instance sees the same types, so each project’s carry a prefix of their own.',
+          'Unpublished content that never shows. Optimizely Graph only serves what’s published, so pages are published as they’re built.',
+          'A preview Visual Builder can’t open. A front end behind a login can’t be framed for live editing, so the editing host is set up for it.',
+        ],
+      },
+      {
+        h: 'Testing, if you license it',
+        p: ['The CMS on its own has no A/B testing. If you license Optimizely Web or Feature Experimentation, a first experiment is set up on a pilot page, so your team starts with one that works.'],
+      },
+    ],
+    faq: [
+      { q: 'Can you move us from Optimizely CMS 12 to SaaS?', a: 'Yes. Cypher rebuilds your live site as an Optimizely SaaS application, moves the content, checks it page by page and redirects every old URL.' },
+      { q: 'Will our marketers be able to build pages themselves?', a: 'Yes. Every component is a content type with display templates, enabled in Visual Builder, so marketers compose, edit and publish pages without a developer.' },
+      { q: 'Do we need Optimizely Experimentation?', a: 'No. The CMS works on its own. If you license Web or Feature Experimentation, a first experiment is set up on a pilot page.' },
+      { q: 'Can we see it on our own site first?', a: 'Yes. In the Optimizely demo, Cypher rebuilds your homepage, header, footer and navigation on Optimizely SaaS, and you edit it in Visual Builder.' },
+      { q: 'Who owns it at the end?', a: 'You do: the repository and the hosting move to you, with a runbook, a component catalog, an editor guide and a known-gaps report.' },
+    ],
+    related: ['/demo/optimizely', '/platforms/optimizely', '/answers/moving-from-optimizely-cms-12-to-saas', '/answers/what-is-optimizely-visual-builder', '/playbooks/migration', '/resources/website-migration-checklist'],
+    updated: '2026-11-21',
   },
 ];
